@@ -11,15 +11,24 @@ const breakpoints: MediaQueryProps = {
   laptop: '1224px',
 };
 
-export const breakpoint = Object.keys(breakpoints).reduce((acc, label) => {
-  acc[label] = (literals: TemplateStringsArray, ...placeholders: any[]) =>
-    css`
-      @media (max-width: ${breakpoints[label]}px) {
-        ${css(literals, ...placeholders)};
-      }
-    `.join('');
-  return acc;
-}, {} as Record<keyof typeof breakpoints, (l: TemplateStringsArray, ...p: any[]) => string>);
+export const breakpoint = Object.keys(breakpoints).reduce(
+  (accumulator, label) => {
+    accumulator[label] = (...args: Array<string[]>) => {
+      return css`
+        @media (max-width: ${breakpoints[label]}) {
+          ${css({}, ...args)};
+        }
+      `;
+    };
+    return accumulator;
+  },
+  {
+    smallMobile: undefined,
+    mobile: undefined,
+    tablet: undefined,
+    laptop: undefined,
+  }
+);
 
 // How to use
 // export const ExampleComponent = styled.div`
