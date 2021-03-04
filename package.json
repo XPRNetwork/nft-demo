@@ -12,6 +12,7 @@
     "check:all": "yarn lint && yarn format && yarn typecheck"
   },
   "dependencies": {
+    "@types/styled-components": "^5.1.7",
     "next": "10.0.4",
     "react": "17.0.1",
     "react-dom": "17.0.1",
