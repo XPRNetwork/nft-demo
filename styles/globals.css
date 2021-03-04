@@ -1,3 +1,23 @@
+@font-face {
+  font-family: 'GilroyLight';
+  src: url('/fonts/Gilroy-Light.otf') format('woff');
+}
+
+@font-face {
+  font-family: 'GilroyExtraBold';
+  src: url('/fonts/Gilroy-ExtraBold.otf') format('woff');
+}
+
+@font-face {
+  font-family: 'GilroyMedium';
+  src: url('/fonts/Gilroy-Medium.otf') format('woff');
+}
+
+@font-face {
+  font-family: 'GilroySemiBold';
+  src: url('/fonts/Gilroy-SemiBold.otf') format('woff');
+}
+
 html,
 body {
   padding: 0;
@@ -13,4 +33,8 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+*:focus {
+  outline-color: #8a9ef5;
 }
