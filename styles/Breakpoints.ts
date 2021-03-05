@@ -7,7 +7,7 @@ interface MediaQueryProps {
 const breakpoints: MediaQueryProps = {
   smallMobile: '400px',
   mobile: '600px',
-  tablet: '920px',
+  tablet: '970px',
   laptop: '1224px',
 };
 

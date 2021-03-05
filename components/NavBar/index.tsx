@@ -6,13 +6,18 @@ import Button from '../Button';
 import {
   Background,
   Nav,
+  AvatarContainer,
   HamburgerContainer,
   ImageContainer,
   Section,
   NavLink,
   GradientBackground,
+  MobileOnlySection,
+  DesktopOnlySection,
+  PlaceholderAvatar,
 } from './NavBar.styled';
 import { useScrollLock } from '../../hooks';
+import { useAuthContext } from '../Provider';
 
 const routes = [
   {
@@ -27,6 +32,7 @@ const routes = [
 
 const NavBar = (): JSX.Element => {
   const router = useRouter();
+  const { currentUser, login, logout } = useAuthContext();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   useScrollLock(isMobileNavOpen);
 
@@ -36,10 +42,31 @@ const NavBar = (): JSX.Element => {
     if (isMobileNavOpen) setIsMobileNavOpen(false);
   };
 
-  const login = () => {
+  const connectWallet = () => {
     closeMobileNav();
-    console.log('connect wallet');
+    login();
   };
+
+  const welcomeMessage = currentUser ? (
+    <h1>
+      Welcome, {currentUser.name.split(' ')[0]} ({currentUser.actor})
+    </h1>
+  ) : null;
+
+  const currentUserAvatar = currentUser ? (
+    <AvatarContainer>
+      <Image
+        priority
+        layout="fixed"
+        width={32}
+        height={32}
+        alt="chain account avatar"
+        src={currentUser.avatar}
+      />
+    </AvatarContainer>
+  ) : (
+    <PlaceholderAvatar />
+  );
 
   return (
     <Background>
@@ -48,8 +75,9 @@ const NavBar = (): JSX.Element => {
           <Image
             priority
             layout="fixed"
-            width={24}
-            height={24}
+            width={40}
+            height={40}
+            alt={isMobileNavOpen ? 'close' : 'open'}
             src={isMobileNavOpen ? '/icons-close.svg' : '/icons-small-menu.svg'}
           />
         </HamburgerContainer>
@@ -59,6 +87,7 @@ const NavBar = (): JSX.Element => {
             layout="fixed"
             width={143}
             height={32}
+            alt="logo"
             src="/logo@3x.png"
           />
         </ImageContainer>
@@ -72,9 +101,16 @@ const NavBar = (): JSX.Element => {
               </NavLink>
             </Link>
           ))}
-          <Button onClick={login}>Connect Wallet</Button>
+          <DesktopOnlySection>
+            {welcomeMessage}
+            {currentUserAvatar}
+          </DesktopOnlySection>
+          <Button onClick={currentUser ? logout : connectWallet}>
+            {currentUser ? 'Log out' : 'Connect Wallet'}
+          </Button>
           <GradientBackground onClick={closeMobileNav} />
         </Section>
+        <MobileOnlySection>{currentUserAvatar}</MobileOnlySection>
       </Nav>
     </Background>
   );
