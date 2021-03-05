@@ -33,17 +33,17 @@ type ImmutableData = {
 
 export type Template = {
   contract: string;
-  template_id: string;
-  is_transferable: boolean;
-  is_burnable: boolean;
-  issued_supply: string;
-  max_supply: string;
   collection: Collection;
   schema: Schema;
+  name: string;
+  template_id: string;
+  max_supply: string;
+  is_transferable: boolean;
+  is_burnable: boolean;
   immutable_data: ImmutableData;
   created_at_time: string;
   created_at_block: string;
-  name: string;
+  issued_supply: string;
 };
 
 export const templatesApiService = new NodeFetch<Template>(
