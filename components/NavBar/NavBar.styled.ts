@@ -24,6 +24,29 @@ export const Nav = styled(MaxWidth).attrs({ as: 'nav' })`
   position: relative;
 `;
 
+export const AvatarContainer = styled.section`
+  margin: 16px;
+
+  * {
+    border-radius: 100%;
+    z-index: 3;
+  }
+
+  ${breakpoint.tablet`
+    margin: 0;
+  `}
+`;
+
+export const PlaceholderAvatar = styled.section`
+  display: none;
+
+  ${breakpoint.tablet`
+    display: block;
+    height: 32px;
+    width: 32px;
+  `}
+`;
+
 export const HamburgerContainer = styled.section`
   display: none;
   cursor: pointer;
@@ -47,6 +70,7 @@ export const ImageContainer = styled.section`
 export const Section = styled.section<SectionProps>`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   background: white;
 
   ${breakpoint.tablet`
@@ -105,5 +129,23 @@ export const NavLink = styled.a<NavLinkProps>`
     margin-right: 0;
     border-bottom: 1px solid #dde4ee;
     padding: 16px 0;
+    width: 100%;
+  `}
+`;
+
+export const MobileOnlySection = styled.section`
+  display: none;
+
+  ${breakpoint.tablet`
+    display: block;
+  `}
+`;
+
+export const DesktopOnlySection = styled.section`
+  display: flex;
+  align-items: center;
+
+  ${breakpoint.tablet`
+    display: none;
   `}
 `;
