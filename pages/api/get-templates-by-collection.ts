@@ -1,11 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { templatesApiService } from '../../services/templates';
-import { salesApiService, Sale, Asset } from '../../services/sales';
-
-type LatestPriceOfTemplate = {
-  price: number;
-  updatedAt: number;
-};
+import { salesApiService, Sale } from '../../services/sales';
 
 const handler = async (
   req: NextApiRequest,
@@ -29,6 +24,7 @@ const handler = async (
           throw new Error(allTemplatesResults.message);
         const allSalesForCollectionResults = await salesApiService.getAll({
           collection_name: collection as string,
+          state: '0',
         });
         if (!allSalesForCollectionResults.success)
           throw new Error(allTemplatesResults.message);
@@ -36,7 +32,9 @@ const handler = async (
           !allSalesForCollectionResults.data ||
           !allSalesForCollectionResults.data.length
         ) {
-          res.status(200).send({ success: true, message: allTemplatesResults });
+          res
+            .status(200)
+            .send({ success: true, message: allTemplatesResults.data });
           return;
         }
 

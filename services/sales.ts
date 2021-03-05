@@ -1,5 +1,6 @@
 import NodeFetch from '../utils/node-fetch';
-import { Schema, Collection, Template } from './templates';
+import { Asset } from './assets';
+import { Collection } from './templates';
 
 type Price = {
   token_contract: string;
@@ -9,18 +10,10 @@ type Price = {
   amount: number;
 };
 
-export type Asset = {
-  contract: string;
-  asset_id: string;
-  owner: string;
-  is_transferable: boolean;
-  is_burnable: boolean;
-  collection: Collection;
-  schema: Schema;
-  template: Template;
-};
-
 export type Sale = {
+  market_contract: string;
+  assets_contract: string;
+  sale_id: string;
   seller: string;
   buyer: string;
   offer_id: string;
@@ -28,23 +21,16 @@ export type Sale = {
   listing_price: string;
   listing_symbol: string;
   assets: Asset[];
-  mutable_data: Record<string, unknown>;
-  immutable_data: Record<string, unknown>;
-  template_mint: string;
-  schema_mint: string;
-  collection_mint: string;
-  backed_tokens: string[] | [];
-  burned_by_account: string | null;
-  burned_at_block: string | null;
-  burned_at_time: string | null;
+  collection_name: string;
+  collection: Collection;
+  maker_marketplace: string;
+  taker_marketplace: string;
+  is_seller_contract: boolean;
   updated_at_block: string;
   updated_at_time: string;
-  transferred_at_block: string;
-  transferred_at_time: string;
-  minted_at_block: string;
-  minted_at_time: string;
-  data: Record<string, unknown>;
-  name: string;
+  created_at_block: string;
+  created_at_time: string;
+  state: number;
 };
 
 export const salesApiService = new NodeFetch<Sale>('/atomicmarket/v1/sales');
