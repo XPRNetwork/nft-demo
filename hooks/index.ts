@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export const useScrollLock = (isActive: boolean): void => {
   useEffect(() => {
@@ -8,4 +8,12 @@ export const useScrollLock = (isActive: boolean): void => {
       document.body.style.overflow = 'scroll';
     }
   }, [isActive]);
+};
+
+export const usePrevious = (value: string): string => {
+  const ref = useRef<string>();
+  useEffect(() => {
+    ref.current = value;
+  }, [value]);
+  return ref.current as string;
 };
