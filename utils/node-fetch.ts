@@ -9,6 +9,9 @@ export interface APIResponse<T> {
 
 export interface QueryParams {
   collection_name?: string;
+  owner?: string;
+  state?: string;
+  sender?: string;
 }
 
 class NodeFetch<T = void, P = void> {
