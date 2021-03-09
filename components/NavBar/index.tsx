@@ -19,22 +19,25 @@ import {
 import { useScrollLock } from '../../hooks';
 import { useAuthContext } from '../Provider';
 
-const routes = [
-  {
-    name: 'Marketplace',
-    path: '/',
-  },
-  {
-    name: 'Collection',
-    path: '/collection',
-  },
-];
-
 const NavBar = (): JSX.Element => {
   const router = useRouter();
   const { currentUser, login, logout } = useAuthContext();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   useScrollLock(isMobileNavOpen);
+
+  const routes = [
+    {
+      name: 'Marketplace',
+      path: '/',
+      isHidden: false,
+    },
+    {
+      name: 'Collection',
+      path: `/collection/testuser1111`, // TODO: Remove when Proton NFTs are live
+      // path: `/collection/${currentUser ? currentUser.actor : ''}`, // TODO: Comment back in when Proton NFTs are live
+      isHidden: !currentUser,
+    },
+  ];
 
   const toggleMobileNav = () => setIsMobileNavOpen(!isMobileNavOpen);
 
@@ -92,15 +95,17 @@ const NavBar = (): JSX.Element => {
           />
         </ImageContainer>
         <Section isMobileNavOpen={isMobileNavOpen}>
-          {routes.map(({ name, path }) => (
-            <Link href={path} passHref key={name}>
-              <NavLink
-                isActive={router.pathname === path}
-                onClick={closeMobileNav}>
-                {name}
-              </NavLink>
-            </Link>
-          ))}
+          {routes.map(({ name, path, isHidden }) => {
+            const isActive =
+              router.pathname.split('/')[1] === path.split('/')[1];
+            return isHidden ? null : (
+              <Link href={path} passHref key={name}>
+                <NavLink isActive={isActive} onClick={closeMobileNav}>
+                  {name}
+                </NavLink>
+              </Link>
+            );
+          })}
           <DesktopOnlySection>
             {welcomeMessage}
             {currentUserAvatar}

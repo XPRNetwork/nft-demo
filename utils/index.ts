@@ -10,3 +10,6 @@ export const toQueryString = (queryObject: QueryParams): string => {
   }
   return parts.length ? parts.join('&') : '';
 };
+
+export const formatNumber = (numberString: string): string =>
+  numberString.replace(/\B(?=(\d{3})+(?!\d))/g, ',');

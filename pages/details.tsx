@@ -2,7 +2,7 @@ import PageLayout from '../components/PageLayout';
 
 const MarketPlace = (): JSX.Element => {
   return (
-    <PageLayout title="Details" pageTitle="Details">
+    <PageLayout title="Details">
       <div>Details</div>
     </PageLayout>
   );
