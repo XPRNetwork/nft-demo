@@ -2,7 +2,7 @@ import { APIResponse } from './node-fetch';
 
 interface BrowserResponse<T> {
   success: boolean;
-  data: APIResponse<T>;
+  message: APIResponse<T>;
 }
 
 const request = <T, P = void>(
