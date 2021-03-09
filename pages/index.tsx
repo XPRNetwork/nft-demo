@@ -4,7 +4,7 @@ import Grid, { GRID_TYPE } from '../components/Grid';
 import { Title } from '../styles/Title.styled';
 import { getFromApi } from '../utils/browser-fetch';
 import { APIResponse } from '../utils/node-fetch';
-import { getTemplatesByCollection, Template } from '../services/templates';
+import { getTemplatesByCollection, getTemplateDetail, Template } from '../services/templates';
 
 type Props = {
   templates: Template[];

@@ -14,6 +14,7 @@ export interface QueryParams {
   sender?: string;
   seller?: string;
   asset_id?: string;
+  template_id?: string;
 }
 
 class NodeFetch<T = void, P = void> {
