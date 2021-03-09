@@ -1,6 +1,14 @@
 import styled from 'styled-components';
 import { MaxWidth } from '../../styles/MaxWidth.styled';
+import { breakpoint } from '../../styles/Breakpoints';
 
-export const Title = styled(MaxWidth)`
-  font-size: 16px;
+export const Container = styled(MaxWidth)`
+  flex-direction: column;
+  margin: 64px auto 128px;
+  width: 100%;
+  overflow-y: scroll;
+
+  ${breakpoint.tablet`
+    margin-bottom: 64px;
+  `}
 `;

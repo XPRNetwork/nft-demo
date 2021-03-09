@@ -94,7 +94,7 @@ class ProtonSDK {
 
       const { auth, accountData } = this.session;
       const { avatar, isLightKYCVerified, name } = accountData[0];
-      const chainAccountAvatar = !avatar
+      const chainAccountAvatar = avatar
         ? `data:image/jpeg;base64,${avatar}`
         : '/default-avatar.png';
       return {

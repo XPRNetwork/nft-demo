@@ -15,6 +15,8 @@ export const Background = styled.section`
   background: white;
   border-bottom: 1px solid #e8ecfd;
   z-index: 2;
+  position: fixed;
+  top: 0;
 `;
 
 export const Nav = styled(MaxWidth).attrs({ as: 'nav' })`
