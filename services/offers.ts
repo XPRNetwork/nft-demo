@@ -1,7 +1,7 @@
 import NodeFetch from '../utils/node-fetch';
 import { Asset } from './assets';
 
-type Offers = {
+export type Offer = {
   contract: string;
   offer_id: string;
   sender_name: string;
@@ -18,6 +18,4 @@ type Offers = {
   created_at_time: string;
 };
 
-export const offersApiService = new NodeFetch<Offers>(
-  '/atomicassets/v1/offers'
-);
+export const offersApiService = new NodeFetch<Offer>('/atomicassets/v1/offers');

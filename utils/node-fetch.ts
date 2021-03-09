@@ -12,6 +12,8 @@ export interface QueryParams {
   owner?: string;
   state?: string;
   sender?: string;
+  seller?: string;
+  asset_id?: string;
 }
 
 class NodeFetch<T = void, P = void> {

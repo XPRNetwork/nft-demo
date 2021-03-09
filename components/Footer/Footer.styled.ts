@@ -8,6 +8,10 @@ export const FooterBackground = styled.section`
   border-bottom: 1px solid #f6f7fe;
   position: fixed;
   bottom: 0;
+
+  ${breakpoint.tablet`
+    position: static;
+  `}
 `;
 
 export const StyledFooter = styled(MaxWidth).attrs({ as: 'footer' })`
