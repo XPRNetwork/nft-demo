@@ -52,6 +52,17 @@ export const templatesApiService = new NodeFetch<Template>(
   '/atomicassets/v1/templates'
 );
 
+export const getTemplateDetail = async (
+  collectionName: string,
+  templateId: string
+): Promise<Template> => {
+  const template = await templatesApiService.getOne(
+    `${collectionName}/${templateId}`
+  );
+
+  return template.data;
+};
+
 export const getTemplatesByCollection = async (
   collection: string
 ): Promise<Template[] | void> => {
