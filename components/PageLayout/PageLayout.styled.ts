@@ -6,7 +6,7 @@ export const Container = styled(MaxWidth)`
   flex-direction: column;
   margin: 64px auto 128px;
   width: 100%;
-  overflow-y: scroll;
+  justify-content: flex-start;
 
   ${breakpoint.tablet`
     margin-bottom: 64px;
