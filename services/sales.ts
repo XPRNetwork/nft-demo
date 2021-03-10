@@ -34,3 +34,18 @@ export type Sale = {
 };
 
 export const salesApiService = new NodeFetch<Sale>('/atomicmarket/v1/sales');
+
+export const getSalesHistoryForTemplate = async (
+  templateId: string
+): Promise<Sale[]> => {
+  try {
+    const latestSales = await salesApiService.getAll({
+      state: '3', // Valid sale, Sale was bought
+      template_id: templateId,
+    });
+    if (!latestSales.success) throw new Error(latestSales.message);
+    return latestSales.data;
+  } catch (e) {
+    throw new Error(e);
+  }
+};

@@ -4,6 +4,7 @@ import Grid, { GRID_TYPE } from '../../components/Grid';
 import { getUserAssets, Asset } from '../../services/assets';
 import { Title } from '../../styles/Title.styled';
 import { useAuthContext } from '../../components/Provider';
+import { getSalesHistoryForTemplate } from '../../services/sales';
 
 type Props = {
   assets: Asset[];
