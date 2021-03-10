@@ -33,8 +33,7 @@ const NavBar = (): JSX.Element => {
     },
     {
       name: 'Collection',
-      path: `/collection/testuser1111`, // TODO: Remove when Proton NFTs are live
-      // path: `/collection/${currentUser ? currentUser.actor : ''}`, // TODO: Comment back in when Proton NFTs are live
+      path: `/collection/${currentUser ? currentUser.actor : ''}`,
       isHidden: !currentUser,
     },
   ];
