@@ -15,7 +15,7 @@ type Props = {
 const Collection = ({ assets, error, chainAccount }: Props): JSX.Element => {
   const [collectionError, setCollectionError] = useState(error);
   const { currentUser } = useAuthContext();
-  const isTest = chainAccount === 'testuser1111'; // TODO: Remove when Proton NFTs are live
+  const isTest = ['testuser1111', 'monsters'].includes(chainAccount); // TODO: Remove when Proton NFTs are live
   const hasAccess =
     isTest || (currentUser && chainAccount === currentUser.actor);
 
