@@ -56,11 +56,15 @@ export const getTemplateDetail = async (
   collectionName: string,
   templateId: string
 ): Promise<Template> => {
-  const template = await templatesApiService.getOne(
-    `${collectionName}/${templateId}`
-  );
-
-  return template.data;
+  try {
+    const template = await templatesApiService.getOne(
+      `${collectionName}/${templateId}`
+    );
+    if (!template.success) throw new Error(template.message);
+    return template.data;
+  } catch (e) {
+    throw new Error(e);
+  }
 };
 
 export const getTemplatesByCollection = async (
