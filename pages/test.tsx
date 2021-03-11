@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-target-blank */
 import { useState } from 'react';
 import ProtonSDK from '../services/proton';
 import PageLayout from '../components/PageLayout';
@@ -27,6 +28,22 @@ const Test = (): JSX.Element => {
       sale_id: saleId,
     });
     console.log(res);
+  };
+
+  const deposit = async () => {
+    const res = await ProtonSDK.deposit({
+      actor: currentUser ? currentUser.actor : '',
+      amount: '1.0000 XPR',
+    });
+    console.log('deposit: ', res);
+  };
+
+  const withdraw = async () => {
+    const res = await ProtonSDK.withdraw({
+      actor: currentUser ? currentUser.actor : '',
+      amount: '1.0000 XPR',
+    });
+    console.log('withdraw: ', res);
   };
 
   return (
@@ -64,6 +81,19 @@ const Test = (): JSX.Element => {
         onChange={(e) => setSaleId(e.target.value)}
       />
       <button onClick={cancelSale}>CANCEL SALE</button>
+      <br />
+      <button onClick={deposit}>Deposit 1 XPR</button>
+      <br />
+      <p>
+        Visit this page to see account balances:
+        <a
+          href="https://proton-test.bloks.io/account/atomicmarket?loadContract=true&tab=Tables&account=atomicmarket&scope=atomicmarket&limit=100&table=balances"
+          target="_blank"
+          style={{ color: 'blue' }}>
+          Atomic Market Balances
+        </a>
+      </p>
+      <button onClick={withdraw}>Withdraw 1 XPR</button>
     </PageLayout>
   );
 };
