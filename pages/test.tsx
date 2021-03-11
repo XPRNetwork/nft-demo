@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import ProtonSDK from '../services/proton';
 import PageLayout from '../components/PageLayout';
-import { useAuthContext } from '../components/Provider/AuthProvider';
+import { useAuthContext } from '../components/Provider';
+import { getSaleAssetsByTemplateId } from '../services/sales';
 
 const Test = (): JSX.Element => {
   const { currentUser } = useAuthContext();
@@ -65,6 +66,16 @@ const Test = (): JSX.Element => {
       <button onClick={cancelSale}>CANCEL SALE</button>
     </PageLayout>
   );
+};
+
+export const getServerSideProps = async (): Promise<{
+  props: Record<string, never>;
+}> => {
+  const saleAssets = await getSaleAssetsByTemplateId('14'); // TODO: Move to `[templateId].tsx`
+  console.log(saleAssets);
+  return {
+    props: {},
+  };
 };
 
 export default Test;

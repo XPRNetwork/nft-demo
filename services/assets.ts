@@ -84,6 +84,7 @@ export const getUserAssets = async (owner: string): Promise<Asset[]> => {
  * @param  {string}  owner        The owner of the assets you're trying to look up the sales for
  * @return {Asset[]}              Returns array of Assets with additional 'isForSale' and 'salePrice' flags
  */
+
 const findMySaleItems = async (
   allAssets: Asset[],
   allMyOffers: Offer[],
@@ -127,6 +128,7 @@ const findMySaleItems = async (
  * @return {Asset}          Returns asset information, with additional flag "isForSale",
  *                          after checking if any listed sales exist for that asset_id
  */
+
 export const getAssetDetails = async (assetId: string): Promise<Asset> => {
   const currentAsset = await assetsApiService.getOne(assetId);
   const saleForThisAsset = await salesApiService.getAll({
