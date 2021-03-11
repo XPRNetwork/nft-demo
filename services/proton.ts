@@ -22,6 +22,16 @@ interface SaleOptions {
   sale_id: string;
 }
 
+interface DepositWithdrawOptions {
+  actor: string;
+  amount: string;
+}
+interface DepositWithdrawResponse {
+  success: boolean;
+  transactionId?: string;
+  error?: string;
+}
+
 interface SaleResponse {
   success: boolean;
   transactionId?: string;
@@ -129,6 +139,112 @@ class ProtonSDK {
       return {
         user: null,
         error: e.message || 'An error has occurred while restoring a session',
+      };
+    }
+  };
+
+  /**
+   * Deposit tokens into the marketplace to be able to buy assets
+   *
+   * @param {string}   actor                chainAccount of user
+   * @param {string}   amount               amount of XPR (will only be using XPR in this demo, i.e 1.0000 XPR)
+   * @return {DepositWithdrawResponse}      Returns an object indicating the success of the transaction and transaction ID.
+   */
+
+  deposit = async ({
+    actor,
+    amount,
+  }: DepositWithdrawOptions): Promise<DepositWithdrawResponse> => {
+    const action = [
+      {
+        account: 'eosio.token',
+        name: 'transfer',
+        authorization: [
+          {
+            actor: actor,
+            permission: 'active',
+          },
+        ],
+        data: {
+          from: actor,
+          to: 'atomicmarket',
+          quantity: amount,
+          memo: 'deposit',
+        },
+      },
+    ];
+
+    try {
+      if (!this.session) {
+        throw new Error('Must be logged in to deposit into market');
+      }
+      const result = await this.session.transact(
+        { actions: action },
+        { broadcast: true }
+      );
+
+      return {
+        success: true,
+        transactionId: result.processed.id,
+      };
+    } catch (e) {
+      return {
+        success: false,
+        error:
+          e.message ||
+          'An error has occurred while attempting to deposit into the market.',
+      };
+    }
+  };
+
+  /**
+   * Withdraw tokens from the marketplace back into user's account
+   *
+   * @param {string}   actor                chainAccount of user
+   * @param {string}   amount               amount of XPR (will only be using XPR in this demo, i.e 1.0000 XPR)
+   * @return {DepositWithdrawResponse}      Returns an object indicating the success of the transaction and transaction ID.
+   */
+
+  withdraw = async ({
+    actor,
+    amount,
+  }: DepositWithdrawOptions): Promise<DepositWithdrawResponse> => {
+    const action = [
+      {
+        account: 'atomicmarket',
+        name: 'withdraw',
+        authorization: [
+          {
+            actor: actor,
+            permission: 'active',
+          },
+        ],
+        data: {
+          owner: actor,
+          token_to_withdraw: amount,
+        },
+      },
+    ];
+    try {
+      if (!this.session) {
+        throw new Error('Must be logged in to withdraw from the market');
+      }
+
+      const result = await this.session.transact(
+        { actions: action },
+        { broadcast: true }
+      );
+
+      return {
+        success: true,
+        transactionId: result.processed.id,
+      };
+    } catch (e) {
+      return {
+        success: false,
+        error:
+          e.message ||
+          'An error has occured while attempting to withdraw from the market',
       };
     }
   };
