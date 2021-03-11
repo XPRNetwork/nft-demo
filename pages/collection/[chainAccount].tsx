@@ -4,7 +4,6 @@ import Grid, { GRID_TYPE } from '../../components/Grid';
 import { getUserAssets, Asset } from '../../services/assets';
 import { Title } from '../../styles/Title.styled';
 import { useAuthContext } from '../../components/Provider';
-import { getSalesHistoryForTemplate } from '../../services/sales';
 
 type Props = {
   assets: Asset[];
@@ -15,9 +14,13 @@ type Props = {
 const Collection = ({ assets, error, chainAccount }: Props): JSX.Element => {
   const [collectionError, setCollectionError] = useState(error);
   const { currentUser } = useAuthContext();
-  const isTest = ['testuser1111', 'monsters'].includes(chainAccount); // TODO: Remove when Proton NFTs are live
+  const isTest = chainAccount === 'monsters'; // TODO: Remove when Proton NFTs are live
   const hasAccess =
     isTest || (currentUser && chainAccount === currentUser.actor);
+
+  useEffect(() => {
+    if (collectionError) setCollectionError('');
+  }, []);
 
   useEffect(() => {
     if (!hasAccess)
