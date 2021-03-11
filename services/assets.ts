@@ -39,6 +39,7 @@ export const getUserAssets = async (owner: string): Promise<Asset[]> => {
   try {
     const myAssetsResults = await assetsApiService.getAll({
       owner,
+      limit: 1000, // TODO: Remove when WEB-768 is merged in to add pagination support
     });
 
     if (!myAssetsResults.success) throw new Error(myAssetsResults.message);
