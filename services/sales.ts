@@ -35,6 +35,12 @@ export type Sale = {
 
 export const salesApiService = new NodeFetch<Sale>('/atomicmarket/v1/sales');
 
+/**
+ * Get the fulfilled sales for a specific templates (sales that were successful)
+ * Mostly used in viewing sales history of a specific template
+ * @param  {string} templateId   The template id of the history you want to look up
+ * @return {Sales[]}             Returns an array of Sales for that specific template id
+ */
 export const getSalesHistoryForTemplate = async (
   templateId: string
 ): Promise<Sale[]> => {
