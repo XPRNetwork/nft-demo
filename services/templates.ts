@@ -1,5 +1,6 @@
 import NodeFetch from '../utils/node-fetch';
-import { salesApiService, Sale } from './sales';
+import { salesApiService } from './sales';
+import { asyncForEach, addPrecisionDecimal } from '../utils/';
 
 export type SchemaFormat = {
   name: string;
@@ -52,6 +53,13 @@ export const templatesApiService = new NodeFetch<Template>(
   '/atomicassets/v1/templates'
 );
 
+/**
+ * Get a specific template detail
+ * Mostly used in viewing a specific template's detail page
+ * @param  {string} collectionName   The name of the collection the template belongs in
+ * @param  {string} templateId       The specific template id number you need to look up details for
+ * @return {Template[]}              Returns array of templates, most likely will only return one item in the array
+ */
 export const getTemplateDetail = async (
   collectionName: string,
   templateId: string
@@ -67,6 +75,13 @@ export const getTemplateDetail = async (
   }
 };
 
+/**
+ * Get a list of all templates within a collection with their lowest and highest price
+ * Mostly used in viewing all the templates of a collection (i.e. in the homepage or after searching for one collection)
+ * Also used display the highest and lowest price of any of the templates with assets for sale in the collection
+ * @param  {string} collection   The name of the collection
+ * @return {Template[]}          Returns array of templates in that collection
+ */
 export const getTemplatesByCollection = async (
   collection: string
 ): Promise<Template[] | void> => {
@@ -78,24 +93,8 @@ export const getTemplatesByCollection = async (
     if (!allTemplatesResults.success)
       throw new Error(allTemplatesResults.message as string);
 
-    const allSalesForCollectionResults = await salesApiService.getAll({
-      collection_name: collection as string,
-      state: '1', // assets listed for sale
-    });
-
-    if (!allSalesForCollectionResults.success)
-      throw new Error(allTemplatesResults.message as string);
-
-    if (
-      !allSalesForCollectionResults.data ||
-      !allSalesForCollectionResults.data.length
-    ) {
-      return allTemplatesResults.data;
-    }
-
-    const allTemplateResultsWithLowestPrice = parseTemplatesForLowestPrice(
-      allTemplatesResults.data,
-      allSalesForCollectionResults.data
+    const allTemplateResultsWithLowestPrice = await parseTemplatesForHighLowPrice(
+      allTemplatesResults.data
     );
 
     return allTemplateResultsWithLowestPrice;
@@ -104,42 +103,59 @@ export const getTemplatesByCollection = async (
   }
 };
 
-const parseTemplatesForLowestPrice = (
-  allTemplates: Template[],
-  allSales: Sale[]
-): Template[] => {
-  // this whole section needs further testing once we are able to make sales
+/**
+ * Gets the highest and lowest price of any assets for sale in a list of templates
+ * Mostly used to display the highest and lowest price of any of the templates with assets for sale in the collection
+ * @param  {Template[]} allTemplates   An array of templates you want to look up the highest/lowest price for
+ * @return {Template[]}                Returns array of templates with an additional two flags: 'highestPrice' and 'lowestPrice'
+ */
+const parseTemplatesForHighLowPrice = async (
+  allTemplates: Template[]
+): Promise<Template[]> => {
   const templateIdsByPrice = {};
-  allSales.forEach((sale: Sale) => {
-    for (const asset of sale.assets) {
-      const templateId = asset.template.template_id;
-      if (
-        templateIdsByPrice[templateId] &&
-        templateIdsByPrice[templateId].price
-      ) {
-        const currentSaleUpdatedAt = Number(sale.updated_at_time);
-        const historySaleUpdatedAt = templateIdsByPrice[templateId].updatedAt;
-        if (currentSaleUpdatedAt < historySaleUpdatedAt) {
-          continue;
-        }
-      }
-      templateIdsByPrice[templateId] = {
-        price: Number(sale.listing_price),
-        symbol: sale.listing_symbol,
-        updatedAt: Number(sale.updated_at_time),
-      };
-    }
+
+  await asyncForEach(allTemplates, async (template: Template) => {
+    const saleForTemplateAsc = await salesApiService.getAll({
+      collection_name: template.collection.collection_name,
+      template_id: template.template_id,
+      sort: 'price',
+      order: 'asc',
+      state: '1', // assets listed for sale
+    });
+    const saleForTemplateDesc = await salesApiService.getAll({
+      collection_name: template.collection.collection_name,
+      template_id: template.template_id,
+      sort: 'price',
+      order: 'desc',
+      state: '1', // assets listed for sale
+    });
+
+    const highestPriceSale = saleForTemplateDesc.data[0];
+    const lowestPriceSale = saleForTemplateAsc.data[0];
+    templateIdsByPrice[template.template_id] = {
+      highestPrice: highestPriceSale
+        ? `${addPrecisionDecimal(
+            highestPriceSale.listing_price,
+            highestPriceSale.price.token_precision
+          )} ${highestPriceSale.listing_symbol}`
+        : '',
+      lowestPrice: lowestPriceSale
+        ? `${addPrecisionDecimal(
+            lowestPriceSale.listing_price,
+            lowestPriceSale.price.token_precision
+          )} ${lowestPriceSale.listing_symbol}`
+        : '',
+    };
   });
 
   const allTemplateResultsWithLowestPrice = allTemplates.map((template) => {
-    let lowestPrice = null;
-    const templatePrice = templateIdsByPrice[template.template_id];
-    if (templatePrice && templatePrice.price) {
-      lowestPrice = `${templatePrice.price} ${templatePrice.symbol}`;
-    }
+    const { lowestPrice, highestPrice } = templateIdsByPrice[
+      template.template_id
+    ];
     return {
       ...template,
       lowestPrice,
+      highestPrice,
     };
   });
 
