@@ -35,6 +35,14 @@ export type Asset = {
 
 export const assetsApiService = new NodeFetch<Asset>('/atomicassets/v1/assets');
 
+/**
+ * Gets a list of all user owned assets and checks whether there are open offers.
+ * Mostly used in viewing all your owned assets and see which one is listed for sale at a glance.
+ * @param  {string} owner   The account name of the owner of the assets to look up
+ * @return {Asset[]}        Returns a list of Assets with an additional "isForSale" flag in each Asset object.
+ *                          If it is for sale, will also return the "salePrice" in the Asset object.
+ */
+
 export const getUserAssets = async (owner: string): Promise<Asset[]> => {
   try {
     const myAssetsResults = await assetsApiService.getAll({
@@ -67,6 +75,15 @@ export const getUserAssets = async (owner: string): Promise<Asset[]> => {
   }
 };
 
+/**
+ * A utility function that loops through a list (array) of open offers and owned assets and
+ * to cross references with the sales API to determine which assets are for sale.
+ * Mostly used in viewing all your owned assets and see which one is listed for sale at a glance.
+ * @param  {Asset[]} allAssets    An array of assets
+ * @param  {Offer[]} allMyOffers  An array of all offers for the above assets
+ * @param  {string}  owner        The owner of the assets you're trying to look up the sales for
+ * @return {Asset[]}              Returns array of Assets with additional 'isForSale' and 'salePrice' flags
+ */
 const findMySaleItems = async (
   allAssets: Asset[],
   allMyOffers: Offer[],
@@ -101,4 +118,29 @@ const findMySaleItems = async (
       };
     })
   );
+};
+
+/**
+ * Gets the detail of a specific asset and returns it with a "isForSale" flag
+ * Mostly used in checking your own asset detail to determine what details to display (cancel listing, vs put up for sale).
+ * @param  {string} assetId The asset id number you're trying to look up
+ * @return {Asset}          Returns asset information, with additional flag "isForSale",
+ *                          after checking if any listed sales exist for that asset_id
+ */
+export const getAssetDetails = async (assetId: string): Promise<Asset> => {
+  const currentAsset = await assetsApiService.getOne(assetId);
+  const saleForThisAsset = await salesApiService.getAll({
+    asset_id: assetId,
+    state: '1', // listed sales
+  });
+
+  let isForSale = false;
+  if (saleForThisAsset.data && saleForThisAsset.data.length > 0) {
+    isForSale = true;
+  }
+
+  return {
+    ...currentAsset.data,
+    isForSale,
+  };
 };
