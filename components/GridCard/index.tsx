@@ -53,13 +53,13 @@ export const AssetCard = (asset: Asset): JSX.Element => {
   const {
     name,
     asset_id,
-    data: { img },
+    data: { image },
     isForSale,
     salePrice,
   } = asset;
   return (
     <Card
-      image={img as string}
+      image={image as string}
       text={name}
       secondaryText={`Serial #${asset_id}`}
       priceText={salePrice as string}
