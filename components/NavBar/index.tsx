@@ -109,7 +109,7 @@ const NavBar = (): JSX.Element => {
             {welcomeMessage}
             {currentUserAvatar}
           </DesktopOnlySection>
-          <Button onClick={currentUser ? logout : connectWallet}>
+          <Button filled onClick={currentUser ? logout : connectWallet}>
             {currentUser ? 'Log out' : 'Connect Wallet'}
           </Button>
           <GradientBackground onClick={closeMobileNav} />
