@@ -1,6 +1,5 @@
 import { ReactNode, useState } from 'react';
 import Image from 'next/image';
-import PageLayout from '../PageLayout';
 import {
   Container,
   Row,
@@ -32,39 +31,37 @@ const DetailsLayout = ({
   const [active, setActive] = useState(true);
 
   return (
-    <PageLayout title="Details">
-      <Container>
-        <Row>
-          <ImageContainer>
-            <Image
-              priority
-              layout="responsive"
-              width={456}
-              height={470}
-              src={`https://ipfs.io/ipfs/${image}`}
-            />
-          </ImageContainer>
-          <Column>
-            <Name>{name}</Name>
-            <Series>Series #{seriesNumber}</Series>
-            {children}
-          </Column>
-        </Row>
-        <ContentRow>
-          <Title>Collectible Details</Title>
-          <Arrow
+    <Container>
+      <Row>
+        <ImageContainer>
+          <Image
             priority
-            layout="fixed"
-            width={24}
-            height={24}
-            src="/arrow.svg"
-            active={active}
-            onClick={() => setActive(!active)}
+            layout="responsive"
+            width={456}
+            height={470}
+            src={`https://ipfs.io/ipfs/${image}`}
           />
-        </ContentRow>
-        {active ? <Description>{details}</Description> : ''}
-      </Container>
-    </PageLayout>
+        </ImageContainer>
+        <Column>
+          <Name>{name}</Name>
+          <Series>Series #{seriesNumber}</Series>
+          {children}
+        </Column>
+      </Row>
+      <ContentRow>
+        <Title>Collectible Details</Title>
+        <Arrow
+          priority
+          layout="fixed"
+          width={24}
+          height={24}
+          src="/arrow.svg"
+          active={active}
+          onClick={() => setActive(!active)}
+        />
+      </ContentRow>
+      {active ? <Description>{details}</Description> : ''}
+    </Container>
   );
 };
 
