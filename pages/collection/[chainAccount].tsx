@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import PageLayout from '../../components/PageLayout';
 import ErrorComponent from '../../components/Error';
@@ -17,6 +17,10 @@ const Collection = ({ assets, error, chainAccount }: Props): JSX.Element => {
   const router = useRouter();
   const { currentUser, login, authError } = useAuthContext();
   const isTest = ['testuser1111', 'monsters'].includes(chainAccount); // TODO: Remove when Proton NFTs are live
+
+  useEffect(() => {
+    router.prefetch('/');
+  }, []);
 
   const getContent = () => {
     if (!currentUser) {

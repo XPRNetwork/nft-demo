@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import PageLayout from '../components/PageLayout';
 import Grid, { GRID_TYPE } from '../components/Grid';
 import ErrorComponent from '../components/Error';
+import { useAuthContext } from '../components/Provider';
 import { Title } from '../styles/Title.styled';
 import { getFromApi } from '../utils/browser-fetch';
-import { APIResponse } from '../utils/node-fetch';
-import { getTemplatesByCollection, Template } from '../services/templates';
+import { BrowserResponse } from '../utils/browser-fetch';
+import { templatesApiService, Template } from '../services/templates';
 
 type Props = {
   templates: Template[];
@@ -17,7 +18,7 @@ type Props = {
 // Keeping function so that we can eventually use to search for other collection types
 const getCollection = async (
   type: string
-): Promise<APIResponse<Template[]>> => {
+): Promise<BrowserResponse<Template[]>> => {
   try {
     const result = await getFromApi<Template[]>(
       `/api/get-templates-by-collection?collection=${type}`
@@ -27,7 +28,7 @@ const getCollection = async (
       throw new Error((result.message as unknown) as string);
     }
 
-    return result.message;
+    return result;
   } catch (e) {
     throw new Error(e);
   }
@@ -39,6 +40,8 @@ const MarketPlace = ({
   defaultCollectionType,
 }: Props): JSX.Element => {
   const router = useRouter();
+  const { currentUser } = useAuthContext();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [marketplaceTemplates, setMarketplaceTemplates] = useState<Template[]>(
     templates
   );
@@ -46,6 +49,24 @@ const MarketPlace = ({
   const [collectionType, setCollectionType] = useState<string>(
     defaultCollectionType
   );
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const result = await getCollection(defaultCollectionType);
+        setMarketplaceTemplates(result.message as Template[]);
+        setIsLoading(false);
+      } catch (e) {
+        setErrorMessage(e.message);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (currentUser) {
+      router.prefetch(`/collection/${currentUser.actor}`);
+    }
+  }, []);
 
   const getContent = () => {
     if (!marketplaceTemplates.length) {
@@ -64,7 +85,13 @@ const MarketPlace = ({
       );
     }
 
-    return <Grid items={marketplaceTemplates} type={GRID_TYPE.TEMPLATE} />;
+    return (
+      <Grid
+        isLoading={isLoading}
+        items={marketplaceTemplates}
+        type={GRID_TYPE.TEMPLATE}
+      />
+    );
   };
 
   return (
@@ -78,12 +105,17 @@ const MarketPlace = ({
 export const getServerSideProps = async (): Promise<{ props: Props }> => {
   const defaultCollectionType = 'monsters';
   try {
-    const templates = (await getTemplatesByCollection(
-      defaultCollectionType
-    )) as Template[];
+    const allTemplatesResults = await templatesApiService.getAll({
+      collection_name: defaultCollectionType,
+    });
+
+    if (!allTemplatesResults.success) {
+      throw new Error(allTemplatesResults.message as string);
+    }
+
     return {
       props: {
-        templates,
+        templates: allTemplatesResults.data,
         error: '',
         defaultCollectionType,
       },
