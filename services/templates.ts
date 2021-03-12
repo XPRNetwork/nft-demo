@@ -34,19 +34,20 @@ type ImmutableData = {
 };
 
 export type Template = {
-  contract: string;
-  collection: Collection;
-  schema: Schema;
-  name: string;
-  template_id: string;
-  max_supply: string;
-  is_transferable: boolean;
-  is_burnable: boolean;
   immutable_data: ImmutableData;
-  created_at_time: string;
-  created_at_block: string;
-  issued_supply: string;
+  template_id?: string;
+  contract?: string;
+  collection?: Collection;
+  schema?: Schema;
+  name?: string;
+  max_supply?: string;
+  is_transferable?: boolean;
+  is_burnable?: boolean;
+  created_at_time?: string;
+  created_at_block?: string;
+  issued_supply?: string;
   lowestPrice?: string;
+  highestPrice?: string;
 };
 
 export const templatesApiService = new NodeFetch<Template>(
@@ -69,7 +70,11 @@ export const getTemplateDetail = async (
       `${collectionName}/${templateId}`
     );
     if (!template.success) throw new Error(template.message);
-    return template.data;
+
+    const templateWithLowestHighestPrice = await parseTemplatesForHighLowPrice([
+      template.data,
+    ]);
+    return templateWithLowestHighestPrice[0];
   } catch (e) {
     throw new Error(e);
   }
