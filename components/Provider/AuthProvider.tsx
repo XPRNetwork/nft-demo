@@ -4,7 +4,7 @@ import { usePrevious } from '../../hooks';
 
 interface AuthContext {
   currentUser: User;
-  error: string;
+  authError: string;
   login: () => Promise<void>;
   logout: () => void;
 }
@@ -15,7 +15,7 @@ interface Props {
 
 const AuthContext = createContext<AuthContext>({
   currentUser: undefined,
-  error: '',
+  authError: '',
   login: () => Promise.resolve(),
   logout: () => {},
 });
@@ -27,31 +27,46 @@ export const useAuthContext = (): AuthContext => {
 
 export const AuthProvider = ({ children }: Props): JSX.Element => {
   const [currentUser, setCurrentUser] = useState<User>(undefined);
-  const [error, setError] = useState('');
-  const prevError = usePrevious(error);
+  const [authError, setAuthError] = useState('');
+  const prevError = usePrevious(authError);
 
   useEffect(() => {
     if (prevError) {
-      setError('');
+      setAuthError('');
     }
   }, [prevError]);
 
   useEffect(() => {
-    const restore = async () => {
-      const { user, error } = await ProtonSDK.restoreSession();
+    if (typeof window !== 'undefined') {
+      const cachedUser = localStorage.getItem('proton-storage-user-auth');
 
-      if (error || !user) {
-        const errorMessage = error
-          ? `Error: ${error}`
-          : 'Error: No user was found';
-        setError(errorMessage);
-        return;
+      if (cachedUser) {
+        const { actor, permission } = JSON.parse(cachedUser);
+        setCurrentUser({
+          actor,
+          permission,
+          name: '',
+          avatar: '/default-avatar.png',
+          isLightKYCVerified: false,
+        });
       }
 
-      setCurrentUser(user);
-    };
+      const restore = async () => {
+        const { user, error } = await ProtonSDK.restoreSession();
 
-    restore();
+        if (error || !user) {
+          const errorMessage = error
+            ? `Error: ${error}`
+            : 'Error: No user was found';
+          setAuthError(errorMessage);
+          return;
+        }
+
+        setCurrentUser(user);
+      };
+
+      restore();
+    }
   }, []);
 
   const login = async (): Promise<void> => {
@@ -60,7 +75,7 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
       const errorMessage = error
         ? `Error: ${error}`
         : 'Error: No user was found';
-      setError(errorMessage);
+      setAuthError(errorMessage);
       return;
     }
 
@@ -75,11 +90,11 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
   const value = useMemo<AuthContext>(
     () => ({
       currentUser,
-      error,
+      authError,
       login,
       logout,
     }),
-    [currentUser, error]
+    [currentUser, authError]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
