@@ -64,7 +64,7 @@ export const AssetCard = (asset: Asset): JSX.Element => {
       secondaryText={`Serial #${asset_id}`}
       priceText={salePrice as string}
       isForSale={isForSale as boolean}
-      redirectPath={`/collection/details/${asset_id}`}
+      redirectPath={`/assets/${asset_id}`}
     />
   );
 };

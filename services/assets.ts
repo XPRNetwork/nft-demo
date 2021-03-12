@@ -6,7 +6,9 @@ import { salesApiService } from './sales';
 export type Asset = {
   name: string;
   data: Record<string, unknown>;
-  asset_id?: string;
+  owner: string;
+  template: Template;
+  asset_id: string;
   mutable_data?: Record<string, unknown>;
   immutable_data?: Record<string, unknown>;
   template_mint?: string;
@@ -23,12 +25,10 @@ export type Asset = {
   minted_at_block?: string;
   minted_at_time?: string;
   contract?: string;
-  owner?: string;
   is_transferable?: boolean;
   is_burnable?: boolean;
   collection?: Collection;
   schema?: Schema;
-  template?: Template;
   isForSale?: boolean;
   salePrice?: string;
 };
