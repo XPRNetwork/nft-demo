@@ -9,6 +9,8 @@ import {
   SecondaryText,
   Price,
   Tag,
+  EmptyPrice,
+  ShimmerBlock,
 } from './GridCard.styled';
 import { formatNumber } from '../../utils';
 
@@ -17,19 +19,26 @@ type Props = {
   secondaryText: string;
   priceText: string;
   image: string;
-  isForSale?: boolean;
   redirectPath: string;
+  isForSale?: boolean;
+  isLoading?: boolean;
 };
+
+interface TemplateCardProps extends Template {
+  isLoading: boolean;
+}
 
 const Card = ({
   text,
   secondaryText,
   priceText,
-  isForSale,
   image,
   redirectPath,
+  isForSale,
+  isLoading,
 }: Props): JSX.Element => {
   const router = useRouter();
+  const price = priceText ? <Price>{priceText}</Price> : <EmptyPrice />;
   return (
     <Container onClick={() => router.push(redirectPath)}>
       <ImageContainer>
@@ -44,19 +53,18 @@ const Card = ({
       </ImageContainer>
       <Text>{text}</Text>
       <SecondaryText>{secondaryText}</SecondaryText>
-      {priceText ? <Price>{priceText}</Price> : null}
+      {isLoading ? <ShimmerBlock /> : price}
     </Container>
   );
 };
 
-export const AssetCard = (asset: Asset): JSX.Element => {
-  const {
-    name,
-    asset_id,
-    data: { image },
-    isForSale,
-    salePrice,
-  } = asset;
+export const AssetCard = ({
+  name,
+  asset_id,
+  data: { image },
+  isForSale,
+  salePrice,
+}: Asset): JSX.Element => {
   return (
     <Card
       image={image as string}
@@ -69,16 +77,17 @@ export const AssetCard = (asset: Asset): JSX.Element => {
   );
 };
 
-export const TemplateCard = (template: Template): JSX.Element => {
-  const {
-    name,
-    max_supply,
-    template_id,
-    immutable_data: { image },
-    lowestPrice,
-  } = template;
+export const TemplateCard = ({
+  name,
+  max_supply,
+  template_id,
+  immutable_data: { image },
+  lowestPrice,
+  isLoading,
+}: TemplateCardProps): JSX.Element => {
   return (
     <Card
+      isLoading={isLoading}
       text={name}
       secondaryText={`Edition Size / ${formatNumber(max_supply)}`}
       priceText={lowestPrice}

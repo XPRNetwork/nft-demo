@@ -1,8 +1,6 @@
-import { APIResponse } from './node-fetch';
-
-interface BrowserResponse<T> {
+export interface BrowserResponse<T> {
   success: boolean;
-  message: APIResponse<T>;
+  message: T;
 }
 
 const request = <T, P = void>(

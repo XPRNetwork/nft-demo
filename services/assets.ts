@@ -2,6 +2,7 @@ import NodeFetch from '../utils/node-fetch';
 import { Collection, Schema, Template } from './templates';
 import { offersApiService, Offer } from './offers';
 import { salesApiService } from './sales';
+import { addPrecisionDecimal } from '../utils';
 
 export type Asset = {
   name: string;
@@ -109,7 +110,15 @@ const findMySaleItems = async (
         });
         // needs further testing to make sure only one sale item comes up in the API call
         if (saleForThisAsset.data && saleForThisAsset.data.length > 0) {
-          salePrice = `${saleForThisAsset.data[0].listing_price} ${saleForThisAsset.data[0].listing_symbol}`;
+          const {
+            listing_price,
+            listing_symbol,
+            price: { token_precision },
+          } = saleForThisAsset.data[0];
+          salePrice = `${addPrecisionDecimal(
+            listing_price,
+            token_precision
+          )} ${listing_symbol}`;
         }
       }
       return {

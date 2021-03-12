@@ -13,9 +13,10 @@ export enum GRID_TYPE {
 type Props = {
   items: Item[];
   type: GRID_TYPE;
+  isLoading?: boolean;
 };
 
-const Grid = ({ items, type }: Props): JSX.Element => {
+const Grid = ({ isLoading, items, type }: Props): JSX.Element => {
   const isAsset = type === GRID_TYPE.ASSET;
   const idKey = isAsset ? 'asset_id' : 'template_id';
 
@@ -25,7 +26,11 @@ const Grid = ({ items, type }: Props): JSX.Element => {
         isAsset ? (
           <AssetCard key={item[idKey]} {...(item as Asset)} />
         ) : (
-          <TemplateCard key={item[idKey]} {...(item as Template)} />
+          <TemplateCard
+            key={item[idKey]}
+            {...(item as Template)}
+            isLoading={isLoading}
+          />
         )
       )}
     </Container>
