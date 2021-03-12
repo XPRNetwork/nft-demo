@@ -33,7 +33,7 @@ type ImmutableData = {
   series: number;
 };
 
-export type Template = {
+export interface Template {
   immutable_data?: ImmutableData;
   template_id?: string;
   contract?: string;
@@ -48,7 +48,7 @@ export type Template = {
   issued_supply?: string;
   lowestPrice?: string;
   highestPrice?: string;
-};
+}
 
 export const templatesApiService = new NodeFetch<Template>(
   '/atomicassets/v1/templates'
@@ -87,6 +87,7 @@ export const getTemplateDetail = async (
  * @param  {string} collection   The name of the collection
  * @return {Template[]}          Returns array of templates in that collection
  */
+
 export const getTemplatesByCollection = async (
   collection: string
 ): Promise<Template[] | void> => {
