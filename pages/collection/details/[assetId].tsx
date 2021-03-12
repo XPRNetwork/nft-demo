@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 import DetailsLayout from '../../../components/DetailsLayout';
+import ErrorComponent from '../../../components/Error';
 import { Asset, getAssetDetails } from '../../../services/assets';
 
 type Props = {
@@ -8,6 +10,7 @@ type Props = {
 };
 
 const CollectionAssetDetail = ({ asset, error }: Props): JSX.Element => {
+  const router = useRouter();
   const [detailsError, setDetailsError] = useState<string>(error);
   const {
     name,
@@ -15,6 +18,16 @@ const CollectionAssetDetail = ({ asset, error }: Props): JSX.Element => {
   } = asset;
 
   const getContent = () => {
+    if (detailsError) {
+      return (
+        <ErrorComponent
+          errorMessage={detailsError}
+          buttonText="Try again"
+          buttonOnClick={() => router.reload()}
+        />
+      );
+    }
+
     // TODO: readd ForSaleDetails and MoreForSaleDetails
     if (!asset) return;
     if (asset.isForSale) {
@@ -33,7 +46,6 @@ const CollectionAssetDetail = ({ asset, error }: Props): JSX.Element => {
       details={'Test Details'}
       image={image as string}>
       {getContent()}
-      {detailsError}
     </DetailsLayout>
   );
 };
