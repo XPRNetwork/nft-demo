@@ -34,7 +34,7 @@ type ImmutableData = {
 };
 
 export type Template = {
-  immutable_data: ImmutableData;
+  immutable_data?: ImmutableData;
   template_id?: string;
   contract?: string;
   collection?: Collection;
