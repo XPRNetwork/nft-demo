@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 import PageLayout from '../../components/PageLayout';
+import ErrorComponent from '../../components/Error';
 import Grid, { GRID_TYPE } from '../../components/Grid';
 import { getUserAssets, Asset } from '../../services/assets';
 import { Title } from '../../styles/Title.styled';
@@ -12,28 +14,58 @@ type Props = {
 };
 
 const Collection = ({ assets, error, chainAccount }: Props): JSX.Element => {
-  const [collectionError, setCollectionError] = useState(error);
-  const { currentUser } = useAuthContext();
-  const isTest = chainAccount === 'monsters'; // TODO: Remove when Proton NFTs are live
-  const hasAccess =
-    isTest || (currentUser && chainAccount === currentUser.actor);
+  const router = useRouter();
+  const { currentUser, login, authError } = useAuthContext();
+  const isTest = ['testuser1111', 'monsters'].includes(chainAccount); // TODO: Remove when Proton NFTs are live
 
-  useEffect(() => {
-    if (collectionError) setCollectionError('');
-  }, []);
-
-  useEffect(() => {
-    if (!hasAccess)
-      setCollectionError(
-        'Unauthorized: you may only view your own collection.'
+  const getContent = () => {
+    if (!currentUser) {
+      return (
+        <ErrorComponent
+          errorMessage="You must log in to view your collection."
+          buttonText="Connect Wallet"
+          buttonOnClick={login}
+        />
       );
-  }, []);
+    }
+
+    if (authError) {
+      return (
+        <ErrorComponent
+          errorMessage={authError}
+          buttonText="Connect Wallet"
+          buttonOnClick={login}
+        />
+      );
+    }
+
+    if (!isTest && chainAccount !== currentUser.actor) {
+      router.push(`/collection/${currentUser.actor}`);
+      return;
+    }
+
+    if (!assets.length) {
+      return (
+        <ErrorComponent errorMessage="Looks like you don't own any monsters yet." />
+      );
+    }
+
+    if (error) {
+      return (
+        <ErrorComponent
+          errorMessage={error}
+          buttonText="Try again"
+          buttonOnClick={() => router.reload()}
+        />
+      );
+    }
+    return <Grid items={assets} type={GRID_TYPE.ASSET} />;
+  };
 
   return (
     <PageLayout title="Collection">
       <Title>Collection</Title>
-      {hasAccess && <Grid items={assets} type={GRID_TYPE.ASSET} />}
-      {collectionError}
+      {getContent()}
     </PageLayout>
   );
 };

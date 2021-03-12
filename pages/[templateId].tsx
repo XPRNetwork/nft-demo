@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 import DetailsLayout from '../components/DetailsLayout';
+import ErrorComponent from '../components/Error';
 import { getTemplateDetail, Template } from '../services/templates';
 
 type Props = {
@@ -8,12 +10,35 @@ type Props = {
 };
 
 const MarketplaceTemplateDetail = ({ template, error }: Props): JSX.Element => {
+  const router = useRouter();
   const [detailsError, setDetailsError] = useState<string>(error);
   const {
     lowestPrice,
     highestPrice,
     immutable_data: { image, series, name },
   } = template;
+
+  const getContent = () => {
+    if (detailsError) {
+      return (
+        <ErrorComponent
+          errorMessage={detailsError}
+          buttonText="Try again"
+          buttonOnClick={() => router.reload()}
+        />
+      );
+    }
+
+    return (
+      <>
+        {/* <MarketPlaceDetails
+          template={currentTemplate}
+          lowestTemplate={lowestTemplate}
+          highestTemplate={highestTemplate}
+        /> */}
+      </>
+    );
+  };
 
   // TODO: readd MarketPlaceDetails
   return (
@@ -22,12 +47,7 @@ const MarketplaceTemplateDetail = ({ template, error }: Props): JSX.Element => {
       seriesNumber={series.toString()}
       details={'Test Details'}
       image={image as string}>
-      {/* <MarketPlaceDetails
-        template={currentTemplate}
-        lowestTemplate={lowestTemplate}
-        highestTemplate={highestTemplate}
-      /> */}
-      {detailsError}
+      {getContent()}
     </DetailsLayout>
   );
 };

@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import PageLayout from '../components/PageLayout';
 import Grid, { GRID_TYPE } from '../components/Grid';
+import ErrorComponent from '../components/Error';
 import { Title } from '../styles/Title.styled';
 import { getFromApi } from '../utils/browser-fetch';
 import { APIResponse } from '../utils/node-fetch';
@@ -26,8 +28,6 @@ const getCollection = async (
     }
 
     return result.message;
-    // this result is what you'll use to render the grid
-    // if there are no prices, there will be either a null in "lowestPrice" or just no "lowestPrice" key
   } catch (e) {
     throw new Error(e);
   }
@@ -38,19 +38,39 @@ const MarketPlace = ({
   error,
   defaultCollectionType,
 }: Props): JSX.Element => {
+  const router = useRouter();
   const [marketplaceTemplates, setMarketplaceTemplates] = useState<Template[]>(
     templates
   );
-  const [marketError, setMarketError] = useState<string>(error);
+  const [errorMessage, setErrorMessage] = useState<string>(error);
   const [collectionType, setCollectionType] = useState<string>(
     defaultCollectionType
   );
 
+  const getContent = () => {
+    if (!marketplaceTemplates.length) {
+      return (
+        <ErrorComponent errorMessage="No templates were found for this collection type." />
+      );
+    }
+
+    if (errorMessage) {
+      return (
+        <ErrorComponent
+          errorMessage={errorMessage}
+          buttonText="Try again"
+          buttonOnClick={() => router.reload()}
+        />
+      );
+    }
+
+    return <Grid items={marketplaceTemplates} type={GRID_TYPE.TEMPLATE} />;
+  };
+
   return (
     <PageLayout title="MarketPlace">
       <Title>MarketPlace</Title>
-      <Grid items={marketplaceTemplates} type={GRID_TYPE.TEMPLATE} />
-      {marketError}
+      {getContent()}
     </PageLayout>
   );
 };
