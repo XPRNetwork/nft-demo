@@ -17,6 +17,11 @@ interface CreateSaleOptions {
   currency: string;
 }
 
+interface PurchaseSaleOptions {
+  buyer: string;
+  sale_id: string;
+}
+
 interface SaleOptions {
   actor: string;
   sale_id: string;
@@ -371,6 +376,52 @@ class ProtonSDK {
       return {
         success: false,
         error: e.message || 'An error has occurred while cancelling the sale.',
+      };
+    }
+  };
+
+  purchaseSale = async ({
+    buyer,
+    sale_id,
+  }: PurchaseSaleOptions): Promise<SaleResponse> => {
+    const actions = [
+      {
+        account: 'atomicmarket',
+        name: 'purchasesale',
+        authorization: [
+          {
+            actor: buyer,
+            permission: 'active',
+          },
+        ],
+        data: {
+          sale_id,
+          buyer,
+          intended_delphi_median: 0,
+          taker_marketplace: '',
+        },
+      },
+    ];
+    try {
+      if (!this.session) {
+        throw new Error('Unable to purchase a sale without logging in.');
+      }
+
+      const result = await this.session.transact(
+        { actions: actions },
+        { broadcast: true }
+      );
+
+      return {
+        success: true,
+        transactionId: result.processed.id,
+      };
+    } catch (e) {
+      return {
+        success: false,
+        error:
+          e.message ||
+          'An error has occurred while trying to purchase an item.',
       };
     }
   };
