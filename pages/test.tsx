@@ -11,6 +11,7 @@ const Test = (): JSX.Element => {
   const [saleId, setSaleId] = useState('');
   const [price, setPrice] = useState('');
   const [currency, setCurrency] = useState('');
+  const [purchaseSaleId, setPurchaseSaleId] = useState('');
 
   const createSale = async () => {
     const res = await ProtonSDK.createSale({
@@ -26,6 +27,14 @@ const Test = (): JSX.Element => {
     const res = await ProtonSDK.cancelSale({
       actor: currentUser ? currentUser.actor : '',
       sale_id: saleId,
+    });
+    console.log(res);
+  };
+
+  const purchaseSale = async () => {
+    const res = await ProtonSDK.purchaseSale({
+      buyer: currentUser ? currentUser.actor : '',
+      sale_id: purchaseSaleId,
     });
     console.log(res);
   };
@@ -60,13 +69,13 @@ const Test = (): JSX.Element => {
       />
       <input
         step="any"
-        type="number"
+        type="text"
         value={price}
-        placeholder="PRICE (i.e. '1.0000')"
+        placeholder="PRICE (i.e. '1.0000 XPR')"
         onChange={(e) => setPrice(e.target.value)}
       />
       <input
-        value={assetId}
+        value={currency}
         placeholder="CURRENCY (i.e. '4,XPR')"
         onChange={(e) => setCurrency(e.target.value)}
       />
@@ -82,6 +91,18 @@ const Test = (): JSX.Element => {
       />
       <button onClick={cancelSale}>CANCEL SALE</button>
       <br />
+
+      <h1>Test ProtonSDK.purchaseSale</h1>
+      <br />
+      <input
+        value={purchaseSaleId}
+        type="text"
+        placeholder="SALE ID"
+        onChange={(e) => setPurchaseSaleId(e.target.value)}
+      />
+      <button onClick={purchaseSale}>PURCHASE SALE</button>
+      <br />
+
       <button onClick={deposit}>Deposit 1 XPR</button>
       <br />
       <p>
