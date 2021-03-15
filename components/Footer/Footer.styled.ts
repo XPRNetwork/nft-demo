@@ -6,12 +6,6 @@ export const FooterBackground = styled.footer`
   width: 100%;
   background: #f6f7fe;
   border-bottom: 1px solid #f6f7fe;
-  position: fixed;
-  bottom: 0;
-
-  ${breakpoint.tablet`
-    position: static;
-  `}
 `;
 
 export const StyledFooter = styled(MaxWidth).attrs({ as: 'section' })`

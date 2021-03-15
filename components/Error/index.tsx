@@ -14,7 +14,7 @@ const Error = ({
   buttonOnClick,
 }: Props): JSX.Element => {
   const router = useRouter();
-  const onClick = buttonOnClick ? buttonOnClick : () => router.push('');
+  const onClick = buttonOnClick ? buttonOnClick : () => router.push('/');
   return (
     <Container>
       <QuestionIcon role="img" />
