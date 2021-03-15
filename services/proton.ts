@@ -1,5 +1,6 @@
 import { ConnectWallet } from '@proton/web-sdk';
 import { LinkSession, Link } from '@proton/link';
+import proton from './proton-rpc';
 import logoUrl from '../public/logo.svg';
 
 export interface User {
@@ -8,6 +9,7 @@ export interface User {
   name: string;
   isLightKYCVerified: boolean;
   permission: string;
+  balance: string;
 }
 
 interface CreateSaleOptions {
@@ -95,7 +97,10 @@ class ProtonSDK {
       const { avatar, isLightKYCVerified, name } = accountData[0];
       const chainAccountAvatar = avatar
         ? `data:image/jpeg;base64,${avatar}`
-        : '/default-avatar.png';
+        : '';
+
+      const balance = await proton.getAtomicMarketBalance(auth.actor);
+
       return {
         user: {
           actor: auth.actor,
@@ -103,6 +108,7 @@ class ProtonSDK {
           isLightKYCVerified,
           name,
           permission: auth.permission,
+          balance,
         },
         error: '',
       };
@@ -129,7 +135,10 @@ class ProtonSDK {
       const { avatar, isLightKYCVerified, name } = accountData[0];
       const chainAccountAvatar = avatar
         ? `data:image/jpeg;base64,${avatar}`
-        : '/default-avatar.png';
+        : '';
+
+      const balance = await proton.getAtomicMarketBalance(auth.actor);
+
       return {
         user: {
           actor: auth.actor,
@@ -137,6 +146,7 @@ class ProtonSDK {
           isLightKYCVerified,
           name,
           permission: auth.permission,
+          balance,
         },
         error: '',
       };

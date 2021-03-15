@@ -2,12 +2,8 @@ import styled from 'styled-components';
 import { MaxWidth } from '../../styles/MaxWidth.styled';
 import { breakpoint } from '../../styles/Breakpoints';
 
-type SectionProps = {
-  isMobileNavOpen: boolean;
-};
-
-type NavLinkProps = {
-  isActive: boolean;
+type DropdownProps = {
+  isOpen: boolean;
 };
 
 export const Background = styled.section`
@@ -26,8 +22,11 @@ export const Nav = styled(MaxWidth).attrs({ as: 'nav' })`
   position: relative;
 `;
 
-export const AvatarContainer = styled.section`
-  margin: 16px;
+export const AvatarContainer = styled.div`
+  margin: 16px 0;
+  width: 40px;
+  height: 40px;
+  position: relative;
 
   * {
     border-radius: 100%;
@@ -36,60 +35,40 @@ export const AvatarContainer = styled.section`
 
   ${breakpoint.tablet`
     margin: 0;
-  `}
-`;
-
-export const PlaceholderAvatar = styled.section`
-  display: none;
-
-  ${breakpoint.tablet`
-    display: block;
-    height: 32px;
     width: 32px;
+    height: 32px;
   `}
 `;
 
-export const HamburgerContainer = styled.section`
-  display: none;
-  cursor: pointer;
-  z-index: 3;
-
-  ${breakpoint.tablet`
-    display: block;
-  `}
-`;
-
-export const ImageContainer = styled.section`
+export const ImageLink = styled.a`
   margin: 16px 0;
   z-index: 3;
-  ${breakpoint.tablet`
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  `}
 `;
 
-export const Section = styled.section<SectionProps>`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: white;
+export const DropdownList = styled.section<DropdownProps>`
+  display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
+  flex-direction: column;
+  position: absolute;
+  top: 60px;
+  right: 0;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 12px 20px -4px rgba(0, 0, 0, 0.1), 0 0 8px 0 rgba(0, 0, 0, 0.08);
+  min-width: 224px;
+  z-index: 1;
 
   ${breakpoint.tablet`
-    ${({ isMobileNavOpen }) =>
-      isMobileNavOpen ? 'display: flex;' : 'display: none;'}
-
-    flex-direction: column;
-    width: 100%;
-    position: absolute;
+    min-width: 0;
+    border-radius: 0;
+    box-shadow: 0;
     top: 65px;
-    z-index: 1;
+    width: 100%;
 
     &:before {
       content: '';
-      background: white;
+      background: #ffffff;
       width: 100%;
-      height: 246px;
+      height: 410px;
       position: fixed;
       top: 0;
       left: 0;
@@ -98,54 +77,109 @@ export const Section = styled.section<SectionProps>`
   `}
 `;
 
-export const GradientBackground = styled.section`
-  display: none;
+export const GradientBackground = styled.div<DropdownProps>`
+  display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  cursor: pointer;
 
   ${breakpoint.tablet`
-    display: block;
-    z-index: 0;
-    content: '';
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top: 246px;
-    left: 0;
-    z-index: -1;
-    opacity: 0.7;
-    background: #0e103c;
+    background-image: linear-gradient(
+      rgba(14, 16, 60, 0.3),
+      rgba(14, 16, 60, 0.4),
+      rgba(14, 16, 60, 0.5),
+      rgba(14, 16, 60, 0.6),
+      rgba(14, 16, 60, 0.67)
+    );
   `}
 `;
 
-export const NavLink = styled.a<NavLinkProps>`
-  font-family: GilroyMedium;
-  color: ${({ isActive }) => (isActive ? '#0e103c' : '#7578b5')};
-  font-weight: ${({ isActive }) => (isActive ? 600 : 500)};
-  border-bottom: 2px solid ${({ isActive }) => (isActive ? '#8a9ef5' : 'white')};
-  cursor: pointer;
-  margin-right: 40px;
-  padding: 20px 0;
+export const Name = styled.span`
+  font-family: GilroySemiBold;
+  color: #0e103c;
+  font-weight: 600;
   font-size: 16px;
   line-height: 24px;
+  margin: 0 16px;
+  padding: 16px 0 8px;
 
   ${breakpoint.tablet`
-    margin-right: 0;
-    border-bottom: 1px solid #dde4ee;
-    padding: 16px 0;
-    width: 100%;
+    border-top: 1px solid #dde4ee;
+    margin: 0;
   `}
 `;
 
-export const MobileOnlySection = styled.section`
+export const Subtitle = styled.span`
+  font-family: GilroyMedium;
+  color: #7578b5;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  margin: 0 16px;
+
+  ${breakpoint.tablet`
+    margin: 0;
+  `}
+`;
+
+export const Balance = styled(Name)`
+  font-size: 18px;
+  border-top: 0;
+  border-bottom: 1px solid #dde4ee;
+  margin: 0 16px;
+  padding: 0 0 16px;
+
+  ${breakpoint.tablet`
+    margin: 0;
+  `}
+`;
+
+export const NavLink = styled.a`
+  font-family: GilroyMedium;
+  font-weight: 500;
+  color: #0e103c;
+  font-size: 16px;
+  line-height: 24px;
+  cursor: pointer;
+  padding: 16px 16px 0;
+  width: 100%;
+  transition: 0.2s;
+
+  :last-of-type {
+    padding-bottom: 16px;
+  }
+
+  :hover {
+    color: #7578b5;
+  }
+
+  ${breakpoint.tablet`
+    padding: 16px 0;
+    border-bottom: 1px solid #dde4ee;
+
+    :last-of-type {
+      border: none;
+    }
+  `}
+`;
+
+export const MobileIcon = styled.div`
   display: none;
+  cursor: pointer;
 
   ${breakpoint.tablet`
     display: block;
   `}
 `;
 
-export const DesktopOnlySection = styled.section`
+export const DesktopIcon = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer;
 
   ${breakpoint.tablet`
     display: none;

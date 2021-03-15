@@ -44,7 +44,7 @@ const Collection = ({ assets, error, chainAccount }: Props): JSX.Element => {
     }
 
     if (!isTest && chainAccount !== currentUser.actor) {
-      router.push(`/collection/${currentUser.actor}`);
+      router.push(`/my-nfts/${currentUser.actor}`);
       return;
     }
 
@@ -67,7 +67,7 @@ const Collection = ({ assets, error, chainAccount }: Props): JSX.Element => {
   };
 
   return (
-    <PageLayout title="Collection">
+    <PageLayout title="My NFTs">
       <Title>Collection</Title>
       {getContent()}
     </PageLayout>
