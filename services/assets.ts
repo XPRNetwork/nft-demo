@@ -10,6 +10,7 @@ export type Asset = {
   owner: string;
   template: Template;
   asset_id: string;
+  saleId?: string;
   mutable_data?: Record<string, unknown>;
   immutable_data?: Record<string, unknown>;
   template_mint?: string;
@@ -146,12 +147,28 @@ export const getAssetDetails = async (assetId: string): Promise<Asset> => {
   });
 
   let isForSale = false;
+  let salePrice = '';
+  let saleId = '';
   if (saleForThisAsset.data && saleForThisAsset.data.length > 0) {
+    const [sale] = saleForThisAsset.data;
+    const {
+      listing_price,
+      listing_symbol,
+      sale_id,
+      price: { token_precision },
+    } = sale;
     isForSale = true;
+    saleId = sale_id;
+    salePrice = `${addPrecisionDecimal(
+      listing_price,
+      token_precision
+    )} ${listing_symbol}`;
   }
 
   return {
     ...currentAsset.data,
     isForSale,
+    salePrice,
+    saleId,
   };
 };
