@@ -1,28 +1,36 @@
-import { useState } from 'react';
 import { useRouter } from 'next/router';
 import DetailsLayout from '../components/DetailsLayout';
 import ErrorComponent from '../components/Error';
 import { getTemplateDetail, Template } from '../services/templates';
+import { getSaleAssetsByTemplateId, SaleAsset } from '../services/sales';
+import PageLayout from '../components/PageLayout';
+import BuyAssetForm from '../components/BuyAssetForm';
 
 type Props = {
   template: Template;
+  allSalesForTemplate: SaleAsset[];
   error: string;
 };
 
-const MarketplaceTemplateDetail = ({ template, error }: Props): JSX.Element => {
+const MarketplaceTemplateDetail = ({
+  template,
+  error,
+  allSalesForTemplate,
+}: Props): JSX.Element => {
   const router = useRouter();
-  const [detailsError, setDetailsError] = useState<string>(error);
+
   const {
     lowestPrice,
     highestPrice,
+    max_supply,
     immutable_data: { image, series, name },
   } = template;
 
   const getContent = () => {
-    if (detailsError) {
+    if (error) {
       return (
         <ErrorComponent
-          errorMessage={detailsError}
+          errorMessage={error}
           buttonText="Try again"
           buttonOnClick={() => router.reload()}
         />
@@ -30,26 +38,22 @@ const MarketplaceTemplateDetail = ({ template, error }: Props): JSX.Element => {
     }
 
     return (
-      <>
-        {/* <MarketPlaceDetails
-          template={currentTemplate}
-          lowestTemplate={lowestTemplate}
-          highestTemplate={highestTemplate}
-        /> */}
-      </>
+      <DetailsLayout
+        name={name}
+        seriesNumber={series.toString()}
+        details="Item details"
+        image={image as string}>
+        <BuyAssetForm
+          lowestPrice={lowestPrice}
+          highestPrice={highestPrice}
+          maxSupply={max_supply}
+          allSalesForTemplate={allSalesForTemplate}
+        />
+      </DetailsLayout>
     );
   };
 
-  // TODO: readd MarketPlaceDetails
-  return (
-    <DetailsLayout
-      name={name}
-      seriesNumber={series.toString()}
-      details={'Test Details'}
-      image={image as string}>
-      {getContent()}
-    </DetailsLayout>
-  );
+  return <PageLayout title={`${name} Details`}>{getContent()}</PageLayout>;
 };
 
 type GetServerSidePropsContext = {
@@ -68,9 +72,12 @@ export const getServerSideProps = async ({
       templateId
     )) as Template;
 
+    const allSalesForTemplate = await getSaleAssetsByTemplateId(templateId);
+
     return {
       props: {
         template: template,
+        allSalesForTemplate: allSalesForTemplate,
         error: '',
       },
     };
@@ -80,12 +87,14 @@ export const getServerSideProps = async ({
         template: {
           lowestPrice: '',
           highestPrice: '',
+          max_supply: '',
           immutable_data: {
             image: '',
             name: '',
             series: 0,
           },
         },
+        allSalesForTemplate: [],
         error: e.message,
       },
     };

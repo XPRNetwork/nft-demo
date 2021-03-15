@@ -42,7 +42,7 @@ interface DepositWithdrawResponse {
 interface SaleResponse {
   success: boolean;
   transactionId?: string;
-  error?: number;
+  error?: string;
 }
 
 interface WalletResponse {
