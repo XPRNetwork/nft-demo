@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import Head from 'next/head';
-import { Container } from './PageLayout.styled';
+import { Main, Container } from './PageLayout.styled';
 
 type Props = {
   title: string;
@@ -9,13 +9,13 @@ type Props = {
 
 const PageLayout = ({ title, children }: Props): JSX.Element => {
   return (
-    <main>
+    <Main>
       <Head>
         <title>{`${title} - NFT Demo`}</title>
         <link rel="shortcut icon" href="/favicon.png" />
       </Head>
       <Container>{children}</Container>
-    </main>
+    </Main>
   );
 };
 
