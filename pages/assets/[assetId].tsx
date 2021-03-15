@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import DetailsLayout from '../../components/DetailsLayout';
 import ErrorComponent from '../../components/Error';
+import Button from '../../components/Button';
 import { Asset, getAssetDetails } from '../../services/assets';
+import AssetSaleDetails from '../../components/AssetSaleDetails';
 import AssetSaleForm from '../../components/AssetSaleForm';
 import { useAuthContext } from '../../components/Provider';
 import { Serial, Divider } from '../../styles/details.styled';
@@ -22,6 +24,8 @@ const CollectionAssetDetail = ({ asset, error }: Props): JSX.Element => {
     owner,
     asset_id,
     isForSale,
+    salePrice,
+    saleId,
     data: { image, series },
     template: { template_id, max_supply },
   } = asset;
@@ -60,12 +64,18 @@ const CollectionAssetDetail = ({ asset, error }: Props): JSX.Element => {
         </Serial>
         <Divider />
         {isForSale ? (
-          // return <ForSaleDetails asset={currentAsset} />;
-          <div></div>
+          <AssetSaleDetails
+            saleId={saleId}
+            salePrice={salePrice}
+            isOwner={isOwner}
+            template_id={template_id}
+          />
         ) : isOwner ? (
           <AssetSaleForm asset_id={asset_id} />
         ) : (
-          ''
+          <Button onClick={() => router.push(`/${template_id}`)}>
+            View Listing
+          </Button>
         )}
       </DetailsLayout>
     );
@@ -99,6 +109,8 @@ export const getServerSideProps = async ({
           owner: '',
           asset_id: '',
           isForSale: false,
+          salePrice: '',
+          saleId: '',
           data: {
             image: '',
             series: '',
