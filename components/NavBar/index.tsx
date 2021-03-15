@@ -153,7 +153,11 @@ const NavBar = (): JSX.Element => {
         {currentUser ? (
           <UserAvatar
             isOpen={isOpen}
-            avatar={currentUser ? currentUser.avatar : '/default-avatar.png'}
+            avatar={
+              currentUser && currentUser.avatar
+                ? currentUser.avatar
+                : '/default-avatar.png'
+            }
             toggleNavDropdown={toggleNavDropdown}
           />
         ) : (
