@@ -18,6 +18,7 @@ export interface QueryParams {
   limit?: number;
   sort?: string;
   order?: string;
+  page?: number;
 }
 
 class NodeFetch<T = void, P = void> {
