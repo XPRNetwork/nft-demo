@@ -47,6 +47,7 @@ const Card = ({
           layout="responsive"
           width={213}
           height={220}
+          alt={text}
           src={`https://ipfs.io/ipfs/${image}`}
         />
         {isForSale ? <Tag>FOR SALE</Tag> : null}

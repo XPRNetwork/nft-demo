@@ -47,6 +47,7 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
           permission,
           name: '',
           avatar: '/default-avatar.png',
+          balance: '0.0000 XPR',
           isLightKYCVerified: false,
         });
       }

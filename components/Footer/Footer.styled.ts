@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { MaxWidth } from '../../styles/MaxWidth.styled';
 import { breakpoint } from '../../styles/Breakpoints';
 
-export const FooterBackground = styled.section`
+export const FooterBackground = styled.footer`
   width: 100%;
   background: #f6f7fe;
   border-bottom: 1px solid #f6f7fe;
@@ -14,7 +14,7 @@ export const FooterBackground = styled.section`
   `}
 `;
 
-export const StyledFooter = styled(MaxWidth).attrs({ as: 'footer' })`
+export const StyledFooter = styled(MaxWidth).attrs({ as: 'section' })`
   justify-content: space-between;
   align-items: center;
   width: 100%;
