@@ -12,7 +12,8 @@ type Price = {
 };
 
 export type SaleAsset = {
-  assetId: string;
+  saleId: string;
+  templateMint: string;
   owner: string;
   salePrice: string;
 };
@@ -83,16 +84,18 @@ export const getSaleAssetsByTemplateId = async (
     });
 
     let saleAssets: SaleAsset[] = [];
-
     for (const sale of sales.data) {
       const {
         assets,
         listing_price,
         listing_symbol,
+        sale_id,
         price: { token_precision },
       } = sale;
-      const formattedAssets = assets.map(({ asset_id, owner }) => ({
-        assetId: asset_id,
+
+      const formattedAssets = assets.map(({ owner, template_mint }) => ({
+        saleId: sale_id,
+        templateMint: template_mint,
         owner,
         salePrice: `${addPrecisionDecimal(
           listing_price,
@@ -101,7 +104,6 @@ export const getSaleAssetsByTemplateId = async (
       }));
       saleAssets = saleAssets.concat(formattedAssets);
     }
-
     return saleAssets;
   } catch (e) {
     throw new Error(e);
