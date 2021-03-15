@@ -12,6 +12,7 @@
     "check:all": "yarn lint && yarn format && yarn typecheck"
   },
   "dependencies": {
+    "@proton/js": "22.0.45",
     "@proton/web-sdk": "2.7.16",
     "@svgr/webpack": "^5.5.0",
     "@types/styled-components": "^5.1.7",

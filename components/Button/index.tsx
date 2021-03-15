@@ -5,10 +5,21 @@ type Props = {
   onClick: () => void;
   filled?: boolean;
   rounded?: boolean;
+  fullWidth?: boolean;
 };
 
-const Button = ({ children, onClick, filled, rounded }: Props): JSX.Element => (
-  <StyledButton filled={filled} rounded={rounded} onClick={onClick}>
+const Button = ({
+  children,
+  onClick,
+  filled,
+  rounded,
+  fullWidth,
+}: Props): JSX.Element => (
+  <StyledButton
+    filled={filled}
+    rounded={rounded}
+    fullWidth={fullWidth}
+    onClick={onClick}>
     {children}
   </StyledButton>
 );

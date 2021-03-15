@@ -1,89 +1,35 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import Button from '../Button';
 import {
   Background,
   Nav,
   AvatarContainer,
-  HamburgerContainer,
-  ImageContainer,
-  Section,
+  ImageLink,
   NavLink,
   GradientBackground,
-  MobileOnlySection,
-  DesktopOnlySection,
-  PlaceholderAvatar,
+  MobileIcon,
+  DropdownList,
+  DesktopIcon,
+  Name,
+  Subtitle,
+  Balance,
 } from './NavBar.styled';
 import { useScrollLock } from '../../hooks';
 import { useAuthContext } from '../Provider';
 
-const NavBar = (): JSX.Element => {
-  const router = useRouter();
-  const { currentUser, login, logout } = useAuthContext();
-  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
-  useScrollLock(isMobileNavOpen);
+type DropdownProps = {
+  isOpen: boolean;
+  closeNavDropdown: () => void;
+};
 
-  const routes = [
-    {
-      name: 'Marketplace',
-      path: '/',
-      isHidden: false,
-    },
-    {
-      name: 'Collection',
-      path: `/collection/${currentUser ? currentUser.actor : ''}`,
-      isHidden: !currentUser,
-    },
-  ];
-
-  const toggleMobileNav = () => setIsMobileNavOpen(!isMobileNavOpen);
-
-  const closeMobileNav = () => {
-    if (isMobileNavOpen) setIsMobileNavOpen(false);
-  };
-
-  const connectWallet = () => {
-    closeMobileNav();
-    login();
-  };
-
-  const welcomeMessage = currentUser ? (
-    <h1>
-      Welcome, {currentUser.name.split(' ')[0]} ({currentUser.actor})
-    </h1>
-  ) : null;
-
-  const currentUserAvatar = currentUser ? (
-    <AvatarContainer>
-      <Image
-        priority
-        layout="fixed"
-        width={32}
-        height={32}
-        alt="chain account avatar"
-        src={currentUser.avatar}
-      />
-    </AvatarContainer>
-  ) : (
-    <PlaceholderAvatar />
-  );
-
+const Logo = (): JSX.Element => {
+  const { currentUser } = useAuthContext();
   return (
-    <Background>
-      <Nav>
-        <HamburgerContainer onClick={toggleMobileNav}>
-          <Image
-            priority
-            layout="fixed"
-            width={40}
-            height={40}
-            alt={isMobileNavOpen ? 'close' : 'open'}
-            src={isMobileNavOpen ? '/icons-close.svg' : '/icons-small-menu.svg'}
-          />
-        </HamburgerContainer>
-        <ImageContainer>
+    <Link href="/" passHref>
+      <ImageLink>
+        <DesktopIcon>
           <Image
             priority
             layout="fixed"
@@ -92,29 +38,131 @@ const NavBar = (): JSX.Element => {
             alt="logo"
             src="/logo@3x.png"
           />
-        </ImageContainer>
-        <Section isMobileNavOpen={isMobileNavOpen}>
-          {routes.map(({ name, path, isHidden }) => {
-            const isActive =
-              router.pathname.split('/')[1] === path.split('/')[1];
-            return isHidden ? null : (
-              <Link href={path} passHref key={name}>
-                <NavLink isActive={isActive} onClick={closeMobileNav}>
-                  {name}
-                </NavLink>
-              </Link>
-            );
-          })}
-          <DesktopOnlySection>
-            {welcomeMessage}
-            {currentUserAvatar}
-          </DesktopOnlySection>
-          <Button filled onClick={currentUser ? logout : connectWallet}>
-            {currentUser ? 'Log out' : 'Connect Wallet'}
+        </DesktopIcon>
+        <MobileIcon>
+          <Image
+            priority
+            layout="fixed"
+            width={currentUser ? 143 : 32}
+            height={32}
+            alt="logo"
+            src={currentUser ? '/logo@3x.png' : '/logo.svg'}
+          />
+        </MobileIcon>
+      </ImageLink>
+    </Link>
+  );
+};
+
+const UserAvatar = ({ isOpen, avatar, toggleNavDropdown }) => {
+  const currentUserAvatar = (
+    <AvatarContainer>
+      <Image priority layout="fill" alt="chain account avatar" src={avatar} />
+    </AvatarContainer>
+  );
+
+  const mobileNavbarIcon = isOpen ? (
+    <AvatarContainer>
+      <Image priority layout="fill" alt="close" src="/x.svg" />
+    </AvatarContainer>
+  ) : (
+    currentUserAvatar
+  );
+
+  return (
+    <>
+      <DesktopIcon onClick={toggleNavDropdown} role="button">
+        {currentUserAvatar}
+      </DesktopIcon>
+      <MobileIcon onClick={toggleNavDropdown} role="button">
+        {mobileNavbarIcon}
+      </MobileIcon>
+    </>
+  );
+};
+
+const Dropdown = ({ isOpen, closeNavDropdown }: DropdownProps): JSX.Element => {
+  const { currentUser, logout } = useAuthContext();
+
+  const routes = [
+    {
+      name: 'Deposit / Withdraw',
+      path: '',
+      onClick: () => console.log('open deposit/withdraw modal'),
+    },
+    {
+      name: "My NFT's",
+      path: `/my-nfts/${currentUser ? currentUser.actor : ''}`,
+      onClick: closeNavDropdown,
+    },
+    {
+      name: 'Marketplace',
+      path: '/',
+      onClick: closeNavDropdown,
+    },
+    {
+      name: 'Sign out',
+      path: '',
+      onClick: () => {
+        closeNavDropdown();
+        logout();
+      },
+    },
+  ];
+
+  return (
+    <DropdownList isOpen={isOpen}>
+      <Name>{currentUser ? currentUser.name : ''}</Name>
+      <Subtitle>Balance</Subtitle>
+      <Balance>{currentUser ? currentUser.balance : '0.0000 XPR'}</Balance>
+      {routes.map(({ name, path, onClick }) =>
+        path ? (
+          <Link href={path} passHref key={name}>
+            <NavLink onClick={onClick}>{name}</NavLink>
+          </Link>
+        ) : (
+          <NavLink onClick={onClick} key={name}>
+            {name}
+          </NavLink>
+        )
+      )}
+    </DropdownList>
+  );
+};
+
+const NavBar = (): JSX.Element => {
+  const { currentUser, login } = useAuthContext();
+  const [isOpen, setIsOpen] = useState(false);
+  useScrollLock(isOpen);
+
+  const toggleNavDropdown = () => setIsOpen(!isOpen);
+
+  const closeNavDropdown = () => {
+    if (isOpen) setIsOpen(false);
+  };
+
+  const connectWallet = () => {
+    closeNavDropdown();
+    login();
+  };
+
+  return (
+    <Background>
+      <Nav>
+        <Logo />
+        {currentUser ? (
+          <UserAvatar
+            isOpen={isOpen}
+            avatar={currentUser ? currentUser.avatar : '/default-avatar.png'}
+            toggleNavDropdown={toggleNavDropdown}
+          />
+        ) : (
+          <Button rounded filled onClick={connectWallet}>
+            Connect Wallet
           </Button>
-          <GradientBackground onClick={closeMobileNav} />
-        </Section>
-        <MobileOnlySection>{currentUserAvatar}</MobileOnlySection>
+        )}
+        <Dropdown isOpen={isOpen} closeNavDropdown={closeNavDropdown} />
+        <GradientBackground isOpen={isOpen} onClick={closeNavDropdown} />
       </Nav>
     </Background>
   );
