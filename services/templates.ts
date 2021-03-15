@@ -89,11 +89,14 @@ export const getTemplateDetail = async (
  */
 
 export const getTemplatesByCollection = async (
-  collection: string
+  collection: string,
+  page: number
 ): Promise<Template[] | void> => {
   try {
     const allTemplatesResults = await templatesApiService.getAll({
       collection_name: collection,
+      page,
+      limit: 10,
     });
 
     if (!allTemplatesResults.success)
