@@ -45,11 +45,16 @@ export const assetsApiService = new NodeFetch<Asset>('/atomicassets/v1/assets');
  *                          If it is for sale, will also return the "salePrice" in the Asset object.
  */
 
-export const getUserAssets = async (owner: string): Promise<Asset[]> => {
+export const getUserAssets = async (
+  owner: string,
+  page?: number
+): Promise<Asset[]> => {
   try {
+    const pageParam = page ? page : 1;
     const myAssetsResults = await assetsApiService.getAll({
       owner,
-      limit: 1000, // TODO: Remove when WEB-768 is merged in to add pagination support
+      page: pageParam,
+      limit: 10,
     });
 
     if (!myAssetsResults.success) throw new Error(myAssetsResults.message);
