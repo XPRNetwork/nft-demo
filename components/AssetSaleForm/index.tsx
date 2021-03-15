@@ -45,7 +45,7 @@ const AssetSaleForm = ({ asset_id }: Props): JSX.Element => {
         type="number"
         pattern="[0-9]*"
       />
-      <Button filled rounded onClick={createSale}>
+      <Button filled rounded fullWidth onClick={createSale}>
         Mark for sale
       </Button>
     </section>

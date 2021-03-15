@@ -3,6 +3,7 @@ import styled from 'styled-components';
 type ButtonProps = {
   filled?: boolean;
   rounded?: boolean;
+  fullWidth?: boolean;
 };
 
 export const StyledButton = styled.button<ButtonProps>`
@@ -19,7 +20,7 @@ export const StyledButton = styled.button<ButtonProps>`
   font-size: 16px;
   line-height: 24px;
   font-family: GilroyMedium;
-  width: 100%;
+  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 
   :hover,
   :focus {

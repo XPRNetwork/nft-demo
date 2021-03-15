@@ -36,6 +36,7 @@ const Footer = (): JSX.Element => {
             layout="fixed"
             width={143}
             height={32}
+            alt="logo"
             src="/logo@3x.png"
           />
         </ImageContainer>

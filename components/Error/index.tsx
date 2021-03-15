@@ -19,7 +19,9 @@ const Error = ({
     <Container>
       <QuestionIcon role="img" />
       <Text>{errorMessage}</Text>
-      <Button onClick={onClick}>{buttonText}</Button>
+      <Button rounded filled onClick={onClick}>
+        {buttonText}
+      </Button>
     </Container>
   );
 };
