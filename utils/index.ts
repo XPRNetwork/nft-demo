@@ -4,7 +4,7 @@ export const toQueryString = (queryObject: QueryParams): string => {
   const parts = [];
   for (const key in queryObject) {
     const value = queryObject[key];
-    if (value && typeof value === 'string') {
+    if (value && (typeof value === 'string' || typeof value === 'number')) {
       parts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
     }
   }

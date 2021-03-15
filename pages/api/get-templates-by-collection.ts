@@ -1,14 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getTemplatesByCollection } from '../../services/templates';
 
-interface TemplateByCollectionReqest extends NextApiRequest {
+interface TemplateByCollectionRequest extends NextApiRequest {
   query: {
     collection: string;
+    page: string;
   };
 }
 
 const handler = async (
-  req: TemplateByCollectionReqest,
+  req: TemplateByCollectionRequest,
   res: NextApiResponse
 ): Promise<void> => {
   const { method, query } = req;
@@ -20,9 +21,11 @@ const handler = async (
     case 'PATCH':
       break;
     default: {
-      const { collection } = query;
+      const { collection, page } = query;
       try {
-        const message = await getTemplatesByCollection(collection);
+        let pageParam = parseInt(page);
+        pageParam = isNaN(pageParam) ? 1 : pageParam;
+        const message = await getTemplatesByCollection(collection, pageParam);
         res.status(200).send({ success: true, message });
       } catch (e) {
         res.status(500).send({

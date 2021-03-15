@@ -1,11 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import PageLayout from '../../components/PageLayout';
+import PaginationButton from '../../components/PaginationButton';
 import ErrorComponent from '../../components/Error';
 import Grid, { GRID_TYPE } from '../../components/Grid';
-import { getUserAssets, Asset } from '../../services/assets';
-import { Title } from '../../styles/Title.styled';
 import { useAuthContext } from '../../components/Provider';
+import { getUserAssets, Asset } from '../../services/assets';
+import { getFromApi, BrowserResponse } from '../../utils/browser-fetch';
+import { Title } from '../../styles/Title.styled';
 
 type Props = {
   assets: Asset[];
@@ -13,14 +15,79 @@ type Props = {
   chainAccount: string;
 };
 
+type GetMyAssetsOptions = {
+  chainAccount: string;
+  page?: number;
+};
+
+const getMyAssets = async ({
+  chainAccount,
+  page,
+}: GetMyAssetsOptions): Promise<BrowserResponse<Asset[]>> => {
+  try {
+    const pageParam = page ? page : 1;
+    const result = await getFromApi<Asset[]>(
+      `/api/my-assets?owner=${chainAccount}&page=${pageParam}`
+    );
+
+    if (!result.success) {
+      throw new Error((result.message as unknown) as string);
+    }
+
+    return result;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
 const Collection = ({ assets, error, chainAccount }: Props): JSX.Element => {
   const router = useRouter();
   const { currentUser, login, authError } = useAuthContext();
+  const [renderedAssets, setRenderedAssets] = useState<Asset[]>(assets);
+  const [prefetchedAssets, setPrefetchedAssets] = useState<Asset[]>([]);
+  const [prefetchPageNumber, setPrefetchPageNumber] = useState<number>(2);
+  const [isLoadingNextPage, setIsLoadingNextPage] = useState<boolean>(true);
+  const [errorMessage, setErrorMessage] = useState<string>(error);
   const isTest = ['testuser1111', 'monsters'].includes(chainAccount); // TODO: Remove when Proton NFTs are live
 
+  const prefetchNextPage = async () => {
+    const prefetchedResult = await getMyAssets({
+      chainAccount: currentUser ? currentUser.actor : '',
+      page: prefetchPageNumber,
+    });
+    setPrefetchedAssets(prefetchedResult.message as Asset[]);
+
+    if (!prefetchedResult.message.length) {
+      setPrefetchPageNumber(-1);
+    } else {
+      setPrefetchPageNumber(prefetchPageNumber + 1);
+    }
+
+    setIsLoadingNextPage(false);
+  };
+
+  const showNextPage = async () => {
+    const allFetchedAssets = renderedAssets.concat(prefetchedAssets);
+    setRenderedAssets(allFetchedAssets);
+    setIsLoadingNextPage(true);
+    await prefetchNextPage();
+  };
+
   useEffect(() => {
-    router.prefetch('/');
+    (async () => {
+      try {
+        router.prefetch('/');
+        await prefetchNextPage();
+      } catch (e) {
+        setErrorMessage(e.message);
+      }
+    })();
   }, []);
+
+  const connectWallet = () => {
+    login();
+    router.reload();
+  };
 
   const getContent = () => {
     if (!currentUser) {
@@ -28,7 +95,7 @@ const Collection = ({ assets, error, chainAccount }: Props): JSX.Element => {
         <ErrorComponent
           errorMessage="You must log in to view your collection."
           buttonText="Connect Wallet"
-          buttonOnClick={login}
+          buttonOnClick={connectWallet}
         />
       );
     }
@@ -38,7 +105,7 @@ const Collection = ({ assets, error, chainAccount }: Props): JSX.Element => {
         <ErrorComponent
           errorMessage={authError}
           buttonText="Connect Wallet"
-          buttonOnClick={login}
+          buttonOnClick={connectWallet}
         />
       );
     }
@@ -54,16 +121,25 @@ const Collection = ({ assets, error, chainAccount }: Props): JSX.Element => {
       );
     }
 
-    if (error) {
+    if (errorMessage) {
       return (
         <ErrorComponent
-          errorMessage={error}
+          errorMessage={errorMessage}
           buttonText="Try again"
           buttonOnClick={() => router.reload()}
         />
       );
     }
-    return <Grid items={assets} type={GRID_TYPE.ASSET} />;
+    return (
+      <>
+        <Grid items={renderedAssets} type={GRID_TYPE.ASSET} />
+        <PaginationButton
+          onClick={showNextPage}
+          isLoading={isLoadingNextPage}
+          disabled={prefetchPageNumber === -1}
+        />
+      </>
+    );
   };
 
   return (
