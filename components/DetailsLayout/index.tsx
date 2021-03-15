@@ -10,7 +10,7 @@ import {
   Name,
   Series,
   ContentRow,
-  Arrow,
+  ArrowContainer,
 } from './DetailsLayout.styled';
 
 type Props = {
@@ -28,7 +28,7 @@ const DetailsLayout = ({
   details,
   image,
 }: Props): JSX.Element => {
-  const [active, setActive] = useState(true);
+  const [isOpen, setIsOpen] = useState(true);
 
   return (
     <Container>
@@ -40,6 +40,7 @@ const DetailsLayout = ({
             width={456}
             height={470}
             src={`https://ipfs.io/ipfs/${image}`}
+            alt={`Image of ${name}`}
           />
         </ImageContainer>
         <Column>
@@ -50,17 +51,18 @@ const DetailsLayout = ({
       </Row>
       <ContentRow>
         <Title>Collectible Details</Title>
-        <Arrow
-          priority
-          layout="fixed"
-          width={24}
-          height={24}
-          src="/arrow.svg"
-          active={active}
-          onClick={() => setActive(!active)}
-        />
+        <ArrowContainer isOpen={isOpen} onClick={() => setIsOpen(!isOpen)}>
+          <Image
+            priority
+            layout="fixed"
+            width={24}
+            height={24}
+            src="/arrow.svg"
+            alt="Dropdown Arrow"
+          />
+        </ArrowContainer>
       </ContentRow>
-      {active ? <Description>{details}</Description> : ''}
+      {isOpen ? <Description>{details}</Description> : ''}
     </Container>
   );
 };

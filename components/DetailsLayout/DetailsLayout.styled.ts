@@ -1,9 +1,7 @@
 import styled from 'styled-components';
-import Image from 'next/image';
 
 type ArrowProps = {
-  active: boolean;
-  layout: string;
+  isOpen: boolean;
 };
 
 export const Container = styled.div`
@@ -61,9 +59,9 @@ export const ContentRow = styled.div`
   margin: 48px 0 16px;
 `;
 
-export const Arrow = styled(Image)<ArrowProps>`
-  transform: ${({ active }) => (active ? 'rotate(0deg)' : 'rotate(-180deg)')};
-  -webkit-transform: ${({ active }) =>
-    active ? 'rotate(0deg)' : 'rotate(-180deg)'};
+export const ArrowContainer = styled.div<ArrowProps>`
+  transform: ${({ isOpen }) => (isOpen ? 'rotate(0deg)' : 'rotate(-180deg)')};
+  -webkit-transform: ${({ isOpen }) =>
+    isOpen ? 'rotate(0deg)' : 'rotate(-180deg)'};
   cursor: pointer;
 `;
