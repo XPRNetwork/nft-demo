@@ -1,4 +1,9 @@
 import { QueryParams } from '../utils/node-fetch';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc'; // dependent on utc plugin
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export const toQueryString = (queryObject: QueryParams): string => {
   const parts = [];
@@ -21,6 +26,15 @@ export const asyncForEach = async (
   for (let index = 0; index < array.length; index++) {
     await callback(array[index], index, array);
   }
+};
+
+export const parseTimestamp = (timestamp: string): string => {
+  if (timestamp) {
+    return `${dayjs(+timestamp)
+      .tz('America/Los_Angeles')
+      .format('MMM DD, YYYY, h:mm A')} PST`;
+  }
+  return '';
 };
 
 export const addPrecisionDecimal = (
