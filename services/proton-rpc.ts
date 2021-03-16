@@ -34,6 +34,19 @@ class ProtonJs {
     });
   };
 
+  getProfileImage = async ({ account }): Promise<void> => {
+    const { rows } = await this.rpc.get_table_rows({
+      scope: 'eosio.proton',
+      code: 'eosio.proton',
+      json: true,
+      table: 'usersinfo',
+      lower_bound: account,
+      upper_bound: account,
+    });
+    const { avatar } = rows[0];
+    return avatar;
+  };
+
   getAtomicMarketBalance = (chainAccount: string) => {
     return new Promise<string>((resolve, _) => {
       this.rpc

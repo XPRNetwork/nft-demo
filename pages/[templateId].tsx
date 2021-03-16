@@ -2,7 +2,12 @@ import { useRouter } from 'next/router';
 import DetailsLayout from '../components/DetailsLayout';
 import ErrorComponent from '../components/Error';
 import { getTemplateDetail, Template } from '../services/templates';
-import { getSaleAssetsByTemplateId, SaleAsset } from '../services/sales';
+import {
+  getSaleAssetsByTemplateId,
+  SaleAsset,
+  getSalesHistoryForTemplate,
+  Sale,
+} from '../services/sales';
 import PageLayout from '../components/PageLayout';
 import BuyAssetForm from '../components/BuyAssetForm';
 
@@ -10,12 +15,14 @@ type Props = {
   template: Template;
   allSalesForTemplate: SaleAsset[];
   error: string;
+  salesHistory: Sale[];
 };
 
 const MarketplaceTemplateDetail = ({
   template,
   error,
   allSalesForTemplate,
+  salesHistory,
 }: Props): JSX.Element => {
   const router = useRouter();
 
@@ -42,6 +49,8 @@ const MarketplaceTemplateDetail = ({
         name={name}
         seriesNumber={series.toString()}
         details="Item details"
+        sales={salesHistory}
+        error={error}
         image={image as string}>
         <BuyAssetForm
           lowestPrice={lowestPrice}
@@ -73,11 +82,13 @@ export const getServerSideProps = async ({
     )) as Template;
 
     const allSalesForTemplate = await getSaleAssetsByTemplateId(templateId);
+    const salesHistory = await getSalesHistoryForTemplate(templateId);
 
     return {
       props: {
         template: template,
         allSalesForTemplate: allSalesForTemplate,
+        salesHistory: salesHistory,
         error: '',
       },
     };
@@ -96,6 +107,7 @@ export const getServerSideProps = async ({
         },
         allSalesForTemplate: [],
         error: e.message,
+        salesHistory: [],
       },
     };
   }

@@ -1,7 +1,11 @@
 import styled from 'styled-components';
 
 type ArrowProps = {
-  isOpen: boolean;
+  isActive: boolean;
+};
+
+type ToggleContainerProps = {
+  active: boolean;
 };
 
 export const Container = styled.div`
@@ -60,8 +64,14 @@ export const ContentRow = styled.div`
 `;
 
 export const ArrowContainer = styled.div<ArrowProps>`
-  transform: ${({ isOpen }) => (isOpen ? 'rotate(0deg)' : 'rotate(-180deg)')};
-  -webkit-transform: ${({ isOpen }) =>
-    isOpen ? 'rotate(0deg)' : 'rotate(-180deg)'};
+  transform: ${({ isActive }) =>
+    isActive ? 'rotate(0deg)' : 'rotate(-180deg)'};
+  -webkit-transform: ${({ isActive }) =>
+    isActive ? 'rotate(0deg)' : 'rotate(-180deg)'};
   cursor: pointer;
+`;
+
+export const ToggleContainer = styled.div<ToggleContainerProps>`
+  display: ${({ active }) => (active ? 'block' : 'none')};
+  width: 100%;
 `;
