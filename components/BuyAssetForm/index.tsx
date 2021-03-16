@@ -77,7 +77,7 @@ const BuyAssetForm = ({
             );
           })}
       </DropdownMenu>
-      <Button filled rounded onClick={buyAsset}>
+      <Button fullWidth filled rounded onClick={buyAsset}>
         Buy
       </Button>
       {purchasingError ? <Error>{purchasingError}</Error> : null}
