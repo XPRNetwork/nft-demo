@@ -4,11 +4,22 @@ interface MediaQueryProps {
   [key: string]: string;
 }
 
+interface MediaQueryValues {
+  [key: string]: number;
+}
+
 const breakpoints: MediaQueryProps = {
   smallMobile: '400px',
   mobile: '600px',
   tablet: '970px',
   laptop: '1224px',
+};
+
+export const breakpointValues: MediaQueryValues = {
+  smallMobile: 400,
+  mobile: 600,
+  tablet: 970,
+  laptop: 1224,
 };
 
 export const breakpoint = Object.keys(breakpoints).reduce(

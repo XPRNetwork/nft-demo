@@ -31,6 +31,7 @@ const MarketplaceTemplateDetail = ({
     highestPrice,
     max_supply,
     immutable_data: { image, series, name },
+    template_id,
   } = template;
 
   const getContent = () => {
@@ -51,7 +52,9 @@ const MarketplaceTemplateDetail = ({
         details="Item details"
         sales={salesHistory}
         error={error}
-        image={image as string}>
+        image={image as string}
+        serial_number={template_id}
+        max_supply={max_supply}>
         <BuyAssetForm
           lowestPrice={lowestPrice}
           highestPrice={highestPrice}
