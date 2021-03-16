@@ -12,10 +12,10 @@ export const MaxWidth = styled.div`
   `}
 
   ${breakpoint.tablet`
-    max-width: 80%;
+    max-width: 90%;
   `};
 
   ${breakpoint.mobile`
-    max-width: 80%;
+    max-width: 90%;
   `};
 `;

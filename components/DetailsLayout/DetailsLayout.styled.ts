@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { breakpoint } from '../../styles/Breakpoints';
 
 type ArrowProps = {
   isActive: boolean;
@@ -12,6 +13,14 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   margin: 64px 100px 0px;
+
+  ${breakpoint.tablet`
+    margin: 64px 0 0;
+  `};
+
+  ${breakpoint.mobile`
+    margin: 32px 0 0;
+  `};
 `;
 
 export const Row = styled.div`
@@ -24,10 +33,22 @@ export const Column = styled.div`
   display: flex;
   flex-direction: column;
   margin: 0 64px 0 56px;
+
+  ${breakpoint.mobile`
+    margin: 0;
+  `};
 `;
 
 export const ImageContainer = styled.div`
   width: 100%;
+
+  ${breakpoint.tablet`
+    max-width: 294px;
+  `};
+
+  ${breakpoint.mobile`
+    margin: 32px auto;
+  `};
 `;
 
 export const Title = styled.h1`
@@ -74,4 +95,19 @@ export const ArrowContainer = styled.div<ArrowProps>`
 export const ToggleContainer = styled.div<ToggleContainerProps>`
   display: ${({ active }) => (active ? 'block' : 'none')};
   width: 100%;
+`;
+
+export const Serial = styled.p`
+  line-height: 24px;
+  margin-bottom: 8px;
+  font-family: GilroyMedium;
+
+  ${breakpoint.mobile`
+    margin: 0;
+  `};
+`;
+
+export const Divider = styled.div`
+  margin: 12px 0 24px 0;
+  border-bottom: 1px solid #e8ecfd;
 `;

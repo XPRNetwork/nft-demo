@@ -7,7 +7,6 @@ import { Asset, getAssetDetails } from '../../services/assets';
 import AssetSaleDetails from '../../components/AssetSaleDetails';
 import AssetSaleForm from '../../components/AssetSaleForm';
 import { useAuthContext } from '../../components/Provider';
-import { Serial, Divider } from '../../styles/details.styled';
 import PageLayout from '../../components/PageLayout';
 
 type Props = {
@@ -26,6 +25,7 @@ const CollectionAssetDetail = ({ asset, error }: Props): JSX.Element => {
     isForSale,
     salePrice,
     saleId,
+    template_mint,
     data: { image, series },
     template: { template_id, max_supply },
   } = asset;
@@ -59,11 +59,9 @@ const CollectionAssetDetail = ({ asset, error }: Props): JSX.Element => {
         seriesNumber={series as string}
         details={'Test Details'}
         error={error}
-        image={image as string}>
-        <Serial>
-          Serial number #{template_id}/{max_supply}
-        </Serial>
-        <Divider />
+        image={image as string}
+        serial_number={template_mint}
+        max_supply={max_supply}>
         {isForSale ? (
           <AssetSaleDetails
             saleId={saleId}
