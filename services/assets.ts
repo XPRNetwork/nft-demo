@@ -10,7 +10,7 @@ export type Asset = {
   owner: string;
   template: Template;
   asset_id: string;
-  saleId?: string;
+  saleId: string;
   mutable_data?: Record<string, unknown>;
   immutable_data?: Record<string, unknown>;
   template_mint?: string;
