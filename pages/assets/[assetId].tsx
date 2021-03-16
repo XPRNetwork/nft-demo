@@ -58,6 +58,7 @@ const CollectionAssetDetail = ({ asset, error }: Props): JSX.Element => {
         name={name}
         seriesNumber={series as string}
         details={'Test Details'}
+        error={error}
         image={image as string}>
         <Serial>
           Serial number #{template_id}/{max_supply}

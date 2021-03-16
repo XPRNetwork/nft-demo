@@ -11,7 +11,10 @@ import {
   Series,
   ContentRow,
   ArrowContainer,
+  ToggleContainer,
 } from './DetailsLayout.styled';
+import { Sale } from '../../services/sales';
+import SalesHistoryTable from '../SalesHistoryTable';
 
 type Props = {
   children: ReactNode;
@@ -19,6 +22,8 @@ type Props = {
   seriesNumber: string;
   details: string;
   image: string;
+  sales?: Sale[];
+  error?: string;
 };
 
 const DetailsLayout = ({
@@ -27,8 +32,11 @@ const DetailsLayout = ({
   seriesNumber,
   details,
   image,
+  sales,
+  error,
 }: Props): JSX.Element => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [detailsActive, setDetailsActive] = useState(true);
+  const [salesTableActive, setSalesTableActive] = useState(true);
 
   return (
     <Container>
@@ -51,7 +59,9 @@ const DetailsLayout = ({
       </Row>
       <ContentRow>
         <Title>Collectible Details</Title>
-        <ArrowContainer isOpen={isOpen} onClick={() => setIsOpen(!isOpen)}>
+        <ArrowContainer
+          isActive={detailsActive}
+          onClick={() => setDetailsActive(!detailsActive)}>
           <Image
             priority
             layout="fixed"
@@ -62,7 +72,31 @@ const DetailsLayout = ({
           />
         </ArrowContainer>
       </ContentRow>
-      {isOpen ? <Description>{details}</Description> : ''}
+      {detailsActive ? <Description>{details}</Description> : ''}
+      {sales ? (
+        <>
+          <ContentRow>
+            <Title>Recent Sales History</Title>
+            <ArrowContainer
+              isActive={salesTableActive}
+              onClick={() => setSalesTableActive(!salesTableActive)}>
+              <Image
+                priority
+                layout="fixed"
+                width={24}
+                height={24}
+                src="/arrow.svg"
+                alt="Dropdown Arrow"
+              />
+            </ArrowContainer>
+          </ContentRow>
+          <ToggleContainer active={salesTableActive}>
+            <SalesHistoryTable tableData={sales} error={error} />
+          </ToggleContainer>
+        </>
+      ) : (
+        ''
+      )}
     </Container>
   );
 };
