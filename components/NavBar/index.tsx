@@ -17,7 +17,7 @@ import {
   Balance,
 } from './NavBar.styled';
 import { useScrollLock } from '../../hooks';
-import { useAuthContext } from '../Provider';
+import { useAuthContext, useModalContext, MODAL_TYPES } from '../Provider';
 
 type DropdownProps = {
   isOpen: boolean;
@@ -83,12 +83,13 @@ const UserAvatar = ({ isOpen, avatar, toggleNavDropdown }) => {
 
 const Dropdown = ({ isOpen, closeNavDropdown }: DropdownProps): JSX.Element => {
   const { currentUser, logout } = useAuthContext();
+  const { openModal } = useModalContext();
 
   const routes = [
     {
       name: 'Deposit / Withdraw',
       path: '',
-      onClick: () => console.log('open deposit/withdraw modal'),
+      onClick: () => openModal(MODAL_TYPES.DEPOSIT),
     },
     {
       name: "My NFT's",
