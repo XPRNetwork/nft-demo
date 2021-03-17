@@ -1,6 +1,8 @@
 import { ReactNode } from 'react';
 import Head from 'next/head';
 import { Main, Container } from './PageLayout.styled';
+import { useModalContext, MODAL_TYPES } from '../Provider';
+import { DepositModal } from '../Modal';
 
 type Props = {
   title: string;
@@ -8,6 +10,17 @@ type Props = {
 };
 
 const PageLayout = ({ title, children }: Props): JSX.Element => {
+  const { modalType } = useModalContext();
+
+  const renderModal = () => {
+    switch (modalType) {
+      case MODAL_TYPES.DEPOSIT:
+        return <DepositModal />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <Main>
       <Head>
@@ -15,6 +28,7 @@ const PageLayout = ({ title, children }: Props): JSX.Element => {
         <link rel="shortcut icon" href="/favicon.png" />
       </Head>
       <Container>{children}</Container>
+      {renderModal()}
     </Main>
   );
 };
