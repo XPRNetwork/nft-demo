@@ -26,6 +26,8 @@ export const Container = styled.article`
 
 export const ImageContainer = styled.div`
   position: relative;
+  border-radius: 10px;
+  overflow: hidden;
 `;
 
 export const Text = styled.span`
