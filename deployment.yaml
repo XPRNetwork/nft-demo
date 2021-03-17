@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nft-demo
+  labels:
+    app: nft-demo
+spec:
+  selector:
+    matchLabels:
+      app: nft-demo
+  template:
+    metadata:
+      labels:
+        app: nft-demo
+        tier: web
+    spec:
+      containers:
+      - name: nft-demo
+        image: gcr.io/proton-wallet/nft-demo
+        ports:
+        - containerPort: 3000
