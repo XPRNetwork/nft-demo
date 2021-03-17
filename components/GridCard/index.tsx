@@ -65,12 +65,14 @@ export const AssetCard = ({
   data: { image },
   isForSale,
   salePrice,
+  template_mint,
+  template: { max_supply },
 }: Asset): JSX.Element => {
   return (
     <Card
       image={image as string}
       text={name}
-      secondaryText={`Serial #${asset_id}`}
+      secondaryText={`Serial #${template_mint}/${max_supply}`}
       priceText={salePrice as string}
       isForSale={isForSale as boolean}
       redirectPath={`/assets/${asset_id}`}
