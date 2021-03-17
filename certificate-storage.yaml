@@ -1,0 +1,19 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: nft-demo-cert
+  namespace: default
+spec:
+  secretName: nft-demo-cert
+  issuerRef:
+    name: nft-demo-issuer
+    kind: ClusterIssuer
+  commonName: protonmarket.org
+  dnsNames:
+  - protonmarket.org
+  acme:
+    config:
+    - http01:
+        ingress: nft-demo-ssl-ingress
+      domains:
+      - protonmarket.org
