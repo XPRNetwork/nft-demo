@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import Head from 'next/head';
 import { Main, Container } from './PageLayout.styled';
 import { useModalContext, MODAL_TYPES } from '../Provider';
-import { DepositModal } from '../Modal';
+import { DepositModal, WithdrawModal } from '../Modal';
 
 type Props = {
   title: string;
@@ -16,6 +16,8 @@ const PageLayout = ({ title, children }: Props): JSX.Element => {
     switch (modalType) {
       case MODAL_TYPES.DEPOSIT:
         return <DepositModal />;
+      case MODAL_TYPES.WITHDRAW:
+        return <WithdrawModal />;
       default:
         return null;
     }
