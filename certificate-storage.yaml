@@ -8,12 +8,12 @@ spec:
   issuerRef:
     name: nft-demo-issuer
     kind: ClusterIssuer
-  commonName: protonmarket.org
+  commonName: nft.uno
   dnsNames:
-  - protonmarket.org
+  - nft.uno
   acme:
     config:
     - http01:
         ingress: nft-demo-ssl-ingress
       domains:
-      - protonmarket.org
+      - nft.uno
