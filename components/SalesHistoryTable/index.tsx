@@ -8,10 +8,16 @@ import { Sale } from '../../services/sales';
 import { addPrecisionDecimal, parseTimestamp, asyncForEach } from '../../utils';
 import { StyledTable } from './SalesHistoryTable.styled';
 import proton from '../../services/proton-rpc';
+import { useWindowSize } from '../../hooks';
 
 type Props = {
   tableData: Sale[];
   error?: string;
+};
+
+type TableHeader = {
+  title: string;
+  id: string;
 };
 
 const salesHistoryTableHeaders = [
@@ -23,9 +29,26 @@ const salesHistoryTableHeaders = [
   { title: 'TX', id: 'tx' },
 ];
 
+const mobileSalesHistoryTableHeaders = [
+  { title: '', id: 'img' },
+  { title: 'BUYER', id: 'buyer' },
+  { title: 'PRICE', id: 'price' },
+  { title: 'TX', id: 'tx' },
+];
+
 const SalesHistoryTable = ({ tableData, error }: Props): JSX.Element => {
   const [avatars, setAvatars] = useState({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [tableHeaders, setTableHeaders] = useState<TableHeader[]>([]);
+  const { isMobile } = useWindowSize();
+
+  useEffect(() => {
+    if (isMobile) {
+      setTableHeaders(mobileSalesHistoryTableHeaders);
+    } else {
+      setTableHeaders(salesHistoryTableHeaders);
+    }
+  }, [isMobile]);
 
   useEffect(() => {
     (async () => {
@@ -52,7 +75,7 @@ const SalesHistoryTable = ({ tableData, error }: Props): JSX.Element => {
     return tableData.map((sale) => {
       return (
         <TableRow key={sale.sale_id}>
-          {salesHistoryTableHeaders.map(({ id }) => {
+          {tableHeaders.map(({ id }) => {
             const content = getCellContent(sale, id, avatars);
             return <SalesHistoryTableCell key={id} id={id} content={content} />;
           })}
@@ -65,7 +88,7 @@ const SalesHistoryTable = ({ tableData, error }: Props): JSX.Element => {
     <StyledTable aria-label="sales-history-table" role="table">
       <thead>
         <TableHeaderRow>
-          {salesHistoryTableHeaders.map((header) => {
+          {tableHeaders.map((header) => {
             return (
               <TableHeaderCell key={header.title}>
                 {header.title}
@@ -80,7 +103,7 @@ const SalesHistoryTable = ({ tableData, error }: Props): JSX.Element => {
           loading={isLoading}
           noData={!tableData.length}
           noDataMessage={'No Recent Sales'}
-          columns={salesHistoryTableHeaders.length}>
+          columns={tableHeaders.length}>
           {getTableContent()}
         </TableContentWrapper>
       </tbody>
