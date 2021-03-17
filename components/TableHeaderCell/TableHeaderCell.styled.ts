@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { breakpoint } from '../../styles/Breakpoints';
 
 export const StyledTableHeaderCell = styled.th`
   font-family: GilroyMedium;
@@ -11,4 +12,8 @@ export const StyledTableHeaderCell = styled.th`
   letter-spacing: 1px;
   color: #7578b5;
   text-align: left;
+
+  ${breakpoint.mobile`
+    padding: 9px 10px;
+  `}
 `;
