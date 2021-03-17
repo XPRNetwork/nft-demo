@@ -77,6 +77,16 @@ export const InputLabel = styled(Description).attrs({ as: 'label' })`
   `}
 `;
 
+export const WithdrawInputLabel = styled.p`
+  display: flex;
+  justify-content: space-between;
+`;
+
+export const AvailableBalance = styled.span`
+  font-weight: 600;
+  color: #8a9ef5;
+`;
+
 export const ErrorMessage = styled(Description).attrs({ as: 'span' })`
   font-size: 12px;
   color: red;
