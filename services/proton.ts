@@ -413,6 +413,15 @@ class ProtonSDK {
       },
     ];
     try {
+      const balanceResult = await proton.getAtomicMarketBalance(buyer);
+      const [balance, _] = balanceResult.split(' ');
+
+      if (parseFloat(balance) === 0) {
+        throw new Error(
+          'Insufficient funds. Open the navigation menu to make a balance deposit and try again.'
+        );
+      }
+
       if (!this.session) {
         throw new Error('Unable to purchase a sale without logging in.');
       }
@@ -427,11 +436,11 @@ class ProtonSDK {
         transactionId: result.processed.id,
       };
     } catch (e) {
+      const message = e.message[0].toUpperCase() + e.message.slice(1);
       return {
         success: false,
         error:
-          e.message ||
-          'An error has occurred while trying to purchase an item.',
+          message || 'An error has occurred while trying to purchase an item.',
       };
     }
   };
