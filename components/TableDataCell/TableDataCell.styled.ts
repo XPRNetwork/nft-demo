@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { breakpoint } from '../../styles/Breakpoints';
 
 export const StyledTableDataCell = styled.td`
   display: table-cell;
@@ -12,4 +13,8 @@ export const StyledTableDataCell = styled.td`
   letter-spacing: normal;
   color: #0e103c;
   text-align: 'left';
+
+  ${breakpoint.mobile`
+    padding: 0px 10px;
+  `}
 `;
