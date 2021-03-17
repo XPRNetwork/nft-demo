@@ -5,7 +5,7 @@ import '../styles/reset.css';
 import '../styles/globals.css';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
-import { AuthProvider } from '../components/Provider';
+import { AuthProvider, ModalProvider } from '../components/Provider';
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   useEffect(() => {
@@ -17,11 +17,13 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   }, []);
 
   return (
-    <AuthProvider>
-      <NavBar />
-      <Component {...pageProps} />
-      <Footer />
-    </AuthProvider>
+    <ModalProvider>
+      <AuthProvider>
+        <NavBar />
+        <Component {...pageProps} />
+        <Footer />
+      </AuthProvider>
+    </ModalProvider>
   );
 }
 
