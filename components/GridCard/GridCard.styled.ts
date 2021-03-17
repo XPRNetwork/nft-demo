@@ -15,19 +15,22 @@ export const Container = styled.article`
   width: 100%;
   cursor: pointer;
 
-  img {
-    transition: 0.3s;
-  }
-
   :hover img {
+    transition: 0.1s;
     transform: scale(1.1);
   }
 `;
 
 export const ImageContainer = styled.div`
   position: relative;
-  border-radius: 10px;
+  border-radius: 18px;
   overflow: hidden;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
 `;
 
 export const Text = styled.span`
