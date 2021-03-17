@@ -22,7 +22,7 @@ env:
   GKE_CLUSTER: proton-taskly-demo    # TODO: update to cluster name
   GKE_ZONE: us-west1-a   # TODO: update to cluster zone
   DEPLOYMENT_NAME: nft-demo # TODO: update to deployment name
-  IMAGE: proton-taskly-demo
+  IMAGE: nft-demo
 
 jobs:
   setup-build-publish-deploy:
