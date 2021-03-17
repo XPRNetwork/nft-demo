@@ -26,9 +26,9 @@ spec:
   tls:
   - secretName: nft-demo-cert
     hosts:
-    - protonmarket.org
+    - nft.uno
   rules:
-  - host: protonmarket.org
+  - host: nft.uno
     http:
       paths:
       - backend:
