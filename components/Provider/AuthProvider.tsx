@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
   }, [prevError]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && !currentUser) {
       const cachedUser = localStorage.getItem('proton-storage-user-auth');
 
       if (cachedUser) {
@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
           actor,
           permission,
           name: '',
-          avatar: '/default-avatar.png',
+          avatar: '',
           isLightKYCVerified: false,
         });
       }
