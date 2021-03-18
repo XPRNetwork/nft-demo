@@ -8,12 +8,12 @@ spec:
   issuerRef:
     name: nft-demo-issuer
     kind: ClusterIssuer
-  commonName: nft.uno
+  commonName: nft.protonchain.com
   dnsNames:
-  - nft.uno
+  - nft.protonchain.com
   acme:
     config:
     - http01:
         ingress: nft-demo-ssl-ingress
       domains:
-      - nft.uno
+      - nft.protonchain.com

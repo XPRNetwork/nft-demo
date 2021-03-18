@@ -26,9 +26,9 @@ spec:
   tls:
   - secretName: nft-demo-cert
     hosts:
-    - nft.uno
+    - nft.protonchain.com
   rules:
-  - host: nft.uno
+  - host: nft.protonchain.com
     http:
       paths:
       - backend:
