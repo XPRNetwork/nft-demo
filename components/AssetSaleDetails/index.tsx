@@ -4,6 +4,7 @@ import { useAuthContext } from '../Provider';
 import ProtonSDK from '../../services/proton';
 import Button from '../Button';
 import { General, Amount } from '../../styles/details.styled';
+import { EMPTY_BALANCE } from '../../utils/constants';
 
 type Props = {
   saleId: string;
@@ -35,7 +36,7 @@ const AssetSaleDetails = ({
   return (
     <section>
       <General>For Sale</General>
-      <Amount>{salePrice ? salePrice : '0 FOOBAR'}</Amount>
+      <Amount>{salePrice ? salePrice : EMPTY_BALANCE}</Amount>
       <Button fullWidth onClick={() => router.push(`/${template_id}`)}>
         View Listing
       </Button>
