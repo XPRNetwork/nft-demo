@@ -4,6 +4,7 @@ import ProtonSDK from '../../services/proton';
 import Button from '../Button';
 import { useAuthContext } from '../Provider';
 import { General, Input } from '../../styles/details.styled';
+import { TOKEN_SYMBOL, TOKEN_PRECISION } from '../../utils/constants';
 
 type Props = {
   asset_id: string;
@@ -17,7 +18,7 @@ const AssetSaleForm = ({ asset_id }: Props): JSX.Element => {
   const updateNumber = (e: ChangeEvent<HTMLInputElement>) => {
     const inputAmount = e.target.value;
     const floatAmount = parseFloat(inputAmount);
-    const formattedAmount = floatAmount.toFixed(6);
+    const formattedAmount = floatAmount.toFixed(TOKEN_PRECISION);
 
     if (floatAmount < 0) {
       setAmount('0');
@@ -38,7 +39,7 @@ const AssetSaleForm = ({ asset_id }: Props): JSX.Element => {
   };
 
   const formatNumber = () => {
-    const numberAmount = parseFloat(amount).toFixed(6);
+    const numberAmount = parseFloat(amount).toFixed(TOKEN_PRECISION);
     setAmount(numberAmount);
   };
 
@@ -46,8 +47,8 @@ const AssetSaleForm = ({ asset_id }: Props): JSX.Element => {
     const res = await ProtonSDK.createSale({
       seller: currentUser ? currentUser.actor : '',
       asset_id,
-      price: `${amount} FOOBAR`,
-      currency: '6,FOOBAR',
+      price: `${amount} ${TOKEN_SYMBOL}`,
+      currency: `${TOKEN_PRECISION},${TOKEN_SYMBOL}`,
     });
 
     if (res.success) {
@@ -57,13 +58,13 @@ const AssetSaleForm = ({ asset_id }: Props): JSX.Element => {
 
   return (
     <section>
-      <General>Sales Price (FOOBAR)</General>
+      <General>Sales Price ({TOKEN_SYMBOL})</General>
       <Input
         required
         type="number"
         min="0"
         max="1000000000"
-        step="0.0001"
+        step={1 / 10 ** TOKEN_PRECISION}
         inputMode="decimal"
         placeholder="Enter Price"
         value={amount}

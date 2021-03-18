@@ -18,6 +18,7 @@ import {
 } from './Modal.styled';
 import ProtonSDK from '../../services/proton';
 import { ReactComponent as CloseIcon } from '../../public/close.svg';
+import { TOKEN_SYMBOL, TOKEN_PRECISION } from '../../utils/constants';
 
 export const WithdrawModal = (): JSX.Element => {
   const {
@@ -37,7 +38,7 @@ export const WithdrawModal = (): JSX.Element => {
     try {
       const res = await ProtonSDK.withdraw({
         actor: currentUser ? currentUser.actor : '',
-        amount: `${amount} FOOBAR`,
+        amount: `${amount} ${TOKEN_SYMBOL}`,
       });
 
       if (!res.success) {
@@ -54,7 +55,7 @@ export const WithdrawModal = (): JSX.Element => {
   const updateNumber = (e: ChangeEvent<HTMLInputElement>) => {
     const inputAmount = e.target.value;
     const floatAmount = parseFloat(inputAmount);
-    const formattedAmount = floatAmount.toFixed(6);
+    const formattedAmount = floatAmount.toFixed(TOKEN_PRECISION);
 
     if (floatAmount < 0) {
       setAmount('0');
@@ -75,7 +76,7 @@ export const WithdrawModal = (): JSX.Element => {
   };
 
   const formatNumber = () => {
-    const numberAmount = parseFloat(amount).toFixed(6);
+    const numberAmount = parseFloat(amount).toFixed(TOKEN_PRECISION);
     setAmount(numberAmount);
   };
 
@@ -108,23 +109,21 @@ export const WithdrawModal = (): JSX.Element => {
             type="number"
             min="0"
             max="1000000000"
-            step="0.0001"
+            step={1 / 10 ** TOKEN_PRECISION}
             inputMode="decimal"
-            placeholder="Enter amount (FOOBAR)"
+            placeholder={`Enter amount (${TOKEN_SYMBOL})`}
             value={amount}
             onBlur={formatNumber}
             onChange={updateNumber}
           />
           {error && <ErrorMessage>{error}</ErrorMessage>}
         </InputLabel>
-        <ButtonContainer>
-          <LinkButton onClick={() => openModal(MODAL_TYPES.DEPOSIT)}>
-            Fund balance
-          </LinkButton>
-          <Button fullWidth filled onClick={withdraw}>
-            Withdraw Funds
-          </Button>
-        </ButtonContainer>
+        <LinkButton onClick={() => openModal(MODAL_TYPES.DEPOSIT)}>
+          Fund balance
+        </LinkButton>
+        <Button fullWidth filled onClick={withdraw}>
+          Withdraw Funds
+        </Button>
       </ModalBox>
     </Background>
   );
