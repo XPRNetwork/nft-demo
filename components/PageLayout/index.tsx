@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import Head from 'next/head';
+import Router from 'next/router';
 import { Main, Container } from './PageLayout.styled';
 import { useModalContext, MODAL_TYPES } from '../Provider';
 import { DepositModal, WithdrawModal } from '../Modal';
@@ -11,6 +12,10 @@ type Props = {
 
 const PageLayout = ({ title, children }: Props): JSX.Element => {
   const { modalType } = useModalContext();
+
+  Router.events.on('routeChangeComplete', () => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  });
 
   const renderModal = () => {
     switch (modalType) {
