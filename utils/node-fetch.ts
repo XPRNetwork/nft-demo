@@ -15,7 +15,7 @@ export interface QueryParams {
   seller?: string;
   asset_id?: string;
   template_id?: string;
-  limit?: number;
+  limit?: string;
   sort?: string;
   order?: string;
   page?: number;
