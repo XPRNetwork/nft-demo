@@ -263,7 +263,7 @@ class ProtonSDK {
    * @param {string}   seller     Chain account of the asset's current owner.
    * @param {string}   asset_id   ID of the asset to sell.
    * @param {string}   price      Listing price of the sale (i.e. '1.000000').
-   * @param {string}   currency   Token precision (number of decimal points) and token symbol that the sale will be paid in (i.e. '4,FOOBAR').
+   * @param {string}   currency   Token precision (number of decimal points) and token symbol that the sale will be paid in (i.e. '6,FOOBAR').
    * @return {SaleResponse}       Returns an object indicating the success of the transaction and transaction ID.
    */
 
