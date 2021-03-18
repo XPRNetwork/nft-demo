@@ -120,14 +120,22 @@ export const getSaleAssetsByTemplateId = async (
         saleId: sale_id,
         templateMint: template_mint,
         owner,
-        salePrice: `${addPrecisionDecimal(
-          listing_price,
-          token_precision
-        )} ${listing_symbol}`,
+        salePrice: `${addPrecisionDecimal(listing_price, token_precision)}`,
+        saleToken: listing_symbol,
       }));
       saleAssets = saleAssets.concat(formattedAssets);
     }
-    return saleAssets;
+    const sortedSaleAssets = saleAssets.sort((a, b) => {
+      if (a.salePrice < b.salePrice) {
+        return 1;
+      }
+      if (a.salePrice > b.salePrice) {
+        return -1;
+      }
+      return 0;
+    });
+
+    return sortedSaleAssets;
   } catch (e) {
     throw new Error(e);
   }
