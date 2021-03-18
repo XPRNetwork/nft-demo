@@ -98,7 +98,7 @@ const BuyAssetForm = ({
                 key={sale.saleId}
                 value={sale.saleId}
                 selected={sale.saleId === saleId}>
-                #{sale.templateMint} - {sale.salePrice}
+                #{sale.templateMint} - {sale.salePrice} {sale.saleToken}
               </option>
             );
           })}

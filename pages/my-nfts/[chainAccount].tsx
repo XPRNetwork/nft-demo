@@ -48,15 +48,6 @@ const Collection = ({ assets, error, chainAccount }: Props): JSX.Element => {
   const [prefetchPageNumber, setPrefetchPageNumber] = useState<number>(2);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string>(error);
-  const isTest = [
-    'testuser1111',
-    'monsters',
-    'andrewp',
-    'cindyc',
-    'yerr',
-    'joanna',
-    'joesobo',
-  ].includes(chainAccount); // TODO: Remove when Proton NFTs are live
 
   const prefetchNextPage = async () => {
     const prefetchedResult = await getMyAssets({

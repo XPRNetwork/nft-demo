@@ -41,8 +41,8 @@ export const addPrecisionDecimal = (
   number: string,
   precision: number
 ): string => {
-  if (number.includes('.')) return number;
-  if (number.length > precision) {
+  if (number && number.includes('.')) return number;
+  if (number && number.length > precision) {
     const insertDecimalAtIndex = number.length - precision;
     return (
       number.slice(0, insertDecimalAtIndex) +
