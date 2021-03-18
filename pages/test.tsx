@@ -42,7 +42,7 @@ const Test = (): JSX.Element => {
   const deposit = async () => {
     const res = await ProtonSDK.deposit({
       actor: currentUser ? currentUser.actor : '',
-      amount: '1.0000 XPR',
+      amount: '1.0000 FOOBAR',
     });
     console.log('deposit: ', res);
   };
@@ -50,7 +50,7 @@ const Test = (): JSX.Element => {
   const withdraw = async () => {
     const res = await ProtonSDK.withdraw({
       actor: currentUser ? currentUser.actor : '',
-      amount: '1.0000 XPR',
+      amount: '1.0000 FOOBAR',
     });
     console.log('withdraw: ', res);
   };
@@ -71,12 +71,12 @@ const Test = (): JSX.Element => {
         step="any"
         type="text"
         value={price}
-        placeholder="PRICE (i.e. '1.0000 XPR')"
+        placeholder="PRICE (i.e. '1.0000 FOOBAR')"
         onChange={(e) => setPrice(e.target.value)}
       />
       <input
         value={currency}
-        placeholder="CURRENCY (i.e. '4,XPR')"
+        placeholder="CURRENCY (i.e. '4,FOOBAR')"
         onChange={(e) => setCurrency(e.target.value)}
       />
       <button onClick={createSale}>CREATE SALE</button>
@@ -103,7 +103,7 @@ const Test = (): JSX.Element => {
       <button onClick={purchaseSale}>PURCHASE SALE</button>
       <br />
 
-      <button onClick={deposit}>Deposit 1 XPR</button>
+      <button onClick={deposit}>Deposit 1 FOOBAR</button>
       <br />
       <p>
         Visit this page to see account balances:
@@ -114,7 +114,7 @@ const Test = (): JSX.Element => {
           Atomic Market Balances
         </a>
       </p>
-      <button onClick={withdraw}>Withdraw 1 XPR</button>
+      <button onClick={withdraw}>Withdraw 1 FOOBAR</button>
     </PageLayout>
   );
 };

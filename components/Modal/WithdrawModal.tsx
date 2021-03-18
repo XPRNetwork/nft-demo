@@ -37,7 +37,7 @@ export const WithdrawModal = (): JSX.Element => {
     try {
       const res = await ProtonSDK.withdraw({
         actor: currentUser ? currentUser.actor : '',
-        amount: `${amount} XPR`,
+        amount: `${amount} FOOBAR`,
       });
 
       if (!res.success) {
@@ -110,7 +110,7 @@ export const WithdrawModal = (): JSX.Element => {
             max="1000000000"
             step="0.0001"
             inputMode="decimal"
-            placeholder="Enter amount (XPR)"
+            placeholder="Enter amount (FOOBAR)"
             value={amount}
             onBlur={formatNumber}
             onChange={updateNumber}

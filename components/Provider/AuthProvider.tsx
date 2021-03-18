@@ -18,7 +18,7 @@ interface Props {
 
 const AuthContext = createContext<AuthContext>({
   currentUser: undefined,
-  currentUserBalance: '0.0000 XPR',
+  currentUserBalance: '0.0000 FOOBAR',
   authError: '',
   login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
@@ -33,7 +33,7 @@ export const useAuthContext = (): AuthContext => {
 export const AuthProvider = ({ children }: Props): JSX.Element => {
   const [currentUser, setCurrentUser] = useState<User>(undefined);
   const [currentUserBalance, setCurrentUserBalance] = useState<string>(
-    '0.0000 XPR'
+    '0.0000 FOOBAR'
   );
   const [authError, setAuthError] = useState<string>('');
   const prevError = usePrevious(authError);
