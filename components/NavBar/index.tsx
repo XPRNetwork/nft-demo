@@ -82,7 +82,7 @@ const UserAvatar = ({ isOpen, avatar, toggleNavDropdown }) => {
 };
 
 const Dropdown = ({ isOpen, closeNavDropdown }: DropdownProps): JSX.Element => {
-  const { currentUser, logout } = useAuthContext();
+  const { currentUser, currentUserBalance, logout } = useAuthContext();
   const { openModal } = useModalContext();
 
   const routes = [
@@ -115,7 +115,7 @@ const Dropdown = ({ isOpen, closeNavDropdown }: DropdownProps): JSX.Element => {
     <DropdownList isOpen={isOpen}>
       <Name>{currentUser ? currentUser.name : ''}</Name>
       <Subtitle>Balance</Subtitle>
-      <Balance>{currentUser ? currentUser.balance : '0.0000 XPR'}</Balance>
+      <Balance>{currentUserBalance}</Balance>
       {routes.map(({ name, path, onClick }) =>
         path ? (
           <Link href={path} passHref key={name}>

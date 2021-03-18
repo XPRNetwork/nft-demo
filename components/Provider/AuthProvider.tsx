@@ -1,12 +1,15 @@
 import { createContext, useState, useContext, useEffect, useMemo } from 'react';
 import ProtonSDK, { User } from '../../services/proton';
+import proton from '../../services/proton-rpc';
 import { usePrevious } from '../../hooks';
 
 interface AuthContext {
   currentUser: User;
+  currentUserBalance: string;
   authError: string;
   login: () => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
+  updateCurrentUserBalance: (chainAccount: string) => Promise<void>;
 }
 
 interface Props {
@@ -15,9 +18,11 @@ interface Props {
 
 const AuthContext = createContext<AuthContext>({
   currentUser: undefined,
+  currentUserBalance: '0.0000 XPR',
   authError: '',
   login: () => Promise.resolve(),
-  logout: () => {},
+  logout: () => Promise.resolve(),
+  updateCurrentUserBalance: () => Promise.resolve(),
 });
 
 export const useAuthContext = (): AuthContext => {
@@ -27,7 +32,10 @@ export const useAuthContext = (): AuthContext => {
 
 export const AuthProvider = ({ children }: Props): JSX.Element => {
   const [currentUser, setCurrentUser] = useState<User>(undefined);
-  const [authError, setAuthError] = useState('');
+  const [currentUserBalance, setCurrentUserBalance] = useState<string>(
+    '0.0000 XPR'
+  );
+  const [authError, setAuthError] = useState<string>('');
   const prevError = usePrevious(authError);
 
   useEffect(() => {
@@ -47,7 +55,6 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
           permission,
           name: '',
           avatar: '/default-avatar.png',
-          balance: '0.0000 XPR',
           isLightKYCVerified: false,
         });
       }
@@ -63,12 +70,18 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
           return;
         }
 
+        await updateCurrentUserBalance(user.actor);
         setCurrentUser(user);
       };
 
       restore();
     }
   }, []);
+
+  const updateCurrentUserBalance = async (chainAccount: string) => {
+    const balance = await proton.getAtomicMarketBalance(chainAccount);
+    setCurrentUserBalance(balance);
+  };
 
   const login = async (): Promise<void> => {
     const { user, error } = await ProtonSDK.login();
@@ -91,11 +104,13 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
   const value = useMemo<AuthContext>(
     () => ({
       currentUser,
+      currentUserBalance,
       authError,
       login,
       logout,
+      updateCurrentUserBalance,
     }),
-    [currentUser, authError]
+    [currentUser, authError, currentUserBalance]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
