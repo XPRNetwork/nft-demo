@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { MaxWidth } from '../../styles/MaxWidth.styled';
 import { breakpoint } from '../../styles/Breakpoints';
+import { FadeInImageContainer } from '../../styles/FadeInImageContainer.styled';
 
 type DropdownProps = {
   isOpen: boolean;
@@ -22,7 +23,7 @@ export const Nav = styled(MaxWidth).attrs({ as: 'nav' })`
   position: relative;
 `;
 
-export const AvatarContainer = styled.div`
+export const AvatarContainer = styled(FadeInImageContainer)`
   margin: 16px 0;
   width: 40px;
   height: 40px;

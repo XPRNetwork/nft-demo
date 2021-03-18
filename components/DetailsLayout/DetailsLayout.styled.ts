@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { breakpoint } from '../../styles/Breakpoints';
+import { FadeInImageContainer } from '../../styles/FadeInImageContainer.styled';
 
 type ArrowProps = {
   isActive: boolean;
@@ -39,7 +40,7 @@ export const Column = styled.div`
   `};
 `;
 
-export const ImageContainer = styled.div`
+export const ImageContainer = styled(FadeInImageContainer)`
   width: 100%;
 
   ${breakpoint.tablet`

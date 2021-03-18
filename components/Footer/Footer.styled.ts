@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { MaxWidth } from '../../styles/MaxWidth.styled';
 import { breakpoint } from '../../styles/Breakpoints';
+import { FadeInImageContainer } from '../../styles/FadeInImageContainer.styled';
 
 export const FooterBackground = styled.footer`
   width: 100%;
@@ -19,7 +20,7 @@ export const StyledFooter = styled(MaxWidth).attrs({ as: 'section' })`
   `}
 `;
 
-export const ImageContainer = styled.section`
+export const ImageContainer = styled(FadeInImageContainer)`
   margin: 24px 0;
 `;
 
