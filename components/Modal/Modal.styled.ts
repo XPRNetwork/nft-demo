@@ -59,22 +59,20 @@ export const Description = styled.p`
   font-size: 14px;
   line-height: 24px;
   color: #7578b5;
-  margin-bottom: 32px;
-
-  ${breakpoint.tablet`
-    margin-bottom: 24px;
-  `}
+  margin-bottom: 24px;
 `;
 
 export const InputLabel = styled(Description).attrs({ as: 'label' })`
   font-size: 12px;
   display: flex;
   flex-direction: column;
-  margin-bottom: 3px;
+  margin: 0;
+`;
 
-  ${breakpoint.tablet`
-    margin-bottom: 0;
-  `}
+export const LinkDescription = styled(Description)`
+  margin-bottom: 4px;
+  text-align: center;
+  font-size: 12px;
 `;
 
 export const WithdrawInputLabel = styled.p`
@@ -101,7 +99,7 @@ export const Input = styled.input`
   border-radius: 4px;
   padding: 8px;
   border: solid 1px #e8ecfd;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 
   ::-webkit-inner-spin-button,
   ::-webkit-outer-spin-button {
@@ -114,40 +112,26 @@ export const Input = styled.input`
   ::placeholder {
     color: #7578b5;
   }
-
-  ${breakpoint.tablet`
-    margin-bottom: 12px;
-  `}
 `;
 
-export const ButtonContainer = styled.section`
-  display: flex;
-  justify-content: space-between;
-
-  ${breakpoint.tablet`
-    flex-direction: column-reverse;
-  `}
-`;
-
-export const LinkButton = styled.button`
+export const StyledLink = styled.a`
   font-family: GilroySemiBold;
   font-size: 14px;
   line-height: 24px;
   color: #8a9ef5;
   width: 100%;
-  padding: 0;
-  margin-right: 75px;
-  border: none;
-  background: none;
   text-decoration: underline;
   cursor: pointer;
   transition: 0.2s;
+  text-align: left;
 
   :hover {
     color: #4d5dc1;
   }
+`;
 
-  ${breakpoint.tablet`
-    margin: 4px 0 12px;
-  `}
+export const LinkButton = styled(StyledLink).attrs({ as: 'button' })`
+  padding: 0;
+  border: none;
+  background: none;
 `;

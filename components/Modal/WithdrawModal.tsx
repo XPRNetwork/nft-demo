@@ -118,14 +118,12 @@ export const WithdrawModal = (): JSX.Element => {
           />
           {error && <ErrorMessage>{error}</ErrorMessage>}
         </InputLabel>
-        <ButtonContainer>
-          <LinkButton onClick={() => openModal(MODAL_TYPES.DEPOSIT)}>
-            Fund balance
-          </LinkButton>
-          <Button fullWidth filled onClick={withdraw}>
-            Withdraw Funds
-          </Button>
-        </ButtonContainer>
+        <LinkButton onClick={() => openModal(MODAL_TYPES.DEPOSIT)}>
+          Fund balance
+        </LinkButton>
+        <Button fullWidth filled onClick={withdraw}>
+          Withdraw Funds
+        </Button>
       </ModalBox>
     </Background>
   );
