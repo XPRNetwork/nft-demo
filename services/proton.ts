@@ -165,7 +165,7 @@ class ProtonSDK {
   }: DepositWithdrawOptions): Promise<DepositWithdrawResponse> => {
     const action = [
       {
-        account: 'eosio.token',
+        account: 'xtokens',
         name: 'transfer',
         authorization: [
           {
