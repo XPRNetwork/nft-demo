@@ -82,6 +82,8 @@ export const getSalesHistoryForAsset = async (
     const latestSales = await salesApiService.getAll({
       state: '3', // Valid sale, Sale was bought
       asset_id: assetId,
+      sort: 'updated',
+      order: 'desc',
     });
     if (!latestSales.success) throw new Error(latestSales.message);
     return latestSales.data;
