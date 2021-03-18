@@ -134,6 +134,7 @@ const Dropdown = ({ isOpen, closeNavDropdown }: DropdownProps): JSX.Element => {
 const NavBar = (): JSX.Element => {
   const { currentUser, login } = useAuthContext();
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoginDisabled, setIsLoginDisabled] = useState<boolean>(false);
   useScrollLock(isOpen);
 
   const toggleNavDropdown = () => setIsOpen(!isOpen);
@@ -142,9 +143,11 @@ const NavBar = (): JSX.Element => {
     if (isOpen) setIsOpen(false);
   };
 
-  const connectWallet = () => {
+  const connectWallet = async () => {
+    setIsLoginDisabled(true);
+    await login();
     closeNavDropdown();
-    login();
+    setIsLoginDisabled(false);
   };
 
   return (
@@ -158,7 +161,11 @@ const NavBar = (): JSX.Element => {
             toggleNavDropdown={toggleNavDropdown}
           />
         ) : (
-          <Button rounded filled onClick={connectWallet}>
+          <Button
+            rounded
+            filled
+            disabled={isLoginDisabled}
+            onClick={connectWallet}>
             Connect Wallet
           </Button>
         )}

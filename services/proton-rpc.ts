@@ -1,4 +1,5 @@
 import { JsonRpc } from '@proton/js';
+import { EMPTY_BALANCE } from '../utils/constants';
 
 class ProtonJs {
   rpc: JsonRpc;
@@ -77,7 +78,7 @@ class ProtonJs {
         })
         .catch((err) => {
           console.warn(err);
-          resolve('0.0000 FOOBAR');
+          resolve(EMPTY_BALANCE);
         });
     });
   };
