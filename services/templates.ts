@@ -125,16 +125,18 @@ const parseTemplatesForHighLowPrice = async (
   const templateIdsByPrice = {};
 
   await asyncForEach(allTemplates, async (template: Template) => {
-    const saleForTemplateAsc = await salesApiService.getAll({
+    const saleForTemplateAsc = await templateSalesApiService.getAll({
       collection_name: template.collection.collection_name,
       template_id: template.template_id,
+      symbol: 'FOOBAR',
       sort: 'price',
       order: 'asc',
       state: '1', // assets listed for sale
     });
-    const saleForTemplateDesc = await salesApiService.getAll({
+    const saleForTemplateDesc = await templateSalesApiService.getAll({
       collection_name: template.collection.collection_name,
       template_id: template.template_id,
+      symbol: 'FOOBAR',
       sort: 'price',
       order: 'desc',
       state: '1', // assets listed for sale
@@ -142,6 +144,7 @@ const parseTemplatesForHighLowPrice = async (
 
     const highestPriceSale = saleForTemplateDesc.data[0];
     const lowestPriceSale = saleForTemplateAsc.data[0];
+
     templateIdsByPrice[template.template_id] = {
       highestPrice: highestPriceSale
         ? `${addPrecisionDecimal(
@@ -191,7 +194,7 @@ const parseTemplatesForLowPrice = async (
       symbol: 'FOOBAR',
       sort: 'price',
       order: 'asc',
-      limit: 1,
+      limit: '1',
     });
 
     let lowestPrice = '';
