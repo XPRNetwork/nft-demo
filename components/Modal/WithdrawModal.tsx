@@ -11,7 +11,6 @@ import {
   InputLabel,
   Input,
   ErrorMessage,
-  ButtonContainer,
   LinkButton,
   WithdrawInputLabel,
   AvailableBalance,
