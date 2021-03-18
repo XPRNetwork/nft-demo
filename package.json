@@ -18,6 +18,7 @@
     "@types/styled-components": "^5.1.7",
     "dayjs": "^1.10.4",
     "next": "10.0.4",
+    "nprogress": "^0.2.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "styled-components": "^5.2.1"
