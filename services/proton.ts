@@ -9,7 +9,6 @@ export interface User {
   name: string;
   isLightKYCVerified: boolean;
   permission: string;
-  balance: string;
 }
 
 interface CreateSaleOptions {
@@ -99,8 +98,6 @@ class ProtonSDK {
         ? `data:image/jpeg;base64,${avatar}`
         : '';
 
-      const balance = await proton.getAtomicMarketBalance(auth.actor);
-
       return {
         user: {
           actor: auth.actor,
@@ -108,7 +105,6 @@ class ProtonSDK {
           isLightKYCVerified,
           name,
           permission: auth.permission,
-          balance,
         },
         error: '',
       };
@@ -137,8 +133,6 @@ class ProtonSDK {
         ? `data:image/jpeg;base64,${avatar}`
         : '';
 
-      const balance = await proton.getAtomicMarketBalance(auth.actor);
-
       return {
         user: {
           actor: auth.actor,
@@ -146,7 +140,6 @@ class ProtonSDK {
           isLightKYCVerified,
           name,
           permission: auth.permission,
-          balance,
         },
         error: '',
       };
