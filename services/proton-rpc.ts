@@ -77,7 +77,7 @@ class ProtonJs {
         })
         .catch((err) => {
           console.warn(err);
-          resolve('0.0000 XPR');
+          resolve('0.0000 FOOBAR');
         });
     });
   };
