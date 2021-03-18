@@ -38,7 +38,7 @@ const AssetSaleForm = ({ asset_id }: Props): JSX.Element => {
   };
 
   const formatNumber = () => {
-    const numberAmount = parseFloat(amount).toFixed(4);
+    const numberAmount = parseFloat(amount).toFixed(6);
     setAmount(numberAmount);
   };
 
@@ -46,8 +46,8 @@ const AssetSaleForm = ({ asset_id }: Props): JSX.Element => {
     const res = await ProtonSDK.createSale({
       seller: currentUser ? currentUser.actor : '',
       asset_id,
-      price: `${amount} XPR`,
-      currency: '4,XPR',
+      price: `${amount} FOOBAR`,
+      currency: '6,FOOBAR',
     });
 
     if (res.success) {
@@ -57,7 +57,7 @@ const AssetSaleForm = ({ asset_id }: Props): JSX.Element => {
 
   return (
     <section>
-      <General>Sales Price (XPR)</General>
+      <General>Sales Price (FOOBAR)</General>
       <Input
         required
         type="number"

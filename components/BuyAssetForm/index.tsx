@@ -38,8 +38,8 @@ const BuyAssetForm = ({
       const balanceError =
         isBalanceEmpty || isBalanceInsufficient
           ? `Insufficient funds: this NFT is listed for ${lowestAmount.toFixed(
-              4
-            )} XPR and your account balance is ${currentUserBalance}. Please deposit more funds to continue this transaction.`
+              6
+            )} FOOBAR and your account balance is ${currentUserBalance}. Please deposit more funds to continue this transaction.`
           : '';
       setPurchasingError(balanceError);
     }

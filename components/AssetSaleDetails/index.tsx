@@ -35,7 +35,7 @@ const AssetSaleDetails = ({
   return (
     <section>
       <General>For Sale</General>
-      <Amount>{salePrice ? salePrice : '0 XPR'}</Amount>
+      <Amount>{salePrice ? salePrice : '0 FOOBAR'}</Amount>
       <Button fullWidth onClick={() => router.push(`/${template_id}`)}>
         View Listing
       </Button>
