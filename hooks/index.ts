@@ -2,7 +2,8 @@ import { useEffect, useState, useRef } from 'react';
 
 export const useScrollLock = (isActive: boolean): void => {
   useEffect(() => {
-    if (isActive) {
+    const isWindowsOS = navigator.platform.toLowerCase().includes('win');
+    if (isActive && !isWindowsOS) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'scroll';
