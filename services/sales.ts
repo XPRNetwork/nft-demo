@@ -58,6 +58,8 @@ export const getSalesHistoryForTemplate = async (
     const latestSales = await salesApiService.getAll({
       state: '3', // Valid sale, Sale was bought
       template_id: templateId,
+      sort: 'updated',
+      order: 'desc',
     });
     if (!latestSales.success) throw new Error(latestSales.message);
     return latestSales.data;
