@@ -128,10 +128,10 @@ const getCellContent = (sale, id, avatars) => {
       return price;
     }
     case 'serial': {
-      const { assets } = sale;
+      const { assets, asset_serial } = sale;
       const asset = assets[0];
       const serial = asset.template_mint;
-      return serial;
+      return asset_serial || serial;
     }
     case 'date': {
       const timeInUnix = sale.updated_at_time;
