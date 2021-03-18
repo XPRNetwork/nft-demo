@@ -58,6 +58,7 @@ jobs:
           --build-arg NFT_ENDPOINT="${{ secrets.NFT_ENDPOINT }}" \
           --build-arg NEXT_PUBLIC_CHAIN_ID="${{ secrets.NEXT_PUBLIC_CHAIN_ID }}" \
           --build-arg NEXT_PUBLIC_CHAIN_ENDPOINT="${{ secrets.NEXT_PUBLIC_CHAIN_ENDPOINT }}" \
+          --build-arg NEXT_PUBLIC_BLOCK_EXPLORER="https://proton.bloks.io/block/"
           .
 
     # Push the Docker image to Google Container Registry
