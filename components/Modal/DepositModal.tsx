@@ -13,13 +13,21 @@ import {
   ErrorMessage,
   ButtonContainer,
   LinkButton,
+  LinkDescription,
+  StyledLink,
+  WithdrawInputLabel,
+  AvailableBalance,
 } from './Modal.styled';
 import ProtonSDK from '../../services/proton';
 import { ReactComponent as CloseIcon } from '../../public/close.svg';
 import { TOKEN_SYMBOL, TOKEN_PRECISION } from '../../utils/constants';
 
 export const DepositModal = (): JSX.Element => {
-  const { currentUser, updateCurrentUserBalance } = useAuthContext();
+  const {
+    currentUser,
+    currentUserBalance,
+    updateCurrentUserBalance,
+  } = useAuthContext();
   const { openModal, closeModal } = useModalContext();
   const [amount, setAmount] = useState<string>('');
   const [error, setError] = useState<string>('');
@@ -94,7 +102,10 @@ export const DepositModal = (): JSX.Element => {
           withdraw at any time.
         </Description>
         <InputLabel>
-          Add funds to your balance
+          <WithdrawInputLabel>
+            <span>Add funds to your balance</span>
+            <AvailableBalance>{currentUserBalance}</AvailableBalance>
+          </WithdrawInputLabel>
           <Input
             required
             type="number"
@@ -109,14 +120,22 @@ export const DepositModal = (): JSX.Element => {
           />
           {error && <ErrorMessage>{error}</ErrorMessage>}
         </InputLabel>
-        <ButtonContainer>
-          <LinkButton onClick={() => openModal(MODAL_TYPES.WITHDRAW)}>
-            Withdraw balance
-          </LinkButton>
-          <Button fullWidth filled onClick={deposit}>
-            Add Funds
-          </Button>
-        </ButtonContainer>
+        <LinkButton onClick={() => openModal(MODAL_TYPES.WITHDRAW)}>
+          Withdraw balance
+        </LinkButton>
+        <Button fullWidth filled onClick={deposit}>
+          Add Funds
+        </Button>
+        <LinkDescription>
+          Need Foobar? Click{' '}
+          <StyledLink
+            href="https://foobar.protonchain.com/"
+            target="_blank"
+            rel="noreferrer">
+            here
+          </StyledLink>
+          .
+        </LinkDescription>
       </ModalBox>
     </Background>
   );
