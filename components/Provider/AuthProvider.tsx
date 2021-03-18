@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
           actor,
           permission,
           name: '',
-          avatar: '',
+          avatar: '/default-avatar.png',
           isLightKYCVerified: false,
         });
       }
@@ -94,6 +94,7 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
       return;
     }
 
+    await updateCurrentUserBalance(user.actor);
     setCurrentUser(user);
   };
 
