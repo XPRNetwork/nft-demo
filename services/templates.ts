@@ -1,6 +1,7 @@
 import NodeFetch from '../utils/node-fetch';
-import { salesApiService, templateSalesApiService } from './sales';
+import { templateSalesApiService } from './sales';
 import { asyncForEach, addPrecisionDecimal } from '../utils/';
+import { TOKEN_SYMBOL } from '../utils/constants';
 
 export type SchemaFormat = {
   name: string;
@@ -128,7 +129,7 @@ const parseTemplatesForHighLowPrice = async (
     const saleForTemplateAsc = await templateSalesApiService.getAll({
       collection_name: template.collection.collection_name,
       template_id: template.template_id,
-      symbol: 'FOOBAR',
+      symbol: TOKEN_SYMBOL,
       sort: 'price',
       order: 'asc',
       state: '1', // assets listed for sale
@@ -136,7 +137,7 @@ const parseTemplatesForHighLowPrice = async (
     const saleForTemplateDesc = await templateSalesApiService.getAll({
       collection_name: template.collection.collection_name,
       template_id: template.template_id,
-      symbol: 'FOOBAR',
+      symbol: TOKEN_SYMBOL,
       sort: 'price',
       order: 'desc',
       state: '1', // assets listed for sale
@@ -191,7 +192,7 @@ const parseTemplatesForLowPrice = async (
     const res = await templateSalesApiService.getAll({
       collection_name: template.collection.collection_name,
       template_id: template.template_id,
-      symbol: 'FOOBAR',
+      symbol: TOKEN_SYMBOL,
       sort: 'price',
       order: 'asc',
       limit: '1',

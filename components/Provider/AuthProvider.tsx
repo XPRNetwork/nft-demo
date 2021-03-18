@@ -2,6 +2,7 @@ import { createContext, useState, useContext, useEffect, useMemo } from 'react';
 import ProtonSDK, { User } from '../../services/proton';
 import proton from '../../services/proton-rpc';
 import { usePrevious } from '../../hooks';
+import { EMPTY_BALANCE } from '../../utils/constants';
 
 interface AuthContext {
   currentUser: User;
@@ -18,7 +19,7 @@ interface Props {
 
 const AuthContext = createContext<AuthContext>({
   currentUser: undefined,
-  currentUserBalance: '0.0000 FOOBAR',
+  currentUserBalance: EMPTY_BALANCE,
   authError: '',
   login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
@@ -33,7 +34,7 @@ export const useAuthContext = (): AuthContext => {
 export const AuthProvider = ({ children }: Props): JSX.Element => {
   const [currentUser, setCurrentUser] = useState<User>(undefined);
   const [currentUserBalance, setCurrentUserBalance] = useState<string>(
-    '0.0000 FOOBAR'
+    EMPTY_BALANCE
   );
   const [authError, setAuthError] = useState<string>('');
   const prevError = usePrevious(authError);
