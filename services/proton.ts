@@ -96,7 +96,7 @@ class ProtonSDK {
       const { avatar, isLightKYCVerified, name } = accountData[0];
       const chainAccountAvatar = avatar
         ? `data:image/jpeg;base64,${avatar}`
-        : '';
+        : '/default-avatar.png';
 
       return {
         user: {
@@ -131,7 +131,7 @@ class ProtonSDK {
       const { avatar, isLightKYCVerified, name } = accountData[0];
       const chainAccountAvatar = avatar
         ? `data:image/jpeg;base64,${avatar}`
-        : '';
+        : '/default-avatar.png';
 
       return {
         user: {
