@@ -32,7 +32,9 @@ const SalesHistoryTableCell = ({ id, content }: Props): JSX.Element => {
     case 'tx': {
       return (
         <ImageDataCell align="left">
-          <Link href={`https://proton-test.bloks.io/block/${content}`} passHref>
+          <Link
+            href={`${process.env.NEXT_PUBLIC_BLOCK_EXPLORER}${content}`}
+            passHref>
             <a target="_blank" rel="noreferrer">
               <Image
                 layout="fixed"
