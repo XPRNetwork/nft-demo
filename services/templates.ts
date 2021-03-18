@@ -187,6 +187,7 @@ const parseTemplatesForLowPrice = async (
   await asyncForEach(allTemplates, async (template: Template) => {
     const res = await templateSalesApiService.getAll({
       collection_name: template.collection.collection_name,
+      template_id: template.template_id,
       symbol: 'FOOBAR',
       sort: 'price',
       order: 'asc',
@@ -194,13 +195,12 @@ const parseTemplatesForLowPrice = async (
     });
 
     let lowestPrice = '';
-    const {
-      listing_price,
-      listing_symbol,
-      price: { token_precision },
-    } = res.data[0];
-
-    if (listing_price) {
+    if (res.data.length) {
+      const {
+        listing_price,
+        listing_symbol,
+        price: { token_precision },
+      } = res.data[0];
       lowestPrice = `${addPrecisionDecimal(
         listing_price,
         token_precision
