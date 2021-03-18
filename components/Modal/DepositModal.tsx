@@ -1,4 +1,4 @@
-import { useState, useEffect, MouseEvent } from 'react';
+import { useState, useEffect, MouseEvent, ChangeEvent } from 'react';
 import { useAuthContext, useModalContext, MODAL_TYPES } from '../Provider';
 import Button from '../Button';
 import {
@@ -18,7 +18,7 @@ import ProtonSDK from '../../services/proton';
 import { ReactComponent as CloseIcon } from '../../public/close.svg';
 
 export const DepositModal = (): JSX.Element => {
-  const { currentUser } = useAuthContext();
+  const { currentUser, updateCurrentUserBalance } = useAuthContext();
   const { openModal, closeModal } = useModalContext();
   const [amount, setAmount] = useState<string>('');
   const [error, setError] = useState<string>('');
@@ -39,20 +39,33 @@ export const DepositModal = (): JSX.Element => {
       }
 
       closeModal();
+      await updateCurrentUserBalance(currentUser.actor);
     } catch (err) {
       setError(err.message);
     }
   };
 
-  const updateNumber = (e) => {
+  const updateNumber = (e: ChangeEvent<HTMLInputElement>) => {
     const inputAmount = e.target.value;
-    const formattedAmount = parseFloat(inputAmount).toFixed(4);
+    const floatAmount = parseFloat(inputAmount);
+    const formattedAmount = floatAmount.toFixed(4);
+
+    if (floatAmount < 0) {
+      setAmount('0');
+      return;
+    }
+
+    if (floatAmount > 1000000000) {
+      setAmount('1000000000');
+      return;
+    }
 
     if (inputAmount.length > formattedAmount.length) {
       setAmount(formattedAmount);
-    } else {
-      setAmount(inputAmount);
+      return;
     }
+
+    setAmount(inputAmount);
   };
 
   const formatNumber = () => {
@@ -83,8 +96,9 @@ export const DepositModal = (): JSX.Element => {
           Add funds to your balance
           <Input
             required
-            min="0"
             type="number"
+            min="0"
+            max="1000000000"
             step="0.0001"
             inputMode="decimal"
             placeholder="Enter amount (XPR)"
