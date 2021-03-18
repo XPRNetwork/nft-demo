@@ -39,6 +39,7 @@ export type Sale = {
   created_at_block: string;
   created_at_time: string;
   state: number;
+  asset_serial: string;
 };
 
 export const salesApiService = new NodeFetch<Sale>('/atomicmarket/v1/sales');
@@ -57,6 +58,28 @@ export const getSalesHistoryForTemplate = async (
     const latestSales = await salesApiService.getAll({
       state: '3', // Valid sale, Sale was bought
       template_id: templateId,
+    });
+    if (!latestSales.success) throw new Error(latestSales.message);
+    return latestSales.data;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * Get the fulfilled sales for a specific asset (sales that were successful)
+ * Mostly used in viewing sales history of a specific asset
+ * @param  {string} assetId   The asset id of the history you want to look up
+ * @return {Sales[]}          Returns an array of Sales for that specific template id
+ */
+
+export const getSalesHistoryForAsset = async (
+  assetId: string
+): Promise<Sale[]> => {
+  try {
+    const latestSales = await salesApiService.getAll({
+      state: '3', // Valid sale, Sale was bought
+      asset_id: assetId,
     });
     if (!latestSales.success) throw new Error(latestSales.message);
     return latestSales.data;
