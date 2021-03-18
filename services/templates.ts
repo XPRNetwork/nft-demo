@@ -1,5 +1,5 @@
 import NodeFetch from '../utils/node-fetch';
-import { salesApiService } from './sales';
+import { salesApiService, templateSalesApiService } from './sales';
 import { asyncForEach, addPrecisionDecimal } from '../utils/';
 
 export type SchemaFormat = {
@@ -102,7 +102,7 @@ export const getTemplatesByCollection = async (
     if (!allTemplatesResults.success)
       throw new Error(allTemplatesResults.message as string);
 
-    const allTemplateResultsWithLowestPrice = await parseTemplatesForHighLowPrice(
+    const allTemplateResultsWithLowestPrice = await parseTemplatesForLowPrice(
       allTemplatesResults.data
     );
 
@@ -118,6 +118,7 @@ export const getTemplatesByCollection = async (
  * @param  {Template[]} allTemplates   An array of templates you want to look up the highest/lowest price for
  * @return {Template[]}                Returns array of templates with an additional two flags: 'highestPrice' and 'lowestPrice'
  */
+
 const parseTemplatesForHighLowPrice = async (
   allTemplates: Template[]
 ): Promise<Template[]> => {
@@ -165,6 +166,55 @@ const parseTemplatesForHighLowPrice = async (
       ...template,
       lowestPrice,
       highestPrice,
+    };
+  });
+
+  return allTemplateResultsWithLowestPrice;
+};
+
+/**
+ * Gets the lowest price of assets for sale in a list of templates
+ * Mostly used to display the lowest price of any of the templates with assets for sale in the collection
+ * @param  {Template[]} allTemplates   An array of templates you want to look up the lowest price for
+ * @return {Template[]}                Returns array of templates with an additional 'lowestPrice' flag
+ */
+
+const parseTemplatesForLowPrice = async (
+  allTemplates: Template[]
+): Promise<Template[]> => {
+  const templateIdsByPrice = {};
+
+  await asyncForEach(allTemplates, async (template: Template) => {
+    const res = await templateSalesApiService.getAll({
+      collection_name: template.collection.collection_name,
+      symbol: 'FOOBAR',
+      sort: 'price',
+      order: 'asc',
+      limit: 1,
+    });
+
+    let lowestPrice = '';
+    const {
+      listing_price,
+      listing_symbol,
+      price: { token_precision },
+    } = res.data[0];
+
+    if (listing_price) {
+      lowestPrice = `${addPrecisionDecimal(
+        listing_price,
+        token_precision
+      )} ${listing_symbol}`;
+    }
+
+    templateIdsByPrice[template.template_id] = lowestPrice;
+  });
+
+  const allTemplateResultsWithLowestPrice = allTemplates.map((template) => {
+    const lowestPrice = templateIdsByPrice[template.template_id];
+    return {
+      ...template,
+      lowestPrice,
     };
   });
 
