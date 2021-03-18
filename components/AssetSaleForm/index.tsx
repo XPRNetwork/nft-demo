@@ -17,7 +17,7 @@ const AssetSaleForm = ({ asset_id }: Props): JSX.Element => {
   const updateNumber = (e: ChangeEvent<HTMLInputElement>) => {
     const inputAmount = e.target.value;
     const floatAmount = parseFloat(inputAmount);
-    const formattedAmount = floatAmount.toFixed(4);
+    const formattedAmount = floatAmount.toFixed(6);
 
     if (floatAmount < 0) {
       setAmount('0');
