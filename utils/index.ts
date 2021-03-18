@@ -42,7 +42,7 @@ export const addPrecisionDecimal = (
   precision: number
 ): string => {
   if (number.includes('.')) return number;
-  if (number.length >= precision) {
+  if (number.length > precision) {
     const insertDecimalAtIndex = number.length - precision;
     return (
       number.slice(0, insertDecimalAtIndex) +
@@ -50,4 +50,10 @@ export const addPrecisionDecimal = (
       number.slice(insertDecimalAtIndex)
     );
   }
+
+  let prependZeros = '';
+  for (let i = 0; i < precision - number.length; i++) {
+    prependZeros += '0';
+  }
+  return `0.${prependZeros + number}`;
 };
