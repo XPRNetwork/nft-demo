@@ -1,10 +1,11 @@
 import styled, { keyframes } from 'styled-components';
+import { FadeInImageContainer } from '../../styles/FadeInImageContainer.styled';
 
 const placeHolderShimmer = keyframes`
-  0%{
+  0% {
     background-position: -500px 0
   }
-  100%{
+  100% {
     background-position: 500px 0
   }
 `;
@@ -21,7 +22,7 @@ export const Container = styled.article`
   }
 `;
 
-export const ImageContainer = styled.div`
+export const ImageContainer = styled(FadeInImageContainer)`
   position: relative;
   border-radius: 18px;
   overflow: hidden;
