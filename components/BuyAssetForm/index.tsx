@@ -22,7 +22,7 @@ const BuyAssetForm = ({
 }: Props): JSX.Element => {
   const router = useRouter();
   const { openModal } = useModalContext();
-  const { currentUser, currentUserBalance } = useAuthContext();
+  const { currentUser, currentUserBalance, login } = useAuthContext();
   const [purchasingError, setPurchasingError] = useState('');
   const [saleId, setSaleId] = useState('');
   const balanceAmount = parseFloat(currentUserBalance.split(' ')[0]);
@@ -34,7 +34,7 @@ const BuyAssetForm = ({
 
   useEffect(() => {
     setPurchasingError('');
-    if (lowestPrice || highestPrice) {
+    if (currentUser && (lowestPrice || highestPrice)) {
       const balanceError =
         isBalanceEmpty || isBalanceInsufficient
           ? `Insufficient funds: this NFT is listed for ${lowestAmount.toFixed(
@@ -67,6 +67,18 @@ const BuyAssetForm = ({
   };
 
   const openDepositModal = () => openModal(MODAL_TYPES.DEPOSIT);
+
+  const handleButtonClick = currentUser
+    ? isBalanceEmpty || isBalanceInsufficient
+      ? openDepositModal
+      : buyAsset
+    : login;
+
+  const buttonText = currentUser
+    ? isBalanceEmpty || isBalanceInsufficient
+      ? 'Deposit funds to buy'
+      : 'Buy'
+    : 'Connect wallet to buy';
 
   return (
     <section>
@@ -103,16 +115,8 @@ const BuyAssetForm = ({
             );
           })}
       </DropdownMenu>
-      <Button
-        fullWidth
-        filled
-        rounded
-        onClick={
-          isBalanceEmpty || isBalanceInsufficient ? openDepositModal : buyAsset
-        }>
-        {isBalanceEmpty || isBalanceInsufficient
-          ? 'Deposit funds to buy'
-          : 'Buy'}
+      <Button fullWidth filled rounded onClick={handleButtonClick}>
+        {buttonText}
       </Button>
       {purchasingError ? <Error>{purchasingError}</Error> : null}
     </section>
