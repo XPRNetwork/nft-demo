@@ -191,7 +191,7 @@ const parseTemplatesForLowPrice = async (
       symbol: 'FOOBAR',
       sort: 'price',
       order: 'asc',
-      limit: 1,
+      limit: '1',
     });
 
     let lowestPrice = '';
