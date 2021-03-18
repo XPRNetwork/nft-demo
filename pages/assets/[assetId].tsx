@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import DetailsLayout from '../../components/DetailsLayout';
 import ErrorComponent from '../../components/Error';
 import Button from '../../components/Button';
+import { getSalesHistoryForAsset, Sale } from '../../services/sales';
 import { Asset, getAssetDetails } from '../../services/assets';
 import AssetSaleDetails from '../../components/AssetSaleDetails';
 import AssetSaleForm from '../../components/AssetSaleForm';
@@ -12,9 +13,10 @@ import PageLayout from '../../components/PageLayout';
 type Props = {
   asset: Asset;
   error: string;
+  sales: Sale[];
 };
 
-const CollectionAssetDetail = ({ asset, error }: Props): JSX.Element => {
+const CollectionAssetDetail = ({ asset, sales, error }: Props): JSX.Element => {
   const router = useRouter();
   const { login, currentUser } = useAuthContext();
   const [detailsError, setDetailsError] = useState<string>(error);
@@ -58,6 +60,7 @@ const CollectionAssetDetail = ({ asset, error }: Props): JSX.Element => {
         name={name}
         seriesNumber={series as string}
         details={'Test Details'}
+        sales={sales}
         error={error}
         image={image as string}
         serial_number={template_mint}
@@ -94,9 +97,15 @@ export const getServerSideProps = async ({
 }: GetServerSidePropsContext): Promise<{ props: Props }> => {
   try {
     const result = await getAssetDetails(assetId);
+    let sales = await getSalesHistoryForAsset(assetId);
+    sales = sales.map((sale) => ({
+      ...sale,
+      asset_serial: result.template_mint,
+    }));
     return {
       props: {
         asset: result,
+        sales: sales,
         error: '',
       },
     };
@@ -119,6 +128,7 @@ export const getServerSideProps = async ({
             max_supply: '',
           },
         },
+        sales: [],
         error: e.message,
       },
     };
