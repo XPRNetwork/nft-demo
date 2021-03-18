@@ -48,7 +48,7 @@ export const DepositModal = (): JSX.Element => {
   const updateNumber = (e: ChangeEvent<HTMLInputElement>) => {
     const inputAmount = e.target.value;
     const floatAmount = parseFloat(inputAmount);
-    const formattedAmount = floatAmount.toFixed(4);
+    const formattedAmount = floatAmount.toFixed(6);
 
     if (floatAmount < 0) {
       setAmount('0');
@@ -69,7 +69,7 @@ export const DepositModal = (): JSX.Element => {
   };
 
   const formatNumber = () => {
-    const numberAmount = parseFloat(amount).toFixed(4);
+    const numberAmount = parseFloat(amount).toFixed(6);
     setAmount(numberAmount);
   };
 
