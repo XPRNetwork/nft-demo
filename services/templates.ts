@@ -103,8 +103,9 @@ export const getTemplatesByCollection = async (
     if (!allTemplatesResults.success)
       throw new Error(allTemplatesResults.message as string);
 
-    const allTemplateResultsWithLowestPrice = await parseTemplatesForLowPrice(
-      allTemplatesResults.data
+    const allTemplateResultsWithLowestPrice = await parseTEmplatesForLowPrice(
+      allTemplatesResults.data,
+      collection
     );
 
     return allTemplateResultsWithLowestPrice;
@@ -177,45 +178,51 @@ const parseTemplatesForHighLowPrice = async (
  * Gets the lowest price of assets for sale in a list of templates
  * Mostly used to display the lowest price of any of the templates with assets for sale in the collection
  * @param  {Template[]} allTemplates   An array of templates you want to look up the lowest price for
+ * @param  {string} collection         Name of collection that templates belong to
  * @return {Template[]}                Returns array of templates with an additional 'lowestPrice' flag
  */
 
-const parseTemplatesForLowPrice = async (
-  allTemplates: Template[]
+const parseTEmplatesForLowPrice = async (
+  allTemplates: Template[],
+  collection: string
 ): Promise<Template[]> => {
-  const templateIdsByPrice = {};
+  const templateIdsByLowestPrice = {};
 
-  await asyncForEach(allTemplates, async (template: Template) => {
-    const res = await templateSalesApiService.getAll({
-      collection_name: template.collection.collection_name,
-      template_id: template.template_id,
-      symbol: TOKEN_SYMBOL,
-      sort: 'price',
-      order: 'asc',
-      limit: '1',
+  const results = await templateSalesApiService.getAll({
+    symbol: TOKEN_SYMBOL,
+    collection_name: collection,
+    order: 'desc',
+    sort: 'created',
+  });
+  const precision = results?.data[0]?.price.token_precision;
+
+  results.data.forEach((sale) => {
+    const price = parseInt(sale.listing_price);
+
+    // handle sale of multiple assets in one sale
+    const listedTemplates = sale.assets.map(
+      (asset) => asset.template.template_id
+    );
+
+    listedTemplates.forEach((templateId) => {
+      const currentLowestPrice = templateIdsByLowestPrice[templateId];
+      if (currentLowestPrice && price < currentLowestPrice) {
+        templateIdsByLowestPrice[templateId] = price;
+      } else {
+        templateIdsByLowestPrice[templateId] = price;
+      }
     });
-
-    let lowestPrice = '';
-    if (res.data.length) {
-      const {
-        listing_price,
-        listing_symbol,
-        price: { token_precision },
-      } = res.data[0];
-      lowestPrice = `${addPrecisionDecimal(
-        listing_price,
-        token_precision
-      )} ${listing_symbol}`;
-    }
-
-    templateIdsByPrice[template.template_id] = lowestPrice;
   });
 
   const allTemplateResultsWithLowestPrice = allTemplates.map((template) => {
-    const lowestPrice = templateIdsByPrice[template.template_id];
+    const lowestPrice = templateIdsByLowestPrice[template.template_id];
+    const formattedPrice = lowestPrice
+      ? `${addPrecisionDecimal(`${lowestPrice}`, precision)} ${TOKEN_SYMBOL}`
+      : '';
+
     return {
       ...template,
-      lowestPrice,
+      lowestPrice: formattedPrice,
     };
   });
 
