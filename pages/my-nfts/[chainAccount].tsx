@@ -109,7 +109,7 @@ const Collection = ({ assets, error, chainAccount }: Props): JSX.Element => {
       );
     }
 
-    if (!isTest && chainAccount !== currentUser.actor) {
+    if (chainAccount !== currentUser.actor) {
       router.push(`/my-nfts/${currentUser.actor}`);
       return;
     }
