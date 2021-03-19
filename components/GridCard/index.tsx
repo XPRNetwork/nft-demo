@@ -38,7 +38,14 @@ const Card = ({
   isLoading,
 }: Props): JSX.Element => {
   const router = useRouter();
-  const price = priceText ? <Price>{priceText}</Price> : <EmptyPrice />;
+
+  const showPrice = () => {
+    if (!priceText) return <EmptyPrice />;
+    const [amount, currency] = priceText.split(' ');
+    const shortenedAmount = parseFloat(amount).toFixed(2);
+    return <Price>{`${shortenedAmount} ${currency}`}</Price>;
+  };
+
   return (
     <Container onClick={() => router.push(redirectPath)}>
       <ImageContainer>
@@ -54,7 +61,7 @@ const Card = ({
       </ImageContainer>
       <Text>{text}</Text>
       <SecondaryText>{secondaryText}</SecondaryText>
-      {isLoading ? <ShimmerBlock /> : price}
+      {isLoading ? <ShimmerBlock /> : showPrice()}
     </Container>
   );
 };
