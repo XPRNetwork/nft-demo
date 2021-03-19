@@ -7,6 +7,10 @@ type DropdownProps = {
   isOpen: boolean;
 };
 
+type NavLinkProps = {
+  isActive: boolean;
+};
+
 export const Background = styled.section`
   width: 100%;
   background: white;
@@ -21,6 +25,12 @@ export const Nav = styled(MaxWidth).attrs({ as: 'nav' })`
   align-items: center;
   width: 100%;
   position: relative;
+`;
+
+export const Section = styled.section`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 export const AvatarContainer = styled(FadeInImageContainer)`
@@ -46,7 +56,32 @@ export const ImageLink = styled.a`
   z-index: 3;
 `;
 
-export const DropdownList = styled.section<DropdownProps>`
+export const MobileDropdownList = styled.section<DropdownProps>`
+  @media (min-width: 970px) {
+    display: none;
+  }
+
+  display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
+  flex-direction: column;
+  position: absolute;
+  right: 0;
+  z-index: 1;
+  top: 65px;
+  width: 100%;
+
+  &:before {
+    content: '';
+    background: #ffffff;
+    width: 100%;
+    height: 410px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+  }
+`;
+
+export const DesktopDropdownList = styled.section<DropdownProps>`
   display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
   flex-direction: column;
   position: absolute;
@@ -59,22 +94,7 @@ export const DropdownList = styled.section<DropdownProps>`
   z-index: 1;
 
   ${breakpoint.tablet`
-    min-width: 0;
-    border-radius: 0;
-    box-shadow: 0;
-    top: 65px;
-    width: 100%;
-
-    &:before {
-      content: '';
-      background: #ffffff;
-      width: 100%;
-      height: 410px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: -1;
-    }    
+    display: none;
   `}
 `;
 
@@ -166,6 +186,23 @@ export const NavLink = styled.a`
       border: none;
     }
   `}
+`;
+
+export const DesktopOnlySection = styled.section`
+  ${breakpoint.tablet`
+    display: none;
+  `}
+`;
+
+export const DesktopNavLink = styled.a<NavLinkProps>`
+  font-family: GilroyMedium;
+  color: ${({ isActive }) => (isActive ? '#0e103c' : '#7578b5')};
+  font-weight: ${({ isActive }) => (isActive ? 600 : 500)};
+  border-bottom: 2px solid ${({ isActive }) => (isActive ? '#8a9ef5' : 'white')};
+  cursor: pointer;
+  margin-right: 40px;
+  font-size: 16px;
+  line-height: 70px;
 `;
 
 export const MobileIcon = styled.div`
