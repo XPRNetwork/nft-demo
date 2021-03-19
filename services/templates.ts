@@ -1,5 +1,5 @@
 import NodeFetch from '../utils/node-fetch';
-import { templateSalesApiService } from './sales';
+import { salesApiService, templateSalesApiService } from './sales';
 import { asyncForEach, addPrecisionDecimal } from '../utils/';
 import { TOKEN_SYMBOL } from '../utils/constants';
 
@@ -126,18 +126,16 @@ const parseTemplatesForHighLowPrice = async (
   const templateIdsByPrice = {};
 
   await asyncForEach(allTemplates, async (template: Template) => {
-    const saleForTemplateAsc = await templateSalesApiService.getAll({
+    const saleForTemplateAsc = await salesApiService.getAll({
       collection_name: template.collection.collection_name,
       template_id: template.template_id,
-      symbol: TOKEN_SYMBOL,
       sort: 'price',
       order: 'asc',
       state: '1', // assets listed for sale
     });
-    const saleForTemplateDesc = await templateSalesApiService.getAll({
+    const saleForTemplateDesc = await salesApiService.getAll({
       collection_name: template.collection.collection_name,
       template_id: template.template_id,
-      symbol: TOKEN_SYMBOL,
       sort: 'price',
       order: 'desc',
       state: '1', // assets listed for sale
@@ -145,7 +143,6 @@ const parseTemplatesForHighLowPrice = async (
 
     const highestPriceSale = saleForTemplateDesc.data[0];
     const lowestPriceSale = saleForTemplateAsc.data[0];
-
     templateIdsByPrice[template.template_id] = {
       highestPrice: highestPriceSale
         ? `${addPrecisionDecimal(
