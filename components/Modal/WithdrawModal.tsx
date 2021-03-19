@@ -78,6 +78,7 @@ export const WithdrawModal = (): JSX.Element => {
           <PriceInput
             amount={amount}
             setAmount={setAmount}
+            submit={() => withdraw()}
             placeholder={`Enter amount (${TOKEN_SYMBOL})`}
           />
           {error && <ErrorMessage>{error}</ErrorMessage>}

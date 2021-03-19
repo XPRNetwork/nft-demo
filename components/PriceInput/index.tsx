@@ -1,14 +1,20 @@
 import { ChangeEvent, KeyboardEvent, Dispatch, SetStateAction } from 'react';
 import { Input } from './PriceInput.styled';
-import { TOKEN_SYMBOL, TOKEN_PRECISION } from '../../utils/constants';
+import { TOKEN_PRECISION } from '../../utils/constants';
 
 type Props = {
   setAmount: Dispatch<SetStateAction<string>>;
   amount: string;
   placeholder: string;
+  submit: () => Promise<void>;
 };
 
-const PriceInput = ({ setAmount, amount, placeholder }: Props): JSX.Element => {
+const PriceInput = ({
+  setAmount,
+  amount,
+  placeholder,
+  submit,
+}: Props): JSX.Element => {
   const updateNumber = (e: ChangeEvent<HTMLInputElement>) => {
     const inputAmount = e.target.value;
     const floatAmount = parseFloat(inputAmount);
@@ -41,6 +47,10 @@ const PriceInput = ({ setAmount, amount, placeholder }: Props): JSX.Element => {
     const invalidChars = ['-', '+', 'e'];
     if (invalidChars.includes(e.key)) {
       e.preventDefault();
+    }
+
+    if (e.key === 'Enter') {
+      submit();
     }
   };
 
