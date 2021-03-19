@@ -103,7 +103,7 @@ export const getTemplatesByCollection = async (
     if (!allTemplatesResults.success)
       throw new Error(allTemplatesResults.message as string);
 
-    const allTemplateResultsWithLowestPrice = await parseTEmplatesForLowPrice(
+    const allTemplateResultsWithLowestPrice = await parseTemplatesForLowPrice(
       allTemplatesResults.data,
       collection
     );
@@ -182,7 +182,7 @@ const parseTemplatesForHighLowPrice = async (
  * @return {Template[]}                Returns array of templates with an additional 'lowestPrice' flag
  */
 
-const parseTEmplatesForLowPrice = async (
+const parseTemplatesForLowPrice = async (
   allTemplates: Template[],
   collection: string
 ): Promise<Template[]> => {
@@ -194,21 +194,25 @@ const parseTEmplatesForLowPrice = async (
     order: 'desc',
     sort: 'created',
   });
+
+  if (!results?.data?.length) {
+    return allTemplates.map((template) => ({
+      ...template,
+      lowestPrice: '',
+    }));
+  }
+
   const precision = results?.data[0]?.price.token_precision;
 
-  results.data.forEach((sale) => {
-    const price = parseInt(sale.listing_price);
+  results.data.forEach(({ listing_price, assets }) => {
+    const price = parseInt(listing_price);
 
     // handle sale of multiple assets in one sale
-    const listedTemplates = sale.assets.map(
-      (asset) => asset.template.template_id
-    );
+    const listedTemplates = assets.map(({ template }) => template.template_id);
 
     listedTemplates.forEach((templateId) => {
       const currentLowestPrice = templateIdsByLowestPrice[templateId];
-      if (currentLowestPrice && price < currentLowestPrice) {
-        templateIdsByLowestPrice[templateId] = price;
-      } else {
+      if (!currentLowestPrice || price < currentLowestPrice) {
         templateIdsByLowestPrice[templateId] = price;
       }
     });
