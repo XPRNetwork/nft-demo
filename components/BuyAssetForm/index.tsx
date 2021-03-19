@@ -57,7 +57,7 @@ const BuyAssetForm = ({
         sale_id: saleId,
       });
       if (purchaseResult.success) {
-        router.reload();
+        router.replace(router.asPath);
       } else {
         throw purchaseResult.error;
       }
