@@ -29,7 +29,7 @@ const AssetSaleDetails = ({
     });
 
     if (res.success) {
-      router.reload();
+      router.replace(router.asPath);
     }
   };
 

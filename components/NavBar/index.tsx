@@ -18,6 +18,7 @@ import {
 } from './NavBar.styled';
 import { useScrollLock } from '../../hooks';
 import { useAuthContext, useModalContext, MODAL_TYPES } from '../Provider';
+import { EMPTY_BALANCE } from '../../utils/constants';
 
 type DropdownProps = {
   isOpen: boolean;
@@ -115,7 +116,7 @@ const Dropdown = ({ isOpen, closeNavDropdown }: DropdownProps): JSX.Element => {
     <DropdownList isOpen={isOpen}>
       <Name>{currentUser ? currentUser.name : ''}</Name>
       <Subtitle>Balance</Subtitle>
-      <Balance>{currentUserBalance}</Balance>
+      <Balance>{currentUserBalance ? currentUserBalance : EMPTY_BALANCE}</Balance>
       {routes.map(({ name, path, onClick }) =>
         path ? (
           <Link href={path} passHref key={name}>
