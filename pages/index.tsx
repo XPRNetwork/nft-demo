@@ -4,72 +4,143 @@ import PageLayout from '../components/PageLayout';
 import Grid, { GRID_TYPE } from '../components/Grid';
 import PaginationButton from '../components/PaginationButton';
 import ErrorComponent from '../components/Error';
+import LoadingPage from '../components/LoadingPage';
 import { useAuthContext } from '../components/Provider';
 import { Title } from '../styles/Title.styled';
-import { getFromApi, BrowserResponse } from '../utils/browser-fetch';
-import { templatesApiService, Template } from '../services/templates';
-
-type Props = {
-  templates: Template[];
-  error: string;
-  defaultCollectionType: string;
-};
+import { getFromApi } from '../utils/browser-fetch';
+import { Template } from '../services/templates';
+import { Sale } from '../services/sales';
+import { toQueryString, addPrecisionDecimal } from '../utils';
+import { TOKEN_SYMBOL } from '../utils/constants';
 
 type GetCollectionOptions = {
   type: string;
   page?: number;
 };
 
-// Keeping function so that we can eventually use to search for other collection types
+type TemplatesById = {
+  [id: string]: Template;
+};
+
+type GetTemplateLowestPriceDataOptions = {
+  templatesById: TemplatesById;
+  type: string;
+  page?: number;
+};
+
+const getTemplateLowestPriceData = async ({
+  templatesById,
+  type,
+  page,
+}: GetTemplateLowestPriceDataOptions): Promise<Template[]> => {
+  const salesQueryObject = {
+    collection_name: type,
+    page: page || 1,
+    symbol: TOKEN_SYMBOL,
+    order: 'desc',
+    sort: 'created',
+  };
+
+  const salesQueryParams = toQueryString(salesQueryObject);
+  const salesResult = await getFromApi<Sale[]>(
+    `https://proton.api.atomicassets.io/atomicmarket/v1/sales/templates?${salesQueryParams}`
+  );
+
+  if (!salesResult.success) {
+    const errorMessage =
+      typeof salesResult.error === 'object'
+        ? salesResult.error.message
+        : salesResult.message;
+    throw new Error(errorMessage as string);
+  }
+
+  if (!salesResult.data.length) {
+    return Object.values(templatesById).map((template) => ({
+      ...template,
+      lowestPrice: '',
+    }));
+  }
+
+  const templatesWithLowestPriceData = salesResult.data.map(
+    ({ listing_price, assets, price: { token_precision } }) => {
+      const {
+        template: { template_id },
+      } = assets[0];
+      return {
+        ...templatesById[template_id],
+        lowestPrice: `${addPrecisionDecimal(
+          listing_price,
+          token_precision
+        )} ${TOKEN_SYMBOL}`,
+      };
+    }
+  );
+
+  return templatesWithLowestPriceData;
+};
+
 const getCollection = async ({
   type,
   page,
-}: GetCollectionOptions): Promise<BrowserResponse<Template[]>> => {
+}: GetCollectionOptions): Promise<Template[]> => {
   try {
-    const pageParam = page ? page : 1;
-    const result = await getFromApi<Template[]>(
-      `/api/get-templates-by-collection?collection=${type}&page=${pageParam}`
+    const templatesQueryObject = {
+      collection_name: type,
+      page: page || 1,
+      limit: 10,
+    };
+
+    const templatesQueryParams = toQueryString(templatesQueryObject);
+    const templatesResult = await getFromApi<Template[]>(
+      `https://proton.api.atomicassets.io/atomicassets/v1/templates?${templatesQueryParams}`
     );
 
-    if (!result.success) {
-      throw new Error((result.message as unknown) as string);
+    if (!templatesResult.success) {
+      const errorMessage =
+        typeof templatesResult.error === 'object'
+          ? templatesResult.error.message
+          : templatesResult.message;
+      throw new Error(errorMessage as string);
     }
 
-    return result;
+    const templatesById: TemplatesById = {};
+    for (const template of templatesResult.data) {
+      templatesById[template.template_id] = template;
+    }
+
+    const templatesWithLowestPriceData = await getTemplateLowestPriceData({
+      templatesById,
+      type,
+      page,
+    });
+
+    return templatesWithLowestPriceData as Template[];
   } catch (e) {
     throw new Error(e);
   }
 };
 
-const MarketPlace = ({
-  templates,
-  error,
-  defaultCollectionType,
-}: Props): JSX.Element => {
+const MarketPlace = (): JSX.Element => {
   const router = useRouter();
   const { currentUser } = useAuthContext();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [renderedTemplates, setRenderedTemplates] = useState<Template[]>(
-    templates
-  );
+  const [renderedTemplates, setRenderedTemplates] = useState<Template[]>([]);
   const [prefetchedTemplates, setPrefetchedTemplates] = useState<Template[]>(
     []
   );
   const [prefetchPageNumber, setPrefetchPageNumber] = useState<number>(2);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState<boolean>(true);
-  const [errorMessage, setErrorMessage] = useState<string>(error);
-  const [collectionType, setCollectionType] = useState<string>(
-    defaultCollectionType
-  );
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [collectionType, setCollectionType] = useState<string>('monsters');
 
   const prefetchNextPage = async () => {
     const prefetchedResult = await getCollection({
-      type: defaultCollectionType,
+      type: collectionType,
       page: prefetchPageNumber,
     });
-    setPrefetchedTemplates(prefetchedResult.message as Template[]);
+    setPrefetchedTemplates(prefetchedResult as Template[]);
 
-    if (!prefetchedResult.message.length) {
+    if (!prefetchedResult.length) {
       setPrefetchPageNumber(-1);
     } else {
       setPrefetchPageNumber(prefetchPageNumber + 1);
@@ -88,8 +159,8 @@ const MarketPlace = ({
   useEffect(() => {
     (async () => {
       try {
-        const result = await getCollection({ type: defaultCollectionType });
-        setRenderedTemplates(result.message as Template[]);
+        const result = await getCollection({ type: collectionType });
+        setRenderedTemplates(result as Template[]);
         setIsLoading(false);
         await prefetchNextPage();
       } catch (e) {
@@ -105,6 +176,10 @@ const MarketPlace = ({
   }, []);
 
   const getContent = () => {
+    if (isLoading) {
+      return <LoadingPage />;
+    }
+
     if (!renderedTemplates.length) {
       return (
         <ErrorComponent errorMessage="No templates were found for this collection type." />
@@ -144,37 +219,6 @@ const MarketPlace = ({
       {getContent()}
     </PageLayout>
   );
-};
-
-export const getServerSideProps = async (): Promise<{ props: Props }> => {
-  const defaultCollectionType = 'monsters';
-  try {
-    const allTemplatesResults = await templatesApiService.getAll({
-      collection_name: defaultCollectionType,
-      page: 1,
-      limit: 10,
-    });
-
-    if (!allTemplatesResults.success) {
-      throw new Error(allTemplatesResults.message as string);
-    }
-
-    return {
-      props: {
-        templates: allTemplatesResults.data,
-        error: '',
-        defaultCollectionType,
-      },
-    };
-  } catch (e) {
-    return {
-      props: {
-        templates: [],
-        error: e.message,
-        defaultCollectionType,
-      },
-    };
-  }
 };
 
 export default MarketPlace;
