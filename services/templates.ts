@@ -195,7 +195,7 @@ const parseTemplatesForLowPrice = async (
     sort: 'created',
   });
 
-  if (!results?.data?.length) {
+  if (!results.data.length) {
     return allTemplates.map((template) => ({
       ...template,
       lowestPrice: '',
@@ -208,7 +208,9 @@ const parseTemplatesForLowPrice = async (
     const price = parseInt(listing_price);
 
     // handle sale of multiple assets in one sale
-    const listedTemplates = assets.map(({ template }) => template.template_id);
+    const listedTemplates = assets.map(
+      ({ template: { template_id } }) => template_id
+    );
 
     listedTemplates.forEach((templateId) => {
       const currentLowestPrice = templateIdsByLowestPrice[templateId];
