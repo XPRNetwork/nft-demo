@@ -207,15 +207,10 @@ const parseTemplatesForLowPrice = async (
   results.data.forEach(({ listing_price, assets }) => {
     const price = parseInt(listing_price);
 
-    // handle sale of multiple assets in one sale
-    const listedTemplates = assets.map(
-      ({ template: { template_id } }) => template_id
-    );
-
-    listedTemplates.forEach((templateId) => {
-      const currentLowestPrice = templateIdsByLowestPrice[templateId];
+    assets.forEach(({ template: { template_id } }) => {
+      const currentLowestPrice = templateIdsByLowestPrice[template_id];
       if (!currentLowestPrice || price < currentLowestPrice) {
-        templateIdsByLowestPrice[templateId] = price;
+        templateIdsByLowestPrice[template_id] = price;
       }
     });
   });
