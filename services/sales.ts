@@ -16,6 +16,7 @@ export type SaleAsset = {
   templateMint: string;
   owner: string;
   salePrice: string;
+  saleToken?: string;
 };
 
 export type Sale = {
