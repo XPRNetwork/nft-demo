@@ -35,6 +35,7 @@ const AssetSaleForm = ({ asset_id }: Props): JSX.Element => {
       <PriceInput
         amount={amount}
         setAmount={setAmount}
+        submit={() => createSale()}
         placeholder="Enter Price"
       />
       <Button filled rounded fullWidth onClick={createSale}>

@@ -80,6 +80,7 @@ export const DepositModal = (): JSX.Element => {
           <PriceInput
             amount={amount}
             setAmount={setAmount}
+            submit={() => deposit()}
             placeholder={`Enter amount (${TOKEN_SYMBOL})`}
           />
           {error && <ErrorMessage>{error}</ErrorMessage>}
