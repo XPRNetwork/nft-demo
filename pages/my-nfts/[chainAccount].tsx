@@ -5,13 +5,11 @@ import PaginationButton from '../../components/PaginationButton';
 import ErrorComponent from '../../components/Error';
 import Grid, { GRID_TYPE } from '../../components/Grid';
 import { useAuthContext } from '../../components/Provider';
-import { getUserAssets, Asset } from '../../services/assets';
+import { Asset } from '../../services/assets';
 import { getFromApi, BrowserResponse } from '../../utils/browser-fetch';
 import { Title } from '../../styles/Title.styled';
 
 type Props = {
-  assets: Asset[];
-  error: string;
   chainAccount: string;
 };
 
@@ -27,7 +25,7 @@ const getMyAssets = async ({
   try {
     const pageParam = page ? page : 1;
     const result = await getFromApi<Asset[]>(
-      `/api/my-assets?owner=${chainAccount}&page=${pageParam}`
+      `https://test.proton.api.atomicassets.io/atomicassets/v1/assets?owner=${chainAccount}&page=${pageParam}&limit=10`
     );
 
     if (!result.success) {
@@ -40,23 +38,23 @@ const getMyAssets = async ({
   }
 };
 
-const Collection = ({ assets, error, chainAccount }: Props): JSX.Element => {
+const Collection = ({ chainAccount }: Props): JSX.Element => {
   const router = useRouter();
   const { currentUser, login, authError } = useAuthContext();
-  const [renderedAssets, setRenderedAssets] = useState<Asset[]>(assets);
+  const [renderedAssets, setRenderedAssets] = useState<Asset[]>([]);
   const [prefetchedAssets, setPrefetchedAssets] = useState<Asset[]>([]);
   const [prefetchPageNumber, setPrefetchPageNumber] = useState<number>(2);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState<boolean>(true);
-  const [errorMessage, setErrorMessage] = useState<string>(error);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const prefetchNextPage = async () => {
     const prefetchedResult = await getMyAssets({
       chainAccount,
       page: prefetchPageNumber,
     });
-    setPrefetchedAssets(prefetchedResult.message as Asset[]);
+    setPrefetchedAssets(prefetchedResult.data as Asset[]);
 
-    if (!prefetchedResult.message.length) {
+    if (!prefetchedResult.data.length) {
       setPrefetchPageNumber(-1);
     } else {
       setPrefetchPageNumber(prefetchPageNumber + 1);
@@ -76,6 +74,8 @@ const Collection = ({ assets, error, chainAccount }: Props): JSX.Element => {
     (async () => {
       try {
         router.prefetch('/');
+        const { data } = await getMyAssets({ chainAccount, page: 1 });
+        setRenderedAssets(data);
         await prefetchNextPage();
       } catch (e) {
         setErrorMessage(e.message);
@@ -114,7 +114,7 @@ const Collection = ({ assets, error, chainAccount }: Props): JSX.Element => {
       return;
     }
 
-    if (!assets.length) {
+    if (!renderedAssets.length) {
       return (
         <ErrorComponent errorMessage="Looks like you don't own any monsters yet." />
       );
@@ -158,24 +158,11 @@ type GetServerSidePropsArgs = {
 export const getServerSideProps = async ({
   params: { chainAccount },
 }: GetServerSidePropsArgs): Promise<{ props: Props }> => {
-  try {
-    const assets = await getUserAssets(chainAccount);
-    return {
-      props: {
-        assets,
-        error: '',
-        chainAccount,
-      },
-    };
-  } catch (e) {
-    return {
-      props: {
-        assets: [],
-        error: e.message,
-        chainAccount,
-      },
-    };
-  }
+  return {
+    props: {
+      chainAccount,
+    },
+  };
 };
 
 export default Collection;
