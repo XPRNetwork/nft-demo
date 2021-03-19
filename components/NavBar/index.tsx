@@ -1,17 +1,22 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Button from '../Button';
 import {
   Background,
   Nav,
+  Section,
   AvatarContainer,
   ImageLink,
   NavLink,
   GradientBackground,
   MobileIcon,
-  DropdownList,
+  MobileDropdownList,
   DesktopIcon,
+  DesktopNavLink,
+  DesktopDropdownList,
+  DesktopOnlySection,
   Name,
   Subtitle,
   Balance,
@@ -85,7 +90,28 @@ const Dropdown = ({ isOpen, closeNavDropdown }: DropdownProps): JSX.Element => {
   const { currentUser, currentUserBalance, logout } = useAuthContext();
   const { openModal } = useModalContext();
 
-  const routes = [
+  const desktopRoutes = [
+    {
+      name: 'Deposit',
+      path: '',
+      onClick: () => openModal(MODAL_TYPES.DEPOSIT),
+    },
+    {
+      name: 'Withdraw',
+      path: '',
+      onClick: () => openModal(MODAL_TYPES.WITHDRAW),
+    },
+    {
+      name: 'Sign out',
+      path: '',
+      onClick: () => {
+        closeNavDropdown();
+        logout();
+      },
+    },
+  ];
+
+  const mobileRoutes = [
     {
       name: 'Deposit / Withdraw',
       path: '',
@@ -111,8 +137,8 @@ const Dropdown = ({ isOpen, closeNavDropdown }: DropdownProps): JSX.Element => {
     },
   ];
 
-  return (
-    <DropdownList isOpen={isOpen}>
+  const getContent = (routes) => (
+    <>
       <Name>{currentUser ? currentUser.name : ''}</Name>
       <Subtitle>Balance</Subtitle>
       <Balance>{currentUserBalance ? currentUserBalance : 0}</Balance>
@@ -127,7 +153,49 @@ const Dropdown = ({ isOpen, closeNavDropdown }: DropdownProps): JSX.Element => {
           </NavLink>
         )
       )}
-    </DropdownList>
+    </>
+  );
+
+  return (
+    <>
+      <DesktopDropdownList isOpen={isOpen}>
+        {getContent(desktopRoutes)}
+      </DesktopDropdownList>
+      <MobileDropdownList isOpen={isOpen}>
+        {getContent(mobileRoutes)}
+      </MobileDropdownList>
+    </>
+  );
+};
+
+const DesktopNavRoutes = () => {
+  const router = useRouter();
+  const { currentUser } = useAuthContext();
+
+  const routes = [
+    {
+      name: 'Marketplace',
+      path: '/',
+      isHidden: false,
+    },
+    {
+      name: "My NFT's",
+      path: `/my-nfts/${currentUser ? currentUser.actor : ''}`,
+      isHidden: !currentUser,
+    },
+  ];
+
+  return (
+    <DesktopOnlySection>
+      {routes.map(({ name, path, isHidden }) => {
+        const isActive = router.pathname.split('/')[1] === path.split('/')[1];
+        return isHidden ? null : (
+          <Link href={path} passHref key={name}>
+            <DesktopNavLink isActive={isActive}>{name}</DesktopNavLink>
+          </Link>
+        );
+      })}
+    </DesktopOnlySection>
   );
 };
 
@@ -139,9 +207,7 @@ const NavBar = (): JSX.Element => {
 
   const toggleNavDropdown = () => setIsOpen(!isOpen);
 
-  const closeNavDropdown = () => {
-    if (isOpen) setIsOpen(false);
-  };
+  const closeNavDropdown = () => setIsOpen(false);
 
   const connectWallet = async () => {
     setIsLoginDisabled(true);
@@ -154,21 +220,24 @@ const NavBar = (): JSX.Element => {
     <Background>
       <Nav>
         <Logo />
-        {currentUser && currentUser.avatar ? (
-          <UserAvatar
-            isOpen={isOpen}
-            avatar={currentUser.avatar}
-            toggleNavDropdown={toggleNavDropdown}
-          />
-        ) : (
-          <Button
-            rounded
-            filled
-            disabled={isLoginDisabled}
-            onClick={connectWallet}>
-            Connect Wallet
-          </Button>
-        )}
+        <Section>
+          <DesktopNavRoutes />
+          {currentUser && currentUser.avatar ? (
+            <UserAvatar
+              isOpen={isOpen}
+              avatar={currentUser.avatar}
+              toggleNavDropdown={toggleNavDropdown}
+            />
+          ) : (
+            <Button
+              rounded
+              filled
+              disabled={isLoginDisabled}
+              onClick={connectWallet}>
+              Connect Wallet
+            </Button>
+          )}
+        </Section>
         <Dropdown isOpen={isOpen} closeNavDropdown={closeNavDropdown} />
         <GradientBackground isOpen={isOpen} onClick={closeNavDropdown} />
       </Nav>
