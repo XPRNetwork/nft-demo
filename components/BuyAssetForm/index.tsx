@@ -106,10 +106,7 @@ const BuyAssetForm = ({
         {allSalesForTemplate.length > 0 &&
           allSalesForTemplate.map((sale) => {
             return (
-              <option
-                key={sale.saleId}
-                value={sale.saleId}
-                selected={sale.saleId === saleId}>
+              <option key={sale.saleId} value={sale.saleId}>
                 #{sale.templateMint} - {sale.salePrice} {sale.saleToken}
               </option>
             );
