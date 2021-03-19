@@ -1,4 +1,4 @@
-import { useState, useEffect, MouseEvent, ChangeEvent } from 'react';
+import { useState, useEffect, MouseEvent } from 'react';
 import { useAuthContext, useModalContext, MODAL_TYPES } from '../Provider';
 import Button from '../Button';
 import {
@@ -9,7 +9,6 @@ import {
   Title,
   Description,
   InputLabel,
-  Input,
   ErrorMessage,
   LinkButton,
   LinkDescription,
@@ -17,9 +16,10 @@ import {
   WithdrawInputLabel,
   AvailableBalance,
 } from './Modal.styled';
+import PriceInput from '../PriceInput';
 import ProtonSDK from '../../services/proton';
 import { ReactComponent as CloseIcon } from '../../public/close.svg';
-import { TOKEN_SYMBOL, TOKEN_PRECISION } from '../../utils/constants';
+import { TOKEN_SYMBOL } from '../../utils/constants';
 
 export const DepositModal = (): JSX.Element => {
   const {
@@ -53,34 +53,6 @@ export const DepositModal = (): JSX.Element => {
     }
   };
 
-  const updateNumber = (e: ChangeEvent<HTMLInputElement>) => {
-    const inputAmount = e.target.value;
-    const floatAmount = parseFloat(inputAmount);
-    const formattedAmount = floatAmount.toFixed(TOKEN_PRECISION);
-
-    if (floatAmount < 0) {
-      setAmount('0');
-      return;
-    }
-
-    if (floatAmount > 1000000000) {
-      setAmount('1000000000');
-      return;
-    }
-
-    if (inputAmount.length > formattedAmount.length) {
-      setAmount(formattedAmount);
-      return;
-    }
-
-    setAmount(inputAmount);
-  };
-
-  const formatNumber = () => {
-    const numberAmount = parseFloat(amount).toFixed(TOKEN_PRECISION);
-    setAmount(numberAmount);
-  };
-
   const handleBackgroundClick = (e: MouseEvent) => {
     if (e.target === e.currentTarget) {
       closeModal();
@@ -105,17 +77,10 @@ export const DepositModal = (): JSX.Element => {
             <span>Add funds to your balance</span>
             <AvailableBalance>{currentUserBalance}</AvailableBalance>
           </WithdrawInputLabel>
-          <Input
-            required
-            type="number"
-            min="0"
-            max="1000000000"
-            step={1 / 10 ** TOKEN_PRECISION}
-            inputMode="decimal"
+          <PriceInput
+            amount={amount}
+            setAmount={setAmount}
             placeholder={`Enter amount (${TOKEN_SYMBOL})`}
-            value={amount}
-            onBlur={formatNumber}
-            onChange={updateNumber}
           />
           {error && <ErrorMessage>{error}</ErrorMessage>}
         </InputLabel>
