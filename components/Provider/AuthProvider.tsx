@@ -2,7 +2,6 @@ import { createContext, useState, useContext, useEffect, useMemo } from 'react';
 import ProtonSDK, { User } from '../../services/proton';
 import proton from '../../services/proton-rpc';
 import { usePrevious } from '../../hooks';
-import { EMPTY_BALANCE } from '../../utils/constants';
 
 interface AuthContext {
   currentUser: User;
