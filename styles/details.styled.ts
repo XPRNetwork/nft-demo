@@ -17,6 +17,7 @@ export const General = styled.p`
   font-size: 14px;
   line-height: 24px;
   font-family: GilroyMedium;
+  margin-bottom: 4px;
 `;
 
 export const Amount = styled.h3`
@@ -25,24 +26,6 @@ export const Amount = styled.h3`
   line-height: 32px;
   margin-bottom: 16px;
   font-family: GilroyMedium;
-`;
-
-export const Input = styled.input`
-  margin: 4px 0 24px;
-  padding: 8px 16px;
-  color: #aab2d5;
-  border: 1px solid #aab2d5;
-  border-radius: 4px;
-  line-height: 24px;
-  width: 100%;
-
-  ::-webkit-input-placeholder {
-    color: #aab2d5;
-  }
-
-  ${breakpoint.mobile`
-    margin-bottom: 0;
-  `};
 `;
 
 export const Row = styled.div`
