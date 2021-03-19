@@ -25,7 +25,7 @@ const AssetSaleForm = ({ asset_id }: Props): JSX.Element => {
     });
 
     if (res.success) {
-      router.reload();
+      router.replace(router.asPath);
     }
   };
 

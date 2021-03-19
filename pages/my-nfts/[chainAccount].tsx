@@ -85,7 +85,7 @@ const Collection = ({ assets, error, chainAccount }: Props): JSX.Element => {
 
   const connectWallet = () => {
     login();
-    router.reload();
+    router.replace(router.asPath);
   };
 
   const getContent = () => {

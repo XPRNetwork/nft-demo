@@ -115,7 +115,7 @@ const Dropdown = ({ isOpen, closeNavDropdown }: DropdownProps): JSX.Element => {
     <DropdownList isOpen={isOpen}>
       <Name>{currentUser ? currentUser.name : ''}</Name>
       <Subtitle>Balance</Subtitle>
-      <Balance>{currentUserBalance}</Balance>
+      <Balance>{currentUserBalance ? currentUserBalance : 0}</Balance>
       {routes.map(({ name, path, onClick }) =>
         path ? (
           <Link href={path} passHref key={name}>
