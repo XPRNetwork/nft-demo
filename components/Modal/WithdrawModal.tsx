@@ -1,4 +1,4 @@
-import { useState, useEffect, MouseEvent, ChangeEvent } from 'react';
+import { useState, useEffect, MouseEvent } from 'react';
 import { useAuthContext, useModalContext, MODAL_TYPES } from '../Provider';
 import Button from '../Button';
 import {

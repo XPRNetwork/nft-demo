@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { breakpoint } from './Breakpoints';
 
 export const Serial = styled.p`
   line-height: 24px;
