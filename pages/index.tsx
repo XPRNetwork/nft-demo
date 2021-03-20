@@ -18,27 +18,35 @@ type GetCollectionOptions = {
   page?: number;
 };
 
-type TemplatesById = {
-  [id: string]: Template;
+type LowestPricesForAllCollectionTemplates = {
+  [id: string]: string;
 };
 
-type GetTemplateLowestPriceDataOptions = {
-  templatesById: TemplatesById;
-  type: string;
-  page?: number;
-};
-
-const getTemplateLowestPriceData = async ({
-  templatesById,
+const getLowestPricesForAllCollectionTemplates = async ({
   type,
-  page,
-}: GetTemplateLowestPriceDataOptions): Promise<Template[]> => {
+}: {
+  type: string;
+}): Promise<LowestPricesForAllCollectionTemplates> => {
+  const statsResults = await getFromApi<{ templates: number }>(
+    `https://proton.api.atomicassets.io/atomicassets/v1/collections/${type}/stats`
+  );
+
+  if (!statsResults.success) {
+    const errorMessage =
+      typeof statsResults.error === 'object'
+        ? statsResults.error.message
+        : statsResults.message;
+    throw new Error(errorMessage as string);
+  }
+
+  const numberOfTemplates = statsResults.data.templates;
+
   const salesQueryObject = {
     collection_name: type,
-    page: page || 1,
     symbol: TOKEN_SYMBOL,
     order: 'desc',
     sort: 'created',
+    limit: numberOfTemplates,
   };
 
   const salesQueryParams = toQueryString(salesQueryObject);
@@ -54,29 +62,22 @@ const getTemplateLowestPriceData = async ({
     throw new Error(errorMessage as string);
   }
 
-  if (!salesResult.data.length) {
-    return Object.values(templatesById).map((template) => ({
-      ...template,
-      lowestPrice: '',
-    }));
+  const lowestPriceByTemplateIds = {};
+  for (const sale of salesResult.data) {
+    const {
+      listing_price,
+      assets,
+      price: { token_precision },
+    } = sale;
+    const {
+      template: { template_id },
+    } = assets[0];
+    lowestPriceByTemplateIds[template_id] = listing_price
+      ? `${addPrecisionDecimal(listing_price, token_precision)} ${TOKEN_SYMBOL}`
+      : '';
   }
 
-  const templatesWithLowestPriceData = salesResult.data.map(
-    ({ listing_price, assets, price: { token_precision } }) => {
-      const {
-        template: { template_id },
-      } = assets[0];
-      return {
-        ...templatesById[template_id],
-        lowestPrice: `${addPrecisionDecimal(
-          listing_price,
-          token_precision
-        )} ${TOKEN_SYMBOL}`,
-      };
-    }
-  );
-
-  return templatesWithLowestPriceData;
+  return lowestPriceByTemplateIds;
 };
 
 const getCollection = async ({
@@ -103,27 +104,29 @@ const getCollection = async ({
       throw new Error(errorMessage as string);
     }
 
-    const templatesById: TemplatesById = {};
-    for (const template of templatesResult.data) {
-      templatesById[template.template_id] = template;
-    }
-
-    const templatesWithLowestPriceData = await getTemplateLowestPriceData({
-      templatesById,
-      type,
-      page,
-    });
-
-    return templatesWithLowestPriceData as Template[];
+    return templatesResult.data;
   } catch (e) {
     throw new Error(e);
   }
 };
 
+const formatTemplatesWithPriceData = (
+  templates: Template[],
+  lowestPrices: LowestPricesForAllCollectionTemplates
+): Template[] =>
+  templates.map((template) => ({
+    ...template,
+    lowestPrice: lowestPrices[template.template_id],
+  }));
+
 const MarketPlace = (): JSX.Element => {
   const router = useRouter();
   const { currentUser } = useAuthContext();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [
+    lowestPrices,
+    setLowestPrices,
+  ] = useState<LowestPricesForAllCollectionTemplates>({});
   const [renderedTemplates, setRenderedTemplates] = useState<Template[]>([]);
   const [prefetchedTemplates, setPrefetchedTemplates] = useState<Template[]>(
     []
@@ -150,7 +153,10 @@ const MarketPlace = (): JSX.Element => {
   };
 
   const showNextPage = async () => {
-    const allFetchedTemplates = renderedTemplates.concat(prefetchedTemplates);
+    const allFetchedTemplates = formatTemplatesWithPriceData(
+      renderedTemplates.concat(prefetchedTemplates),
+      lowestPrices
+    );
     setRenderedTemplates(allFetchedTemplates);
     setIsLoadingNextPage(true);
     await prefetchNextPage();
@@ -159,8 +165,18 @@ const MarketPlace = (): JSX.Element => {
   useEffect(() => {
     (async () => {
       try {
+        const lowestPricesResult = await getLowestPricesForAllCollectionTemplates(
+          { type: collectionType }
+        );
+        setLowestPrices(lowestPricesResult);
+
         const result = await getCollection({ type: collectionType });
-        setRenderedTemplates(result as Template[]);
+        const templatesWithLowestPrice = formatTemplatesWithPriceData(
+          result,
+          lowestPricesResult
+        );
+        setRenderedTemplates(templatesWithLowestPrice);
+
         setIsLoading(false);
         await prefetchNextPage();
       } catch (e) {
