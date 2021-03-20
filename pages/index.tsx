@@ -69,9 +69,15 @@ const getLowestPricesForAllCollectionTemplates = async ({
       assets,
       price: { token_precision },
     } = sale;
+
+    if (!assets.length) {
+      continue;
+    }
+
     const {
       template: { template_id },
     } = assets[0];
+
     lowestPriceByTemplateIds[template_id] = listing_price
       ? `${addPrecisionDecimal(listing_price, token_precision)} ${TOKEN_SYMBOL}`
       : '';
@@ -116,7 +122,7 @@ const formatTemplatesWithPriceData = (
 ): Template[] =>
   templates.map((template) => ({
     ...template,
-    lowestPrice: lowestPrices[template.template_id],
+    lowestPrice: lowestPrices[template.template_id] || '',
   }));
 
 const MarketPlace = (): JSX.Element => {
