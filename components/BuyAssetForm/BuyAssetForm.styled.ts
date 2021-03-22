@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const Error = styled.p`
+export const ErrorMessage = styled.p`
   color: #b57579;
   font-size: 16px;
   line-height: 24px;

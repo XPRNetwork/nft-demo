@@ -2,18 +2,12 @@ import { useRouter } from 'next/router';
 import DetailsLayout from '../components/DetailsLayout';
 import ErrorComponent from '../components/Error';
 import { getTemplateDetail, Template } from '../services/templates';
-import {
-  getSaleAssetsByTemplateId,
-  SaleAsset,
-  getSalesHistoryForTemplate,
-  Sale,
-} from '../services/sales';
+import { getSalesHistoryForTemplate, Sale } from '../services/sales';
 import PageLayout from '../components/PageLayout';
 import BuyAssetForm from '../components/BuyAssetForm';
 
 type Props = {
   template: Template;
-  allSalesForTemplate: SaleAsset[];
   error: string;
   salesHistory: Sale[];
 };
@@ -21,7 +15,6 @@ type Props = {
 const MarketplaceTemplateDetail = ({
   template,
   error,
-  allSalesForTemplate,
   salesHistory,
 }: Props): JSX.Element => {
   const router = useRouter();
@@ -56,10 +49,10 @@ const MarketplaceTemplateDetail = ({
         template_id={template_id}
         max_supply={max_supply}>
         <BuyAssetForm
+          templateId={template_id}
           lowestPrice={lowestPrice}
           highestPrice={highestPrice}
           maxSupply={max_supply}
-          allSalesForTemplate={allSalesForTemplate}
         />
       </DetailsLayout>
     );
@@ -84,13 +77,11 @@ export const getServerSideProps = async ({
       templateId
     )) as Template;
 
-    const allSalesForTemplate = await getSaleAssetsByTemplateId(templateId);
     const salesHistory = await getSalesHistoryForTemplate(templateId);
 
     return {
       props: {
         template: template,
-        allSalesForTemplate: allSalesForTemplate,
         salesHistory: salesHistory,
         error: '',
       },
@@ -108,7 +99,6 @@ export const getServerSideProps = async ({
             series: 0,
           },
         },
-        allSalesForTemplate: [],
         error: e.message,
         salesHistory: [],
       },

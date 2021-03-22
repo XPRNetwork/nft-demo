@@ -4,26 +4,88 @@ import ProtonSDK from '../../services/proton';
 import { SaleAsset } from '../../services/sales';
 import Button from '../Button';
 import { General, Amount, Row, Divider } from '../../styles/details.styled';
-import { Error, DropdownMenu } from './BuyAssetForm.styled';
+import { ErrorMessage, DropdownMenu } from './BuyAssetForm.styled';
 import { useAuthContext, useModalContext, MODAL_TYPES } from '../Provider';
+import { getFromApi } from '../../utils/browser-fetch';
+import { toQueryString, addPrecisionDecimal } from '../../utils';
 
 type Props = {
+  templateId: string;
   lowestPrice: string;
   highestPrice: string;
   maxSupply: string;
-  allSalesForTemplate: SaleAsset[];
+};
+
+const getAllTemplateSales = async (
+  templateId: string
+): Promise<SaleAsset[]> => {
+  try {
+    let sales = [];
+    let hasResults = true;
+    let page = 1;
+    while (hasResults) {
+      const queryObject = {
+        state: '3',
+        sort: 'price',
+        order: 'asc',
+        template_id: templateId,
+        page,
+      };
+      const queryParams = toQueryString(queryObject);
+      const result = await getFromApi<SaleAsset[]>(
+        `https://proton.api.atomicassets.io/atomicmarket/v1/sales?${queryParams}`
+      );
+
+      if (!result.success) {
+        throw new Error((result.message as unknown) as string);
+      }
+
+      if (result.data.length === 0) {
+        hasResults = false;
+      }
+
+      sales = sales.concat(result.data);
+      page += 1;
+    }
+
+    let saleAssets = [];
+    for (const sale of sales) {
+      const {
+        assets,
+        listing_price,
+        listing_symbol,
+        sale_id,
+        price: { token_precision },
+      } = sale;
+
+      const formattedAssets = assets.map(({ owner, template_mint }) => ({
+        saleId: sale_id,
+        templateMint: template_mint,
+        owner,
+        salePrice: `${addPrecisionDecimal(listing_price, token_precision)}`,
+        saleToken: listing_symbol,
+        listing_price,
+      }));
+      saleAssets = saleAssets.concat(formattedAssets);
+    }
+
+    return saleAssets as SaleAsset[];
+  } catch (e) {
+    throw new Error(e);
+  }
 };
 
 const BuyAssetForm = ({
+  templateId,
   lowestPrice,
   highestPrice,
   maxSupply,
-  allSalesForTemplate,
 }: Props): JSX.Element => {
   const router = useRouter();
   const { openModal } = useModalContext();
   const { currentUser, currentUserBalance, login } = useAuthContext();
-  const [purchasingError, setPurchasingError] = useState('');
+  const [sales, setSales] = useState<SaleAsset[]>([]);
+  const [purchasingError, setPurchasingError] = useState<string>('');
   const [saleId, setSaleId] = useState('');
   const balanceAmount = parseFloat(currentUserBalance.split(' ')[0]);
   const lowestAmount = lowestPrice
@@ -44,6 +106,13 @@ const BuyAssetForm = ({
       setPurchasingError(balanceError);
     }
   }, [currentUserBalance]);
+
+  useEffect(() => {
+    (async () => {
+      const saleAssets = await getAllTemplateSales(templateId);
+      setSales(saleAssets);
+    })();
+  }, [templateId]);
 
   const buyAsset = async () => {
     if (!saleId) {
@@ -88,7 +157,7 @@ const BuyAssetForm = ({
       </Row>
       <Row>
         <p>{maxSupply}</p>
-        <p>{allSalesForTemplate.length}</p>
+        <p>{sales.length}</p>
       </Row>
       <Divider />
       <General>Lowest Price</General>
@@ -100,22 +169,20 @@ const BuyAssetForm = ({
         name="Available Assets For Sale"
         value={saleId}
         onChange={(e) => setSaleId(e.target.value)}>
-        <option key="blank" value="">
+        <option key="blank" value="" disabled>
           - - Select a serial number - -
         </option>
-        {allSalesForTemplate.length > 0 &&
-          allSalesForTemplate.map((sale) => {
-            return (
-              <option key={sale.saleId} value={sale.saleId}>
-                #{sale.templateMint} - {sale.salePrice} {sale.saleToken}
-              </option>
-            );
-          })}
+        {sales.length > 0 &&
+          sales.map((sale) => (
+            <option key={sale.saleId} value={sale.saleId}>
+              #{sale.templateMint} - {sale.salePrice} {sale.saleToken}
+            </option>
+          ))}
       </DropdownMenu>
       <Button fullWidth filled rounded onClick={handleButtonClick}>
         {buttonText}
       </Button>
-      {purchasingError ? <Error>{purchasingError}</Error> : null}
+      {purchasingError ? <ErrorMessage>{purchasingError}</ErrorMessage> : null}
     </section>
   );
 };
