@@ -37,9 +37,10 @@ export const DepositModal = (): JSX.Element => {
 
   const deposit = async () => {
     try {
+      const formattedAmount = parseFloat(amount).toFixed(TOKEN_PRECISION);
       const res = await ProtonSDK.deposit({
         actor: currentUser ? currentUser.actor : '',
-        amount: `${amount} ${TOKEN_SYMBOL}`,
+        amount: `${formattedAmount} ${TOKEN_SYMBOL}`,
       });
 
       if (!res.success) {
