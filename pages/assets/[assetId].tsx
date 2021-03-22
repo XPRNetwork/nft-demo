@@ -59,7 +59,6 @@ const CollectionAssetDetail = ({ asset, sales, error }: Props): JSX.Element => {
       <DetailsLayout
         name={name}
         seriesNumber={series as string}
-        details={'Test Details'}
         sales={sales}
         error={error}
         image={image as string}
