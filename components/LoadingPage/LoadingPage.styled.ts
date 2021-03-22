@@ -8,13 +8,3 @@ export const Container = styled.section`
   justify-content: center;
   align-items: center;
 `;
-
-export const Text = styled.p`
-  font-family: GilroySemiBold;
-  font-size: 18px;
-  line-height: 24px;
-  color: #0e103c;
-  max-width: 280px;
-  text-align: center;
-  margin: 32px 0 20px;
-`;
