@@ -56,20 +56,20 @@ NEXT_PUBLIC_CHAIN_ENDPOINT='https://testnet.protonchain.com'
 
 ## Marketplace
 
-The marketplace page consists of templates of a specific `collection_name`. These templates are fetched with the `getTemplatesByCollection` / `getTemplateDetail` and `parseTemplatesForHighLowPrice` functions in `services/templates.ts`.
+The marketplace page consists of templates of a specific `collection_name`.
 
 ### Custom flags
 
-- The `parseTemplatesForHighLowPrice` function extends the `Template` object by adding the following custom properties: `lowestPrice` and `highestPrice`.
+- The `Template` object is extended with the following custom properties: `lowestPrice` and `highestPrice`.
   - `lowestPrice` (string) is determined by checking the Sales API for assets listed for sale and finding the lowest price of the assets of that particular template.
   - `highestPrice` (string) is determined by checking the Sales API and finding the highest price of the assets of that particular template.
 
 ## My NFTs
 
-The `My NFTs` page consists of the current user's assets. Each user is only allowed to view their own collection page in this demo. These assets are fetched with the `getUserAssets` and `findMySaleItems` functions in `services/assets.ts`.
+The `My NFTs` page consists of the current user's assets. Each user is only allowed to view their own collection page in this demo.
 
 ### Custom flags
 
-- The `findMySaleItems` function extends the `Asset` object by adding the following custom properties: `isForSale` and `salePrice`.
+- The `Asset` object is extended with the following custom properties: `isForSale` and `salePrice`.
   - `isForSale` (boolean) is determined by checking the Sales API for currently listed sales using the `asset_id` and `seller` (current user's `chainAccount`)
   - `salePrice` (string) is determined by checking the Sales API and combining an asset's `listing_price` and `listing_symbol`
