@@ -95,6 +95,40 @@ export const getSalesHistoryForAsset = async (
 };
 
 /**
+ * Get the unfulfilled sale for a specific asset
+ * @param assetId Id of the asset listed for sale
+ * @param seller  Owner of the asset listed for sale
+ * @returns {SaleAsset[]}
+ */
+
+export const getAssetSale = async (
+  assetId: string,
+  seller: string
+): Promise<Sale[]> => {
+  try {
+    const queryObject = {
+      asset_id: assetId,
+      state: '1',
+      seller: seller,
+    };
+
+    const queryString = toQueryString(queryObject);
+
+    const result = await getFromApi<Sale[]>(
+      `https://proton.api.atomicassets.io/atomicmarket/v1/sales?${queryString}`
+    );
+
+    if (!result.success) {
+      throw new Error((result.message as unknown) as string);
+    }
+
+    return result.data;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
  * Get the unfulfilled sales for a specific template
  * Mostly used in purchasing an asset of a specific template
  * @param  {string} templateId   The template id of an asset you want to purchase
