@@ -12,7 +12,7 @@ import {
   EmptyPrice,
   ShimmerBlock,
 } from './GridCard.styled';
-import { formatNumber } from '../../utils';
+import { formatNumber, formatPrice } from '../../utils';
 
 type Props = {
   text: string;
@@ -41,9 +41,7 @@ const Card = ({
 
   const showPrice = () => {
     if (!priceText) return <EmptyPrice />;
-    const [amount, currency] = priceText.split(' ');
-    const shortenedAmount = parseFloat(amount).toFixed(2);
-    return <Price>{`${shortenedAmount} ${currency}`}</Price>;
+    return <Price>{formatPrice(priceText)}</Price>;
   };
 
   return (

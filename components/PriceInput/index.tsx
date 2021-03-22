@@ -58,9 +58,12 @@ const PriceInput = ({
       '.',
       'Enter',
       'Backspace',
+      'ArrowLeft',
+      'ArrowRight',
+      'Tab',
     ];
 
-    if (!validChars.includes(e.key)) {
+    if (!validChars.includes(e.key) && !e.metaKey) {
       e.preventDefault();
     }
 

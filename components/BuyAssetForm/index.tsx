@@ -6,6 +6,7 @@ import Button from '../Button';
 import { General, Amount, Row, Divider } from '../../styles/details.styled';
 import { ErrorMessage, DropdownMenu } from './BuyAssetForm.styled';
 import { useAuthContext, useModalContext, MODAL_TYPES } from '../Provider';
+import { formatPrice } from '../../utils';
 
 type Props = {
   templateId: string;
@@ -27,9 +28,8 @@ const BuyAssetForm = ({
   const [purchasingError, setPurchasingError] = useState<string>('');
   const [saleId, setSaleId] = useState('');
   const balanceAmount = parseFloat(currentUserBalance.split(' ')[0]);
-  const lowestAmount = lowestPrice
-    ? parseFloat(lowestPrice.split(' ')[0])
-    : undefined;
+  const lowestAmountString = lowestPrice.split(' ')[0];
+  const lowestAmount = lowestPrice ? parseFloat(lowestAmountString) : undefined;
   const isBalanceEmpty = balanceAmount === 0;
   const isBalanceInsufficient = lowestAmount && lowestAmount > balanceAmount;
 
@@ -38,9 +38,9 @@ const BuyAssetForm = ({
     if (currentUser && (lowestPrice || highestPrice)) {
       const balanceError =
         isBalanceEmpty || isBalanceInsufficient
-          ? `Insufficient funds: this NFT is listed for ${lowestAmount.toFixed(
-              6
-            )} FOOBAR and your account balance is ${currentUserBalance}. Please deposit more funds to continue this transaction.`
+          ? `Insufficient funds: this NFT is listed for ${formatPrice(
+              lowestPrice
+            )} and your account balance is ${currentUserBalance}. Please deposit more funds to continue this transaction.`
           : '';
       setPurchasingError(balanceError);
     }
@@ -100,9 +100,9 @@ const BuyAssetForm = ({
       </Row>
       <Divider />
       <General>Lowest Price</General>
-      <Amount>{lowestPrice ? lowestPrice : 'None'}</Amount>
+      <Amount>{lowestPrice ? formatPrice(lowestPrice) : 'None'}</Amount>
       <General>Highest Price</General>
-      <Amount>{highestPrice ? highestPrice : 'None'}</Amount>
+      <Amount>{highestPrice ? formatPrice(highestPrice) : 'None'}</Amount>
       <General>Serial number</General>
       <DropdownMenu
         name="Available Assets For Sale"
