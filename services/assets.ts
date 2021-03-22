@@ -1,8 +1,10 @@
 import NodeFetch from '../utils/node-fetch';
 import { Collection, Schema, Template } from './templates';
-import { offersApiService, Offer } from './offers';
-import { salesApiService } from './sales';
-import { addPrecisionDecimal } from '../utils';
+import { Offer } from './offers';
+import { salesApiService, getAssetSale } from './sales';
+import { addPrecisionDecimal, toQueryString } from '../utils';
+import { getFromApi } from '../utils/browser-fetch';
+import { getUserOffers } from './offers';
 
 export type Asset = {
   name: string;
@@ -40,9 +42,9 @@ export const assetsApiService = new NodeFetch<Asset>('/atomicassets/v1/assets');
 /**
  * Gets a list of all user owned assets and checks whether there are open offers.
  * Mostly used in viewing all your owned assets and see which one is listed for sale at a glance.
- * @param  {string} owner   The account name of the owner of the assets to look up
- * @return {Asset[]}        Returns a list of Assets with an additional "isForSale" flag in each Asset object.
- *                          If it is for sale, will also return the "salePrice" in the Asset object.
+ * @param owner The account name of the owner of the assets to look up
+ * @param page  The page to look up from atomicassets api if number of assets returned is greater than given limit (default 100)
+ * @returns {Asset[]}
  */
 
 export const getUserAssets = async (
@@ -51,28 +53,29 @@ export const getUserAssets = async (
 ): Promise<Asset[]> => {
   try {
     const pageParam = page ? page : 1;
-    const myAssetsResults = await assetsApiService.getAll({
-      owner,
+    const queryObject = {
+      owner: owner,
       page: pageParam,
       limit: 10,
-    });
+    };
+    const queryString = toQueryString(queryObject);
+    const userAssetsRes = await getFromApi<Asset[]>(
+      `https://proton.api.atomicassets.io/atomicassets/v1/assets?${queryString}`
+    );
 
-    if (!myAssetsResults.success) throw new Error(myAssetsResults.message);
+    if (!userAssetsRes.success) {
+      throw new Error((userAssetsRes.message as unknown) as string);
+    }
 
-    const allMyOffers = await offersApiService.getAll({
-      sender: owner,
-      state: '0', // only valid offers
-    });
+    const userOffers = await getUserOffers(owner);
 
-    if (!allMyOffers.success) throw new Error(allMyOffers.message);
-
-    if (!allMyOffers.data || !allMyOffers.data.length) {
-      return myAssetsResults.data;
+    if (!userOffers || !userOffers.length) {
+      return userAssetsRes.data;
     }
 
     const myAssetsAndSaleItems = await findMySaleItems(
-      myAssetsResults.data,
-      allMyOffers.data,
+      userAssetsRes.data,
+      userOffers,
       owner
     );
 
@@ -109,18 +112,14 @@ const findMySaleItems = async (
       let salePrice = '';
       if (assetIdsWithOffers[asset.asset_id]) {
         isForSale = true;
-        const saleForThisAsset = await salesApiService.getAll({
-          asset_id: asset.asset_id,
-          state: '1', // listed sales
-          seller: owner,
-        });
+        const saleForThisAsset = await getAssetSale(asset.asset_id, owner);
         // needs further testing to make sure only one sale item comes up in the API call
-        if (saleForThisAsset.data && saleForThisAsset.data.length > 0) {
+        if (saleForThisAsset.length && saleForThisAsset.length > 0) {
           const {
             listing_price,
             listing_symbol,
             price: { token_precision },
-          } = saleForThisAsset.data[0];
+          } = saleForThisAsset[0];
           salePrice = `${addPrecisionDecimal(
             listing_price,
             token_precision
