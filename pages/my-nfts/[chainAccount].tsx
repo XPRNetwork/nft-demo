@@ -25,7 +25,7 @@ const getMyAssets = async ({
   try {
     const pageParam = page ? page : 1;
     const result = await getFromApi<Asset[]>(
-      `https://test.proton.api.atomicassets.io/atomicassets/v1/assets?owner=${chainAccount}&page=${pageParam}&limit=10`
+      `https://proton.api.atomicassets.io/atomicassets/v1/assets?owner=${chainAccount}&page=${pageParam}&limit=10`
     );
 
     if (!result.success) {
