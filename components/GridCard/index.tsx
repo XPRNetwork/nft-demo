@@ -41,8 +41,7 @@ const Card = ({
 
   const showPrice = () => {
     if (!priceText) return <EmptyPrice />;
-    const [amount, currency] = priceText.split(' ');
-    return <Price>{`${formatPrice(amount)} ${currency}`}</Price>;
+    return <Price>{formatPrice(priceText)}</Price>;
   };
 
   return (
