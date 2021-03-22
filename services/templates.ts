@@ -1,6 +1,7 @@
 import NodeFetch from '../utils/node-fetch';
-import { salesApiService, templateSalesApiService } from './sales';
-import { asyncForEach, addPrecisionDecimal } from '../utils/';
+import { getFromApi } from '../utils/browser-fetch';
+import { salesApiService, Sale } from './sales';
+import { asyncForEach, addPrecisionDecimal, toQueryString } from '../utils/';
 import { TOKEN_SYMBOL } from '../utils/constants';
 
 export type SchemaFormat = {
@@ -51,6 +52,11 @@ export interface Template {
   highestPrice?: string;
 }
 
+type GetCollectionOptions = {
+  type: string;
+  page?: number;
+};
+
 export const templatesApiService = new NodeFetch<Template>(
   '/atomicassets/v1/templates'
 );
@@ -82,33 +88,38 @@ export const getTemplateDetail = async (
 };
 
 /**
- * Get a list of all templates within a collection with their lowest and highest price
+ * Get a list of all templates within a collection
  * Mostly used in viewing all the templates of a collection (i.e. in the homepage or after searching for one collection)
- * Also used display the highest and lowest price of any of the templates with assets for sale in the collection
- * @param  {string} collection   The name of the collection
+ * @param  {string} type         The name of the collection
+ * @param  {string} page         Page number of results to return (defaults to 1)
  * @return {Template[]}          Returns array of templates in that collection
  */
 
-export const getTemplatesByCollection = async (
-  collection: string,
-  page: number
-): Promise<Template[] | void> => {
+export const getTemplatesByCollection = async ({
+  type,
+  page,
+}: GetCollectionOptions): Promise<Template[]> => {
   try {
-    const allTemplatesResults = await templatesApiService.getAll({
-      collection_name: collection,
-      page,
+    const templatesQueryObject = {
+      collection_name: type,
+      page: page || 1,
       limit: 10,
-    });
+    };
 
-    if (!allTemplatesResults.success)
-      throw new Error(allTemplatesResults.message as string);
-
-    const allTemplateResultsWithLowestPrice = await parseTemplatesForLowPrice(
-      allTemplatesResults.data,
-      collection
+    const templatesQueryParams = toQueryString(templatesQueryObject);
+    const templatesResult = await getFromApi<Template[]>(
+      `https://proton.api.atomicassets.io/atomicassets/v1/templates?${templatesQueryParams}`
     );
 
-    return allTemplateResultsWithLowestPrice;
+    if (!templatesResult.success) {
+      const errorMessage =
+        typeof templatesResult.error === 'object'
+          ? templatesResult.error.message
+          : templatesResult.message;
+      throw new Error(errorMessage as string);
+    }
+
+    return templatesResult.data;
   } catch (e) {
     throw new Error(e);
   }
@@ -175,57 +186,89 @@ const parseTemplatesForHighLowPrice = async (
 };
 
 /**
- * Gets the lowest price of assets for sale in a list of templates
+ * Gets the lowest price of assets for sale for a collection's templates
  * Mostly used to display the lowest price of any of the templates with assets for sale in the collection
- * @param  {Template[]} allTemplates   An array of templates you want to look up the lowest price for
- * @param  {string} collection         Name of collection that templates belong to
+ * @param  {string} type               Name of collection that templates belong to
  * @return {Template[]}                Returns array of templates with an additional 'lowestPrice' flag
  */
 
-const parseTemplatesForLowPrice = async (
-  allTemplates: Template[],
-  collection: string
-): Promise<Template[]> => {
-  const templateIdsByLowestPrice = {};
+export const getLowestPricesForAllCollectionTemplates = async ({
+  type,
+}: {
+  type: string;
+}): Promise<{ [id: string]: string }> => {
+  const statsResults = await getFromApi<{ templates: number }>(
+    `https://proton.api.atomicassets.io/atomicassets/v1/collections/${type}/stats`
+  );
 
-  const results = await templateSalesApiService.getAll({
-    symbol: TOKEN_SYMBOL,
-    collection_name: collection,
-    order: 'desc',
-    sort: 'created',
-  });
-
-  if (!results.data.length) {
-    return allTemplates.map((template) => ({
-      ...template,
-      lowestPrice: '',
-    }));
+  if (!statsResults.success) {
+    const errorMessage =
+      typeof statsResults.error === 'object'
+        ? statsResults.error.message
+        : statsResults.message;
+    throw new Error(errorMessage as string);
   }
 
-  const precision = results?.data[0]?.price.token_precision;
+  const numberOfTemplates = statsResults.data.templates;
 
-  results.data.forEach(({ listing_price, assets }) => {
-    const price = parseInt(listing_price);
+  const salesQueryObject = {
+    collection_name: type,
+    symbol: TOKEN_SYMBOL,
+    order: 'desc',
+    sort: 'created',
+    limit: numberOfTemplates,
+  };
 
-    assets.forEach(({ template: { template_id } }) => {
-      const currentLowestPrice = templateIdsByLowestPrice[template_id];
-      if (!currentLowestPrice || price < currentLowestPrice) {
-        templateIdsByLowestPrice[template_id] = price;
-      }
-    });
-  });
+  const salesQueryParams = toQueryString(salesQueryObject);
+  const salesResult = await getFromApi<Sale[]>(
+    `https://proton.api.atomicassets.io/atomicmarket/v1/sales/templates?${salesQueryParams}`
+  );
 
-  const allTemplateResultsWithLowestPrice = allTemplates.map((template) => {
-    const lowestPrice = templateIdsByLowestPrice[template.template_id];
-    const formattedPrice = lowestPrice
-      ? `${addPrecisionDecimal(`${lowestPrice}`, precision)} ${TOKEN_SYMBOL}`
+  if (!salesResult.success) {
+    const errorMessage =
+      typeof salesResult.error === 'object'
+        ? salesResult.error.message
+        : salesResult.message;
+    throw new Error(errorMessage as string);
+  }
+
+  const lowestPriceByTemplateIds = {};
+  for (const sale of salesResult.data) {
+    const {
+      listing_price,
+      assets,
+      price: { token_precision },
+    } = sale;
+
+    if (!assets.length) {
+      continue;
+    }
+
+    const {
+      template: { template_id },
+    } = assets[0];
+
+    lowestPriceByTemplateIds[template_id] = listing_price
+      ? `${addPrecisionDecimal(listing_price, token_precision)} ${TOKEN_SYMBOL}`
       : '';
+  }
 
-    return {
-      ...template,
-      lowestPrice: formattedPrice,
-    };
-  });
-
-  return allTemplateResultsWithLowestPrice;
+  return lowestPriceByTemplateIds;
 };
+
+/**
+ * Formats an array of templates with a custom 'lowestPrice' flag
+ * Mostly used to display the lowest price of any of the templates with assets for sale in the collection
+ * @param  {string} templates         Array of templates to format
+ * @param  {string} lowestPrices      Object of a collection's lowest priced assets organized by template ID
+ * @return {Template[]}               Returns array of templates with an additional 'lowestPrice' flag
+ */
+
+export const formatTemplatesWithPriceData = (
+  templates: Template[],
+  lowestPrices: { [id: string]: string }
+): Template[] =>
+  templates.map((template) => ({
+    ...template,
+    lowestPrice: lowestPrices[template.template_id] || '',
+  }));

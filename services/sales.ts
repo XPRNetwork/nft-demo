@@ -46,10 +46,6 @@ export type Sale = {
 
 export const salesApiService = new NodeFetch<Sale>('/atomicmarket/v1/sales');
 
-export const templateSalesApiService = new NodeFetch<Sale>(
-  '/atomicmarket/v1/sales/templates'
-);
-
 /**
  * Get the fulfilled sales for a specific templates (sales that were successful)
  * Mostly used in viewing sales history of a specific template
