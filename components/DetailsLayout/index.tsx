@@ -27,7 +27,8 @@ type Props = {
   image: string;
   sales?: Sale[];
   error?: string;
-  serial_number: string;
+  serial_number?: string;
+  template_id?: string;
   max_supply: string;
 };
 
@@ -40,6 +41,7 @@ const DetailsLayout = ({
   sales,
   error,
   serial_number,
+  template_id,
   max_supply,
 }: Props): JSX.Element => {
   const [detailsActive, setDetailsActive] = useState(true);
@@ -76,7 +78,10 @@ const DetailsLayout = ({
             <Name>{name}</Name>
             <Series>Series #{seriesNumber}</Series>
             <Serial>
-              Serial number #{serial_number}/{max_supply}
+              {serial_number
+                ? `Serial number #${serial_number}/`
+                : `Template number #${template_id}/`}
+              {max_supply}
             </Serial>
             <Divider />
             {children}
