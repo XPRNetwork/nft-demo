@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { useRouter } from 'next/router';
 import ProtonSDK from '../../services/proton';
 import { SaleAsset, getAllTemplateSales } from '../../services/sales';
@@ -25,31 +25,29 @@ const BuyAssetForm = ({
   const { openModal } = useModalContext();
   const { currentUser, currentUserBalance, login } = useAuthContext();
   const [sales, setSales] = useState<SaleAsset[]>([]);
+  const [pricesBySaleId, setPricesBySaleId] = useState<{
+    [templateMint: string]: string;
+  }>({});
   const [purchasingError, setPurchasingError] = useState<string>('');
+  const [isBalanceInsufficient, setIsBalanceInsufficient] = useState<boolean>(
+    false
+  );
+  const [isLoadingPrices, setIsLoadingPrices] = useState<boolean>(true);
   const [saleId, setSaleId] = useState('');
   const balanceAmount = parseFloat(currentUserBalance.split(' ')[0]);
-  const lowestAmountString = lowestPrice.split(' ')[0];
-  const lowestAmount = lowestPrice ? parseFloat(lowestAmountString) : undefined;
-  const isBalanceEmpty = balanceAmount === 0;
-  const isBalanceInsufficient = lowestAmount && lowestAmount > balanceAmount;
 
   useEffect(() => {
     setPurchasingError('');
-    if (currentUser && (lowestPrice || highestPrice)) {
-      const balanceError =
-        isBalanceEmpty || isBalanceInsufficient
-          ? `Insufficient funds: this NFT is listed for ${formatPrice(
-              lowestPrice
-            )} and your account balance is ${currentUserBalance}. Please deposit more funds to continue this transaction.`
-          : '';
-      setPurchasingError(balanceError);
-    }
-  }, [currentUserBalance]);
+    if (balanceAmount === 0) setIsBalanceInsufficient(true);
+  }, [currentUser, currentUserBalance]);
 
   useEffect(() => {
     (async () => {
-      const saleAssets = await getAllTemplateSales(templateId);
-      setSales(saleAssets);
+      setIsLoadingPrices(true);
+      const { prices, assets } = await getAllTemplateSales(templateId);
+      setSales(assets);
+      setPricesBySaleId(prices);
+      setIsLoadingPrices(false);
     })();
   }, [templateId]);
 
@@ -77,16 +75,40 @@ const BuyAssetForm = ({
   const openDepositModal = () => openModal(MODAL_TYPES.DEPOSIT);
 
   const handleButtonClick = currentUser
-    ? isBalanceEmpty || isBalanceInsufficient
+    ? isBalanceInsufficient
       ? openDepositModal
       : buyAsset
     : login;
 
   const buttonText = currentUser
-    ? isBalanceEmpty || isBalanceInsufficient
+    ? isBalanceInsufficient
       ? 'Deposit funds to buy'
       : 'Buy'
     : 'Connect wallet to buy';
+
+  const handleDropdownSelect = (e: ChangeEvent<HTMLSelectElement>) => {
+    setPurchasingError('');
+
+    if (!currentUser) {
+      setPurchasingError('You must log in to purchase an asset.');
+      return;
+    }
+
+    const id = e.target.value;
+    const priceString = pricesBySaleId[id];
+    const amount = parseFloat(priceString.split(' ')[0]);
+
+    if (amount > balanceAmount) {
+      setIsBalanceInsufficient(true);
+      setPurchasingError(
+        `Insufficient funds: this NFT is listed for ${formatPrice(
+          priceString
+        )} and your account balance is ${currentUserBalance}. Please deposit more funds to continue this transaction.`
+      );
+    }
+
+    setSaleId(id);
+  };
 
   return (
     <section>
@@ -105,16 +127,17 @@ const BuyAssetForm = ({
       <Amount>{highestPrice ? formatPrice(highestPrice) : 'None'}</Amount>
       <General>Serial number</General>
       <DropdownMenu
+        isLoading={isLoadingPrices}
         name="Available Assets For Sale"
         value={saleId}
-        onChange={(e) => setSaleId(e.target.value)}>
+        onChange={handleDropdownSelect}>
         <option key="blank" value="" disabled>
           - - Select a serial number - -
         </option>
         {sales.length > 0 &&
-          sales.map((sale) => (
-            <option key={sale.saleId} value={sale.saleId}>
-              #{sale.templateMint} - {sale.salePrice} {sale.saleToken}
+          sales.map(({ saleId, templateMint, salePrice }) => (
+            <option key={templateMint} value={saleId}>
+              #{templateMint} - {salePrice}
             </option>
           ))}
       </DropdownMenu>
