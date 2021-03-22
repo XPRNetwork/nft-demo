@@ -39,8 +39,8 @@ const BuyAssetForm = ({
       const balanceError =
         isBalanceEmpty || isBalanceInsufficient
           ? `Insufficient funds: this NFT is listed for ${formatPrice(
-              lowestAmountString
-            )} FOOBAR and your account balance is ${currentUserBalance}. Please deposit more funds to continue this transaction.`
+              lowestPrice
+            )} and your account balance is ${currentUserBalance}. Please deposit more funds to continue this transaction.`
           : '';
       setPurchasingError(balanceError);
     }
