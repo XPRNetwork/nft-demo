@@ -103,7 +103,7 @@ export const getSalesHistoryForAsset = async (
  * Get the unfulfilled sales for a specific template
  * Mostly used in purchasing an asset of a specific template
  * @param  {string} templateId     The template id of an asset you want to purchase
- * @return {SaleAssetRecord}       Returns a of SaleAssetRecord indexed by template mint
+ * @return {SaleAssetRecord}       Returns a SaleAssetRecord including a record of prices by sale ID and an array of assets for sale
  */
 
 export const getAllTemplateSales = async (
