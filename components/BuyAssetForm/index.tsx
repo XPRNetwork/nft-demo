@@ -1,78 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import ProtonSDK from '../../services/proton';
-import { SaleAsset } from '../../services/sales';
+import { SaleAsset, getAllTemplateSales } from '../../services/sales';
 import Button from '../Button';
 import { General, Amount, Row, Divider } from '../../styles/details.styled';
 import { ErrorMessage, DropdownMenu } from './BuyAssetForm.styled';
 import { useAuthContext, useModalContext, MODAL_TYPES } from '../Provider';
-import { getFromApi } from '../../utils/browser-fetch';
-import { toQueryString, addPrecisionDecimal } from '../../utils';
 
 type Props = {
   templateId: string;
   lowestPrice: string;
   highestPrice: string;
   maxSupply: string;
-};
-
-const getAllTemplateSales = async (
-  templateId: string
-): Promise<SaleAsset[]> => {
-  try {
-    let sales = [];
-    let hasResults = true;
-    let page = 1;
-    while (hasResults) {
-      const queryObject = {
-        state: '3',
-        sort: 'price',
-        order: 'asc',
-        template_id: templateId,
-        page,
-      };
-      const queryParams = toQueryString(queryObject);
-      const result = await getFromApi<SaleAsset[]>(
-        `https://proton.api.atomicassets.io/atomicmarket/v1/sales?${queryParams}`
-      );
-
-      if (!result.success) {
-        throw new Error((result.message as unknown) as string);
-      }
-
-      if (result.data.length === 0) {
-        hasResults = false;
-      }
-
-      sales = sales.concat(result.data);
-      page += 1;
-    }
-
-    let saleAssets = [];
-    for (const sale of sales) {
-      const {
-        assets,
-        listing_price,
-        listing_symbol,
-        sale_id,
-        price: { token_precision },
-      } = sale;
-
-      const formattedAssets = assets.map(({ owner, template_mint }) => ({
-        saleId: sale_id,
-        templateMint: template_mint,
-        owner,
-        salePrice: `${addPrecisionDecimal(listing_price, token_precision)}`,
-        saleToken: listing_symbol,
-        listing_price,
-      }));
-      saleAssets = saleAssets.concat(formattedAssets);
-    }
-
-    return saleAssets as SaleAsset[];
-  } catch (e) {
-    throw new Error(e);
-  }
 };
 
 const BuyAssetForm = ({
