@@ -45,18 +45,19 @@ export const addPrecisionDecimal = (
   if (number && number.includes('.')) return number;
   if (number && number.length > precision) {
     const insertDecimalAtIndex = number.length - precision;
-    return (
+    const numberString =
       number.slice(0, insertDecimalAtIndex) +
       '.' +
-      number.slice(insertDecimalAtIndex)
-    );
+      number.slice(insertDecimalAtIndex);
+    return parseFloat(numberString).toString();
   }
 
   let prependZeros = '';
   for (let i = 0; i < precision - number.length; i++) {
     prependZeros += '0';
   }
-  return `0.${prependZeros + number}`;
+  const numberString = `0.${prependZeros + number}`;
+  return parseFloat(numberString).toString();
 };
 
 export const formatPrice = (amount: string): string =>
