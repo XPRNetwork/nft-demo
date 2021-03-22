@@ -8,6 +8,7 @@ import { useAuthContext } from '../../components/Provider';
 import { Asset } from '../../services/assets';
 import { getFromApi, BrowserResponse } from '../../utils/browser-fetch';
 import { Title } from '../../styles/Title.styled';
+import { getUserOffers } from '../../services/offers';
 
 type Props = {
   chainAccount: string;
@@ -27,6 +28,9 @@ const getMyAssets = async ({
     const result = await getFromApi<Asset[]>(
       `https://proton.api.atomicassets.io/atomicassets/v1/assets?owner=${chainAccount}&page=${pageParam}&limit=10`
     );
+
+    const offers = await getUserOffers(chainAccount);
+    console.log('offers: ', offers);
 
     if (!result.success) {
       throw new Error((result.message as unknown) as string);
