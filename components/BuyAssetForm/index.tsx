@@ -52,12 +52,13 @@ const BuyAssetForm = ({
     }
 
     try {
+      const chainAccount = currentUser.actor;
       const purchaseResult = await ProtonSDK.purchaseSale({
-        buyer: currentUser ? currentUser.actor : '',
+        buyer: currentUser ? chainAccount : '',
         sale_id: saleId,
       });
       if (purchaseResult.success) {
-        router.push(`/my-nfts/${currentUser.actor}`);
+        router.push(`/my-nfts/${chainAccount}`);
       } else {
         throw purchaseResult.error;
       }
