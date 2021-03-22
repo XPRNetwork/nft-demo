@@ -53,7 +53,7 @@ const MarketplaceTemplateDetail = ({
         sales={salesHistory}
         error={error}
         image={image as string}
-        serial_number={template_id}
+        template_id={template_id}
         max_supply={max_supply}>
         <BuyAssetForm
           lowestPrice={lowestPrice}
