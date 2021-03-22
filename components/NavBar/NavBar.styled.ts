@@ -202,7 +202,7 @@ export const DesktopNavLink = styled.a<NavLinkProps>`
   cursor: pointer;
   margin-right: 40px;
   font-size: 16px;
-  line-height: 70px;
+  padding: 24px 0;
 `;
 
 export const MobileIcon = styled.div`

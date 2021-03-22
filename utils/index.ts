@@ -1,7 +1,8 @@
-import { QueryParams } from '../utils/node-fetch';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc'; // dependent on utc plugin
+import { QueryParams } from './node-fetch';
+import { SHORTENED_TOKEN_PRECISION } from './constants';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -57,3 +58,8 @@ export const addPrecisionDecimal = (
   }
   return `0.${prependZeros + number}`;
 };
+
+export const formatPrice = (amount: string): string =>
+  parseFloat(
+    parseFloat(amount).toFixed(SHORTENED_TOKEN_PRECISION)
+  ).toLocaleString();
