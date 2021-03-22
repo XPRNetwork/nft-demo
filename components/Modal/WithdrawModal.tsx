@@ -35,9 +35,10 @@ export const WithdrawModal = (): JSX.Element => {
 
   const withdraw = async () => {
     try {
+      const formattedAmount = parseFloat(amount).toFixed(TOKEN_PRECISION);
       const res = await ProtonSDK.withdraw({
         actor: currentUser ? currentUser.actor : '',
-        amount: `${amount} ${TOKEN_SYMBOL}`,
+        amount: `${formattedAmount} ${TOKEN_SYMBOL}`,
       });
 
       if (!res.success) {
