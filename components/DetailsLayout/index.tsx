@@ -7,7 +7,6 @@ import {
   Column,
   ImageContainer,
   Title,
-  Description,
   Name,
   Series,
   ContentRow,
@@ -23,7 +22,6 @@ type Props = {
   children: ReactNode;
   name: string;
   seriesNumber: string;
-  details: string;
   image: string;
   sales?: Sale[];
   error?: string;
@@ -36,7 +34,6 @@ const DetailsLayout = ({
   children,
   name,
   seriesNumber,
-  details,
   image,
   sales,
   error,
@@ -44,7 +41,6 @@ const DetailsLayout = ({
   template_id,
   max_supply,
 }: Props): JSX.Element => {
-  const [detailsActive, setDetailsActive] = useState(true);
   const [salesTableActive, setSalesTableActive] = useState(true);
   const [width, setWidth] = useState(0);
 
@@ -106,22 +102,6 @@ const DetailsLayout = ({
           {children}
         </Column>
       )}
-      <ContentRow>
-        <Title>Collectible Details</Title>
-        <ArrowContainer
-          isActive={detailsActive}
-          onClick={() => setDetailsActive(!detailsActive)}>
-          <Image
-            priority
-            layout="fixed"
-            width={24}
-            height={24}
-            src="/arrow.svg"
-            alt="Dropdown Arrow"
-          />
-        </ArrowContainer>
-      </ContentRow>
-      {detailsActive ? <Description>{details}</Description> : ''}
       {sales ? (
         <>
           <ContentRow>

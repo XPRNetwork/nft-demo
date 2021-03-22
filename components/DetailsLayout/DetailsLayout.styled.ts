@@ -58,12 +58,6 @@ export const Title = styled.h1`
   font-family: GilroySemiBold;
 `;
 
-export const Description = styled.p`
-  color: #7578b5;
-  max-width: 880px;
-  font-family: GilroyMedium;
-`;
-
 export const Name = styled.h1`
   font-size: 40px;
   line-height: 48px;
