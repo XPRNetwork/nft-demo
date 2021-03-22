@@ -1,7 +1,8 @@
 import NodeFetch from '../utils/node-fetch';
 import { Asset } from './assets';
 import { Collection } from './templates';
-import { addPrecisionDecimal } from '../utils';
+import { getFromApi } from '../utils/browser-fetch';
+import { toQueryString, addPrecisionDecimal } from '../utils';
 
 type Price = {
   token_contract: string;
@@ -98,25 +99,47 @@ export const getSalesHistoryForAsset = async (
 };
 
 /**
- * Get the assets for sale for a specific templates (sales that are listed for sale but not sold).
- * Mostly used in viewing sales history of a specific template.
- * @param  {string} templateId   The template id of the sale assets you want to look up.
- * @return {SaleAsset[]}         Returns an array of SaleAssets for that specific template id with an additional flag: 'salePrice'.
+ * Get the unfulfilled sales for a specific template
+ * Mostly used in purchasing an asset of a specific template
+ * @param  {string} templateId   The template id of an asset you want to purchase
+ * @return {SaleAsset[]}         Returns an array of SaleAssets for that specific template id
  */
 
-export const getSaleAssetsByTemplateId = async (
+export const getAllTemplateSales = async (
   templateId: string
 ): Promise<SaleAsset[]> => {
   try {
-    const sales = await salesApiService.getAll({
-      template_id: templateId,
-      state: '1', // LISTED - Assets for sale
-      sort: 'price',
-      order: 'asc',
-    });
+    let sales = [];
+    let hasResults = true;
+    let page = 1;
 
-    let saleAssets: SaleAsset[] = [];
-    for (const sale of sales.data) {
+    while (hasResults) {
+      const queryObject = {
+        state: '3',
+        sort: 'price',
+        order: 'asc',
+        template_id: templateId,
+        page,
+      };
+      const queryParams = toQueryString(queryObject);
+      const result = await getFromApi<SaleAsset[]>(
+        `https://proton.api.atomicassets.io/atomicmarket/v1/sales?${queryParams}`
+      );
+
+      if (!result.success) {
+        throw new Error((result.message as unknown) as string);
+      }
+
+      if (result.data.length === 0) {
+        hasResults = false;
+      }
+
+      sales = sales.concat(result.data);
+      page += 1;
+    }
+
+    let saleAssets = [];
+    for (const sale of sales) {
       const {
         assets,
         listing_price,
@@ -131,20 +154,12 @@ export const getSaleAssetsByTemplateId = async (
         owner,
         salePrice: `${addPrecisionDecimal(listing_price, token_precision)}`,
         saleToken: listing_symbol,
+        listing_price,
       }));
       saleAssets = saleAssets.concat(formattedAssets);
     }
-    const sortedSaleAssets = saleAssets.sort((a, b) => {
-      if (a.salePrice < b.salePrice) {
-        return 1;
-      }
-      if (a.salePrice > b.salePrice) {
-        return -1;
-      }
-      return 0;
-    });
 
-    return sortedSaleAssets;
+    return saleAssets as SaleAsset[];
   } catch (e) {
     throw new Error(e);
   }

@@ -1,29 +1,30 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import ProtonSDK from '../../services/proton';
-import { SaleAsset } from '../../services/sales';
+import { SaleAsset, getAllTemplateSales } from '../../services/sales';
 import Button from '../Button';
 import { General, Amount, Row, Divider } from '../../styles/details.styled';
-import { Error, DropdownMenu } from './BuyAssetForm.styled';
+import { ErrorMessage, DropdownMenu } from './BuyAssetForm.styled';
 import { useAuthContext, useModalContext, MODAL_TYPES } from '../Provider';
 
 type Props = {
+  templateId: string;
   lowestPrice: string;
   highestPrice: string;
   maxSupply: string;
-  allSalesForTemplate: SaleAsset[];
 };
 
 const BuyAssetForm = ({
+  templateId,
   lowestPrice,
   highestPrice,
   maxSupply,
-  allSalesForTemplate,
 }: Props): JSX.Element => {
   const router = useRouter();
   const { openModal } = useModalContext();
   const { currentUser, currentUserBalance, login } = useAuthContext();
-  const [purchasingError, setPurchasingError] = useState('');
+  const [sales, setSales] = useState<SaleAsset[]>([]);
+  const [purchasingError, setPurchasingError] = useState<string>('');
   const [saleId, setSaleId] = useState('');
   const balanceAmount = parseFloat(currentUserBalance.split(' ')[0]);
   const lowestAmount = lowestPrice
@@ -44,6 +45,13 @@ const BuyAssetForm = ({
       setPurchasingError(balanceError);
     }
   }, [currentUserBalance]);
+
+  useEffect(() => {
+    (async () => {
+      const saleAssets = await getAllTemplateSales(templateId);
+      setSales(saleAssets);
+    })();
+  }, [templateId]);
 
   const buyAsset = async () => {
     if (!saleId) {
@@ -88,7 +96,7 @@ const BuyAssetForm = ({
       </Row>
       <Row>
         <p>{maxSupply}</p>
-        <p>{allSalesForTemplate.length}</p>
+        <p>{sales.length}</p>
       </Row>
       <Divider />
       <General>Lowest Price</General>
@@ -100,22 +108,20 @@ const BuyAssetForm = ({
         name="Available Assets For Sale"
         value={saleId}
         onChange={(e) => setSaleId(e.target.value)}>
-        <option key="blank" value="">
+        <option key="blank" value="" disabled>
           - - Select a serial number - -
         </option>
-        {allSalesForTemplate.length > 0 &&
-          allSalesForTemplate.map((sale) => {
-            return (
-              <option key={sale.saleId} value={sale.saleId}>
-                #{sale.templateMint} - {sale.salePrice} {sale.saleToken}
-              </option>
-            );
-          })}
+        {sales.length > 0 &&
+          sales.map((sale) => (
+            <option key={sale.saleId} value={sale.saleId}>
+              #{sale.templateMint} - {sale.salePrice} {sale.saleToken}
+            </option>
+          ))}
       </DropdownMenu>
       <Button fullWidth filled rounded onClick={handleButtonClick}>
         {buttonText}
       </Button>
-      {purchasingError ? <Error>{purchasingError}</Error> : null}
+      {purchasingError ? <ErrorMessage>{purchasingError}</ErrorMessage> : null}
     </section>
   );
 };

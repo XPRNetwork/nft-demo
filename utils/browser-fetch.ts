@@ -1,6 +1,10 @@
 export interface BrowserResponse<T> {
   success: boolean;
   message: T;
+  data?: T;
+  error?: {
+    message: string;
+  };
 }
 
 const request = <T, P = void>(
