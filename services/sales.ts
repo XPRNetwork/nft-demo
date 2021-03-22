@@ -1,6 +1,8 @@
 import NodeFetch from '../utils/node-fetch';
 import { Asset } from './assets';
 import { Collection } from './templates';
+import { getFromApi } from '../utils/browser-fetch';
+import { toQueryString, addPrecisionDecimal } from '../utils';
 
 type Price = {
   token_contract: string;
@@ -91,6 +93,73 @@ export const getSalesHistoryForAsset = async (
     });
     if (!latestSales.success) throw new Error(latestSales.message);
     return latestSales.data;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * Get the unfulfilled sales for a specific template
+ * Mostly used in purchasing an asset of a specific template
+ * @param  {string} templateId   The template id of an asset you want to purchase
+ * @return {SaleAsset[]}         Returns an array of SaleAssets for that specific template id
+ */
+
+export const getAllTemplateSales = async (
+  templateId: string
+): Promise<SaleAsset[]> => {
+  try {
+    let sales = [];
+    let hasResults = true;
+    let page = 1;
+
+    while (hasResults) {
+      const queryObject = {
+        state: '3',
+        sort: 'price',
+        order: 'asc',
+        template_id: templateId,
+        page,
+      };
+      const queryParams = toQueryString(queryObject);
+      const result = await getFromApi<SaleAsset[]>(
+        `https://proton.api.atomicassets.io/atomicmarket/v1/sales?${queryParams}`
+      );
+
+      if (!result.success) {
+        throw new Error((result.message as unknown) as string);
+      }
+
+      if (result.data.length === 0) {
+        hasResults = false;
+      }
+
+      sales = sales.concat(result.data);
+      page += 1;
+    }
+
+    let saleAssets = [];
+    for (const sale of sales) {
+      const {
+        assets,
+        listing_price,
+        listing_symbol,
+        sale_id,
+        price: { token_precision },
+      } = sale;
+
+      const formattedAssets = assets.map(({ owner, template_mint }) => ({
+        saleId: sale_id,
+        templateMint: template_mint,
+        owner,
+        salePrice: `${addPrecisionDecimal(listing_price, token_precision)}`,
+        saleToken: listing_symbol,
+        listing_price,
+      }));
+      saleAssets = saleAssets.concat(formattedAssets);
+    }
+
+    return saleAssets as SaleAsset[];
   } catch (e) {
     throw new Error(e);
   }
