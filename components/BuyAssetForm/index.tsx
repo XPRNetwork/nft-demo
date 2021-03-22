@@ -57,7 +57,7 @@ const BuyAssetForm = ({
         sale_id: saleId,
       });
       if (purchaseResult.success) {
-        router.replace(router.asPath);
+        router.push(`/my-nfts/${currentUser.actor}`);
       } else {
         throw purchaseResult.error;
       }
