@@ -24,14 +24,14 @@ export const offersApiService = new NodeFetch<Offer>('/atomicassets/v1/offers');
 
 /**
  * Get list of assets that user has listed for sale
- * @param owner The account name of the owner of the assets to look up
+ * @param sender The account name of the owner of the assets to look up
  * @returns {Offer[]}
  */
 
-export const getUserOffers = async (owner: string): Promise<Offer[]> => {
+export const getUserOffers = async (sender: string): Promise<Offer[]> => {
   try {
     const queryObject = {
-      owner: owner,
+      sender: sender,
       state: '0',
     };
     const queryParams = toQueryString(queryObject);
@@ -43,7 +43,7 @@ export const getUserOffers = async (owner: string): Promise<Offer[]> => {
       throw new Error((result.message as unknown) as string);
     }
 
-    return result.data as Offer[];
+    return result.data;
   } catch (e) {
     throw new Error(e);
   }
