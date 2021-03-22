@@ -42,7 +42,6 @@ const MarketplaceTemplateDetail = ({
       <DetailsLayout
         name={name}
         seriesNumber={series.toString()}
-        details="Item details"
         sales={salesHistory}
         error={error}
         image={image as string}
