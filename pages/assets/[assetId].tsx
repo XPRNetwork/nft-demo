@@ -38,9 +38,7 @@ const CollectionAssetDetail = (): JSX.Element => {
   const { assetId } = router.query as Query;
   const { login, currentUser } = useAuthContext();
   const [error, setError] = useState<string>('');
-  const [shouldGetAssetDetails, setShouldGetAssetDetails] = useState<boolean>(
-    true
-  );
+  const [shouldReload, setShouldReload] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [asset, setAsset] = useState<Asset>(emptyAsset);
   const [sales, setSales] = useState<Sale[]>([]);
@@ -58,7 +56,7 @@ const CollectionAssetDetail = (): JSX.Element => {
   } = asset;
 
   useEffect(() => {
-    if (assetId && shouldGetAssetDetails) {
+    if (assetId && shouldReload) {
       (async () => {
         try {
           const asset = await getAssetDetails(assetId);
@@ -67,14 +65,14 @@ const CollectionAssetDetail = (): JSX.Element => {
           setAsset(asset);
           setSales(sales);
           setIsLoading(false);
-          setShouldGetAssetDetails(false);
+          setShouldReload(false);
         } catch (e) {
           setError(e.message);
-          setShouldGetAssetDetails(false);
+          setShouldReload(false);
         }
       })();
     }
-  }, [assetId, shouldGetAssetDetails]);
+  }, [assetId, shouldReload]);
 
   const getContent = () => {
     if (!currentUser) {
@@ -118,12 +116,12 @@ const CollectionAssetDetail = (): JSX.Element => {
             salePrice={salePrice}
             isOwner={isOwner}
             template_id={template_id}
-            setShouldGetAssetDetails={setShouldGetAssetDetails}
+            setShouldReload={setShouldReload}
           />
         ) : isOwner ? (
           <AssetSaleForm
             asset_id={asset_id}
-            setShouldGetAssetDetails={setShouldGetAssetDetails}
+            setShouldReload={setShouldReload}
           />
         ) : (
           <Button onClick={() => router.push(`/${template_id}`)}>

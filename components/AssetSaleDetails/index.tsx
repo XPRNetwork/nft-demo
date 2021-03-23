@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { useRouter } from 'next/router';
 import { useAuthContext } from '../Provider';
 import ProtonSDK from '../../services/proton';
@@ -11,7 +11,7 @@ type Props = {
   salePrice: string;
   isOwner: boolean;
   template_id: string;
-  setShouldGetAssetDetails: (boolean) => void;
+  setShouldReload: Dispatch<SetStateAction<boolean>>;
 };
 
 const AssetSaleDetails = ({
@@ -19,7 +19,7 @@ const AssetSaleDetails = ({
   salePrice,
   isOwner,
   template_id,
-  setShouldGetAssetDetails,
+  setShouldReload,
 }: Props): JSX.Element => {
   const router = useRouter();
   const { currentUser } = useAuthContext();
@@ -31,7 +31,7 @@ const AssetSaleDetails = ({
     });
 
     if (res.success) {
-      setShouldGetAssetDetails(true);
+      setShouldReload(true);
     }
   };
 
