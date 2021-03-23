@@ -80,8 +80,9 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
         sales={sales}
         error={error}
         image={image as string}
-        template_id={template_id}
-        max_supply={max_supply}>
+        max_supply={max_supply}
+        id={template_id}
+        type="Template">
         <BuyAssetForm
           templateId={template_id}
           lowestPrice={lowestPrice}

@@ -72,7 +72,12 @@ class NodeFetch<T = void, P = void> {
     routeParameter?: string
   ): Promise<APIResponse<T>> => {
     const parameter = routeParameter || '';
-    const url = process.env.NFT_ENDPOINT + this.endpoint + '/' + id + parameter;
+    const url =
+      'https://proton.api.atomicassets.io' +
+      this.endpoint +
+      '/' +
+      id +
+      parameter;
     return this.request(url, null);
   };
 
@@ -81,7 +86,9 @@ class NodeFetch<T = void, P = void> {
       queryParams && Object.values(queryParams).length
         ? '?' + toQueryString(queryParams)
         : '';
-    const url = process.env.NFT_ENDPOINT + this.endpoint + queryString;
+
+    const url =
+      'https://proton.api.atomicassets.io' + this.endpoint + queryString;
     return this.request(url, null);
   };
 
@@ -90,12 +97,12 @@ class NodeFetch<T = void, P = void> {
     routeParameter?: string
   ): Promise<APIResponse<T>> => {
     const route = routeParameter || '';
-    const url = process.env.NFT_ENDPOINT + this.endpoint + route;
+    const url = 'https://proton.api.atomicassets.io' + this.endpoint + route;
     return this.request(url, JSON.stringify(body), 'POST');
   };
 
   put = async (body: Partial<P>): Promise<APIResponse<T>> => {
-    const url = process.env.NFT_ENDPOINT + this.endpoint;
+    const url = 'https://proton.api.atomicassets.io' + this.endpoint;
     return this.request(url, JSON.stringify(body), 'PUT');
   };
 
@@ -103,7 +110,8 @@ class NodeFetch<T = void, P = void> {
     body: Partial<P>,
     routeParameter: string
   ): Promise<APIResponse<T>> => {
-    const url = process.env.NFT_ENDPOINT + this.endpoint + routeParameter;
+    const url =
+      'https://proton.api.atomicassets.io' + this.endpoint + routeParameter;
     return this.request(url, JSON.stringify(body), 'PATCH');
   };
 }

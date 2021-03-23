@@ -109,7 +109,9 @@ const CollectionAssetDetail = (): JSX.Element => {
         error={error}
         image={image as string}
         serial_number={template_mint}
-        max_supply={max_supply}>
+        max_supply={max_supply}
+        id={asset_id}
+        type="Asset">
         {isForSale ? (
           <AssetSaleDetails
             saleId={saleId}

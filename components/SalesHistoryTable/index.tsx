@@ -30,7 +30,7 @@ type TableHeader = {
   id: string;
 };
 
-type GetMyAssetsOptions = {
+type GetSalesOptions = {
   id: string;
   page?: number;
   type?: string;
@@ -78,7 +78,7 @@ const getMySalesHistory = async ({
   id,
   page,
   type,
-}: GetMyAssetsOptions): Promise<Sale[]> => {
+}: GetSalesOptions): Promise<Sale[]> => {
   try {
     const pageParam = page ? page : 1;
     const typeParam = type ? type : 'Template';
@@ -203,7 +203,7 @@ const SalesHistoryTable = ({
               errorMessage ? `An error has occurred: ${errorMessage}` : null
             }
             loading={isLoading}
-            noData={!tableData.length}
+            noData={!renderedData.length}
             noDataMessage={'No Recent Sales'}
             columns={tableHeaders.length}>
             {getTableContent()}
