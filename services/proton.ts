@@ -20,6 +20,7 @@ interface CreateSaleOptions {
 
 interface PurchaseSaleOptions {
   buyer: string;
+  amount: string;
   sale_id: string;
 }
 
@@ -147,60 +148,6 @@ class ProtonSDK {
       return {
         user: null,
         error: e.message || 'An error has occurred while restoring a session',
-      };
-    }
-  };
-
-  /**
-   * Deposit tokens into the marketplace to be able to buy assets
-   *
-   * @param {string}   actor                chainAccount of user
-   * @param {string}   amount               amount of FOOBAR (will only be using FOOBAR in this demo, i.e 1.000000 FOOBAR)
-   * @return {DepositWithdrawResponse}      Returns an object indicating the success of the transaction and transaction ID.
-   */
-
-  deposit = async ({
-    actor,
-    amount,
-  }: DepositWithdrawOptions): Promise<DepositWithdrawResponse> => {
-    const action = [
-      {
-        account: 'xtokens',
-        name: 'transfer',
-        authorization: [
-          {
-            actor: actor,
-            permission: 'active',
-          },
-        ],
-        data: {
-          from: actor,
-          to: 'atomicmarket',
-          quantity: amount,
-          memo: 'deposit',
-        },
-      },
-    ];
-
-    try {
-      if (!this.session) {
-        throw new Error('Must be logged in to deposit into market');
-      }
-      const result = await this.session.transact(
-        { actions: action },
-        { broadcast: true }
-      );
-
-      return {
-        success: true,
-        transactionId: result.processed.id,
-      };
-    } catch (e) {
-      return {
-        success: false,
-        error:
-          e.message ||
-          'An error has occurred while attempting to deposit into the market.',
       };
     }
   };
@@ -385,9 +332,26 @@ class ProtonSDK {
 
   purchaseSale = async ({
     buyer,
+    amount,
     sale_id,
   }: PurchaseSaleOptions): Promise<SaleResponse> => {
     const actions = [
+      {
+        account: 'xtokens',
+        name: 'transfer',
+        authorization: [
+          {
+            actor: buyer,
+            permission: 'active',
+          },
+        ],
+        data: {
+          from: buyer,
+          to: 'atomicmarket',
+          quantity: amount,
+          memo: 'deposit',
+        },
+      },
       {
         account: 'atomicmarket',
         name: 'purchasesale',
@@ -406,6 +370,7 @@ class ProtonSDK {
       },
     ];
     try {
+<<<<<<< HEAD
       const balanceResult = await proton.getAccountBalance(buyer);
       const [balance, _] = balanceResult.split(' ');
 
@@ -415,6 +380,8 @@ class ProtonSDK {
         );
       }
 
+=======
+>>>>>>> Set up purchasing
       if (!this.session) {
         throw new Error('Unable to purchase a sale without logging in.');
       }
@@ -437,6 +404,8 @@ class ProtonSDK {
       };
     }
   };
+
+
 }
 
 export default new ProtonSDK();
