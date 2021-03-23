@@ -23,7 +23,10 @@ const BuyAssetForm = ({
   const router = useRouter();
   const { currentUser, currentUserBalance, login } = useAuthContext();
   const [sales, setSales] = useState<SaleAsset[]>([]);
-  const [pricesBySaleId, setPricesBySaleId] = useState<{
+  const [formattedPricesBySaleId, setFormattedPricesBySaleId] = useState<{
+    [templateMint: string]: string;
+  }>({});
+  const [rawPricesBySaleId, setRawPricesBySaleId] = useState<{
     [templateMint: string]: string;
   }>({});
   const [purchasingError, setPurchasingError] = useState<string>('');
@@ -35,6 +38,7 @@ const BuyAssetForm = ({
   const balanceAmount = parseFloat(
     currentUserBalance.split(' ')[0].replace(',', '')
   );
+  const [rawPriceOfSale, setRawPriceOfSale] = useState('');
 
   useEffect(() => {
     setPurchasingError('');
@@ -44,9 +48,12 @@ const BuyAssetForm = ({
   useEffect(() => {
     (async () => {
       setIsLoadingPrices(true);
-      const { prices, assets } = await getAllTemplateSales(templateId);
+      const { formattedPrices, rawPrices, assets } = await getAllTemplateSales(
+        templateId
+      );
       setSales(assets);
-      setPricesBySaleId(prices);
+      setFormattedPricesBySaleId(formattedPrices);
+      setRawPricesBySaleId(rawPrices);
       setIsLoadingPrices(false);
     })();
   }, [templateId]);
@@ -62,9 +69,11 @@ const BuyAssetForm = ({
         setPurchasingError('Must be logged in');
         return;
       }
+
       const chainAccount = currentUser.actor;
       const purchaseResult = await ProtonSDK.purchaseSale({
         buyer: chainAccount,
+        amount: rawPriceOfSale,
         sale_id: saleId,
       });
       if (purchaseResult.success) {
@@ -98,7 +107,7 @@ const BuyAssetForm = ({
     }
 
     const id = e.target.value;
-    const priceString = pricesBySaleId[id];
+    const priceString = formattedPricesBySaleId[id];
     const amount = parseFloat(priceString.split(' ')[0].replace(',', ''));
     if (amount > balanceAmount) {
       setIsBalanceInsufficient(true);
@@ -106,7 +115,7 @@ const BuyAssetForm = ({
         `Insufficient funds: this NFT is listed for ${priceString} and your account balance is ${currentUserBalance}. Please visit Foobar Faucet for more funds to continue this transaction.`
       );
     }
-
+    setRawPriceOfSale(rawPricesBySaleId[id]);
     setSaleId(id);
   };
 

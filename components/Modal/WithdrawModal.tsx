@@ -1,5 +1,5 @@
 import { useState, useEffect, MouseEvent } from 'react';
-import { useAuthContext, useModalContext, MODAL_TYPES } from '../Provider';
+import { useAuthContext, useModalContext } from '../Provider';
 import Button from '../Button';
 import {
   Background,
@@ -10,7 +10,6 @@ import {
   Description,
   InputLabel,
   ErrorMessage,
-  LinkButton,
   WithdrawInputLabel,
   AvailableBalance,
 } from './Modal.styled';
@@ -25,7 +24,7 @@ export const WithdrawModal = (): JSX.Element => {
     currentUserBalance,
     updateCurrentUserBalance,
   } = useAuthContext();
-  const { openModal, closeModal } = useModalContext();
+  const { closeModal } = useModalContext();
   const [amount, setAmount] = useState<string>('');
   const [error, setError] = useState<string>('');
 
@@ -84,9 +83,6 @@ export const WithdrawModal = (): JSX.Element => {
           />
           {error && <ErrorMessage>{error}</ErrorMessage>}
         </InputLabel>
-        <LinkButton onClick={() => openModal(MODAL_TYPES.DEPOSIT)}>
-          Fund balance
-        </LinkButton>
         <Button fullWidth filled onClick={withdraw}>
           Withdraw Funds
         </Button>

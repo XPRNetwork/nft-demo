@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Router from 'next/router';
 import { Main, Container } from './PageLayout.styled';
 import { useModalContext, MODAL_TYPES } from '../Provider';
-import { DepositModal, WithdrawModal } from '../Modal';
+import { WithdrawModal } from '../Modal';
 
 type Props = {
   title: string;
@@ -19,8 +19,6 @@ const PageLayout = ({ title, children }: Props): JSX.Element => {
 
   const renderModal = () => {
     switch (modalType) {
-      case MODAL_TYPES.DEPOSIT:
-        return <DepositModal />;
       case MODAL_TYPES.WITHDRAW:
         return <WithdrawModal />;
       default:
