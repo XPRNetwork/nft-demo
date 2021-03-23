@@ -26,7 +26,7 @@ const handler = async (
     default: {
       try {
         const chainAccounts =
-          typeof accounts === 'string' ? [accounts] : accounts;
+          typeof accounts === 'string' ? [accounts] : [...new Set(accounts)];
 
         for (const account of chainAccounts) {
           if (!cache.has(account)) {
