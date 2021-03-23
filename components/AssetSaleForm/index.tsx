@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { useRouter } from 'next/router';
+import React, { useState, Dispatch, SetStateAction } from 'react';
 import ProtonSDK from '../../services/proton';
 import Button from '../Button';
 import PriceInput from '../PriceInput';
@@ -9,10 +8,10 @@ import { TOKEN_SYMBOL, TOKEN_PRECISION } from '../../utils/constants';
 
 type Props = {
   asset_id: string;
+  setShouldReload: Dispatch<SetStateAction<boolean>>;
 };
 
-const AssetSaleForm = ({ asset_id }: Props): JSX.Element => {
-  const router = useRouter();
+const AssetSaleForm = ({ asset_id, setShouldReload }: Props): JSX.Element => {
   const { currentUser } = useAuthContext();
   const [amount, setAmount] = useState<string>('');
 
@@ -26,7 +25,7 @@ const AssetSaleForm = ({ asset_id }: Props): JSX.Element => {
     });
 
     if (res.success) {
-      router.replace(router.asPath);
+      setShouldReload(true);
     }
   };
 

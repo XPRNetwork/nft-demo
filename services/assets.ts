@@ -1,7 +1,6 @@
-import NodeFetch from '../utils/node-fetch';
 import { Collection, Schema, Template } from './templates';
 import { Offer } from './offers';
-import { salesApiService, getAssetSale } from './sales';
+import { getAssetSale } from './sales';
 import { addPrecisionDecimal, toQueryString } from '../utils';
 import { getFromApi } from '../utils/browser-fetch';
 import { getUserOffers } from './offers';
@@ -36,8 +35,6 @@ export type Asset = {
   isForSale?: boolean;
   salePrice?: string;
 };
-
-export const assetsApiService = new NodeFetch<Asset>('/atomicassets/v1/assets');
 
 /**
  * Gets a list of all user owned assets and checks whether there are open offers.
@@ -146,17 +143,22 @@ const findMySaleItems = async (
  */
 
 export const getAssetDetails = async (assetId: string): Promise<Asset> => {
-  const currentAsset = await assetsApiService.getOne(assetId);
-  const saleForThisAsset = await salesApiService.getAll({
-    asset_id: assetId,
-    state: '1', // listed sales
-  });
+  const currentAssetResponse = await getFromApi<Asset>(
+    `https://proton.api.atomicassets.io/atomicassets/v1/assets/${assetId}`
+  );
+
+  if (!currentAssetResponse.success) {
+    throw new Error((currentAssetResponse.message as unknown) as string);
+  }
+
+  const saleForThisAsset = await getAssetSale(assetId);
 
   let isForSale = false;
   let salePrice = '';
   let saleId = '';
-  if (saleForThisAsset.data && saleForThisAsset.data.length > 0) {
-    const [sale] = saleForThisAsset.data;
+
+  if (saleForThisAsset && saleForThisAsset.length > 0) {
+    const [sale] = saleForThisAsset;
     const {
       listing_price,
       listing_symbol,
@@ -172,7 +174,7 @@ export const getAssetDetails = async (assetId: string): Promise<Asset> => {
   }
 
   return {
-    ...currentAsset.data,
+    ...currentAssetResponse.data,
     isForSale,
     salePrice,
     saleId,
