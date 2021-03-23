@@ -1,6 +1,10 @@
 import { JsonRpc } from '@proton/js';
 import { formatPrice } from '../utils';
-import { TOKEN_SYMBOL, TOKEN_CONTRACT } from '../utils/constants';
+import {
+  TOKEN_SYMBOL,
+  TOKEN_CONTRACT,
+  EMPTY_BALANCE,
+} from '../utils/constants';
 
 class ProtonJs {
   rpc: JsonRpc;
@@ -56,6 +60,41 @@ class ProtonJs {
     });
 
     return !rows.length ? '' : rows[0].avatar;
+  };
+
+  getAtomicMarketBalance = (chainAccount: string) => {
+    return new Promise<string>((resolve, _) => {
+      this.rpc
+        .get_table_rows({
+          json: true,
+          code: 'atomicmarket',
+          scope: 'atomicmarket',
+          table: 'balances',
+          lower_bound: chainAccount,
+          limit: 1,
+          reverse: false,
+          show_payer: false,
+        })
+        .then((res) => {
+          if (!res.rows.length) {
+            throw new Error('No balances found for Atomic Market.');
+          }
+
+          const [balance] = res.rows;
+          if (balance.owner !== chainAccount || !balance.quantities.length) {
+            throw new Error(
+              `No Atomic Market balances found for chain account: ${chainAccount}.`
+            );
+          }
+
+          const [amount] = balance.quantities;
+          resolve(amount);
+        })
+        .catch((err) => {
+          console.warn(err);
+          resolve(EMPTY_BALANCE);
+        });
+    });
   };
 }
 

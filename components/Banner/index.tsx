@@ -5,23 +5,23 @@ import { Background } from './Banner.styled';
 import { formatPrice } from '../../utils';
 
 const Banner = (): JSX.Element => {
-  const { currentUserBalance } = useAuthContext();
+  const { atomicMarketBalance } = useAuthContext();
   const router = useRouter();
   const { openModal } = useModalContext();
   const [isBannerVisible, setIsBannerVisible] = useState<boolean>(false);
   const path = router.pathname.split('/')[1];
 
   useEffect(() => {
-    if (!currentUserBalance) return;
+    if (!atomicMarketBalance) return;
 
-    const balance = parseInt(currentUserBalance.match(/\d/g)[0]);
+    const balance = parseInt(atomicMarketBalance.match(/\d/g)[0]);
 
     if (path === 'my-nfts' && balance > 0) {
       setIsBannerVisible(true);
     } else {
       setIsBannerVisible(false);
     }
-  }, [path, currentUserBalance]);
+  }, [path, atomicMarketBalance]);
 
   if (!isBannerVisible) return null;
 
@@ -30,7 +30,7 @@ const Banner = (): JSX.Element => {
       <span className="money" role="img" aria-label="Money">
         💸
       </span>
-      Claim {formatPrice(currentUserBalance)} from sales
+      Claim {formatPrice(atomicMarketBalance)} from sales
       <span className="money" role="img" aria-label="Money">
         💸
       </span>

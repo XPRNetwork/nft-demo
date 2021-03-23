@@ -16,11 +16,7 @@ import { formatPrice } from '../../utils';
 import { ReactComponent as CloseIcon } from '../../public/close.svg';
 
 export const ClaimModal = (): JSX.Element => {
-  const {
-    currentUser,
-    currentUserBalance,
-    updateCurrentUserBalance,
-  } = useAuthContext();
+  const { currentUser, atomicMarketBalance, updateBalances } = useAuthContext();
   const { closeModal } = useModalContext();
   const [error, setError] = useState<string>('');
 
@@ -32,7 +28,7 @@ export const ClaimModal = (): JSX.Element => {
     try {
       const res = await ProtonSDK.withdraw({
         actor: currentUser ? currentUser.actor : '',
-        amount: `${currentUserBalance}`,
+        amount: `${atomicMarketBalance}`,
       });
 
       if (!res.success) {
@@ -40,7 +36,7 @@ export const ClaimModal = (): JSX.Element => {
       }
 
       closeModal();
-      await updateCurrentUserBalance(currentUser.actor);
+      await updateBalances(currentUser.actor);
     } catch (err) {
       setError(err.message);
     }
@@ -56,13 +52,13 @@ export const ClaimModal = (): JSX.Element => {
     <Background onClick={handleBackgroundClick}>
       <ModalBox>
         <Section>
-          <Title>Claim {formatPrice(currentUserBalance)}</Title>
+          <Title>Claim {formatPrice(atomicMarketBalance)}</Title>
           <CloseIconContainer role="button" onClick={closeModal}>
             <CloseIcon />
           </CloseIconContainer>
         </Section>
         <Description>
-          Congratulations, You sold {formatPrice(currentUserBalance)} of NFTs.
+          Congratulations, You sold {formatPrice(atomicMarketBalance)} of NFTs.
           Claim them now!
         </Description>
         <Row>
