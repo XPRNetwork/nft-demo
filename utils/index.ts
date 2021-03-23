@@ -40,7 +40,8 @@ export const parseTimestamp = (timestamp: string): string => {
 
 export const addPrecisionDecimal = (
   number: string,
-  precision: number
+  precision: number,
+  noCommas?: boolean
 ): string => {
   if (number && number.includes('.')) return formatThousands(number);
   if (number && number.length > precision) {
@@ -49,6 +50,9 @@ export const addPrecisionDecimal = (
       number.slice(0, insertDecimalAtIndex) +
       '.' +
       number.slice(insertDecimalAtIndex);
+    if (noCommas) {
+      return numberString;
+    }
     return formatThousands(parseFloat(numberString).toString());
   }
 
@@ -57,6 +61,9 @@ export const addPrecisionDecimal = (
     prependZeros += '0';
   }
   const numberString = `0.${prependZeros + number}`;
+  if (noCommas) {
+    return numberString;
+  }
   return formatThousands(parseFloat(numberString).toString());
 };
 
