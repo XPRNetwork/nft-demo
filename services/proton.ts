@@ -370,18 +370,6 @@ class ProtonSDK {
       },
     ];
     try {
-<<<<<<< HEAD
-      const balanceResult = await proton.getAccountBalance(buyer);
-      const [balance, _] = balanceResult.split(' ');
-
-      if (parseFloat(balance) === 0) {
-        throw new Error(
-          'Insufficient funds. Open the navigation menu to make a balance deposit and try again.'
-        );
-      }
-
-=======
->>>>>>> Set up purchasing
       if (!this.session) {
         throw new Error('Unable to purchase a sale without logging in.');
       }
