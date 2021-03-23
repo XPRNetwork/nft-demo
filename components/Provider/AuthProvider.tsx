@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
   }, []);
 
   const updateCurrentUserBalance = async (chainAccount: string) => {
-    const balance = await proton.getAtomicMarketBalance(chainAccount);
+    const balance = await proton.getAccountBalance(chainAccount);
     setCurrentUserBalance(balance);
   };
 
