@@ -1,5 +1,9 @@
 import styled from 'styled-components';
 
+type DropdownMenuProps = {
+  isLoading: boolean;
+};
+
 export const ErrorMessage = styled.p`
   color: #b57579;
   font-size: 16px;
@@ -7,7 +11,7 @@ export const ErrorMessage = styled.p`
   font-family: GilroyMedium;
 `;
 
-export const DropdownMenu = styled.select`
+export const DropdownMenu = styled.select<DropdownMenuProps>`
   font-family: GilroyMedium;
   font-size: 16px;
   margin: 4px 0 0px;
@@ -26,6 +30,12 @@ export const DropdownMenu = styled.select`
   background: url('/down-arrow.svg');
   background-repeat: no-repeat;
   background-position: top 2px right 15px;
+
+  ${({ isLoading }) =>
+    isLoading &&
+    `
+    pointer-events: none;
+  `}
 
   &:hover {
     border: 1px solid #aab2d5;

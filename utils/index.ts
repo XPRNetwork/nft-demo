@@ -42,14 +42,14 @@ export const addPrecisionDecimal = (
   number: string,
   precision: number
 ): string => {
-  if (number && number.includes('.')) return number;
+  if (number && number.includes('.')) return formatThousands(number);
   if (number && number.length > precision) {
     const insertDecimalAtIndex = number.length - precision;
     const numberString =
       number.slice(0, insertDecimalAtIndex) +
       '.' +
       number.slice(insertDecimalAtIndex);
-    return parseFloat(numberString).toString();
+    return formatThousands(parseFloat(numberString).toString());
   }
 
   let prependZeros = '';
@@ -57,7 +57,7 @@ export const addPrecisionDecimal = (
     prependZeros += '0';
   }
   const numberString = `0.${prependZeros + number}`;
-  return parseFloat(numberString).toString();
+  return formatThousands(parseFloat(numberString).toString());
 };
 
 export const formatPrice = (priceString: string): string => {
@@ -66,4 +66,11 @@ export const formatPrice = (priceString: string): string => {
     parseFloat(price).toFixed(SHORTENED_TOKEN_PRECISION)
   ).toLocaleString();
   return `${amount} ${currency}`;
+};
+
+const formatThousands = (numberString: string): string => {
+  const [integers, decimals] = numberString.split('.');
+  let salePrice = parseFloat(integers).toLocaleString();
+  salePrice = decimals ? salePrice + '.' + decimals : salePrice;
+  return salePrice;
 };
