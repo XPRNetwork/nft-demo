@@ -5,8 +5,7 @@ import { SaleAsset, getAllTemplateSales } from '../../services/sales';
 import Button from '../Button';
 import { General, Amount, Row, Divider } from '../../styles/details.styled';
 import { ErrorMessage, DropdownMenu } from './BuyAssetForm.styled';
-import { useAuthContext, useModalContext, MODAL_TYPES } from '../Provider';
-import { formatPrice } from '../../utils';
+import { useAuthContext } from '../Provider';
 
 type Props = {
   templateId: string;
@@ -22,7 +21,6 @@ const BuyAssetForm = ({
   maxSupply,
 }: Props): JSX.Element => {
   const router = useRouter();
-  const { openModal } = useModalContext();
   const { currentUser, currentUserBalance, login } = useAuthContext();
   const [sales, setSales] = useState<SaleAsset[]>([]);
   const [pricesBySaleId, setPricesBySaleId] = useState<{
