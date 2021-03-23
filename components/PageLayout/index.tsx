@@ -3,14 +3,15 @@ import Head from 'next/head';
 import Router from 'next/router';
 import { Main, Container } from './PageLayout.styled';
 import { useModalContext, MODAL_TYPES } from '../Provider';
-import { WithdrawModal, ClaimModal } from '../Modal';
+import { WithdrawModal, ClaimBalanceBanner } from '../Modal';
 
 type Props = {
   title: string;
   children: ReactNode;
+  bannerSpacing?: boolean;
 };
 
-const PageLayout = ({ title, children }: Props): JSX.Element => {
+const PageLayout = ({ title, children, bannerSpacing }: Props): JSX.Element => {
   const { modalType } = useModalContext();
 
   Router.events.on('routeChangeComplete', () => {
@@ -22,14 +23,14 @@ const PageLayout = ({ title, children }: Props): JSX.Element => {
       case MODAL_TYPES.WITHDRAW:
         return <WithdrawModal />;
       case MODAL_TYPES.CLAIM:
-        return <ClaimModal />;
+        return <ClaimBalanceBanner />;
       default:
         return null;
     }
   };
 
   return (
-    <Main>
+    <Main bannerSpacing={bannerSpacing}>
       <Head>
         <title>{`${title} - NFT Demo`}</title>
         <link rel="shortcut icon" href="/favicon.png" />

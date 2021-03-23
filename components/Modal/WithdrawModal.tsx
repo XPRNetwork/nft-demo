@@ -19,7 +19,11 @@ import { ReactComponent as CloseIcon } from '../../public/close.svg';
 import { TOKEN_SYMBOL, TOKEN_PRECISION } from '../../utils/constants';
 
 export const WithdrawModal = (): JSX.Element => {
-  const { currentUser, currentUserBalance, updateBalances } = useAuthContext();
+  const {
+    currentUser,
+    currentUserBalance,
+    updateAtomicBalance,
+  } = useAuthContext();
   const { closeModal } = useModalContext();
   const [amount, setAmount] = useState<string>('');
   const [error, setError] = useState<string>('');
@@ -41,7 +45,7 @@ export const WithdrawModal = (): JSX.Element => {
       }
 
       closeModal();
-      await updateBalances(currentUser.actor);
+      await updateAtomicBalance(currentUser.actor);
     } catch (err) {
       setError(err.message);
     }

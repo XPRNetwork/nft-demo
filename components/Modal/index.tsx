@@ -1,2 +1,2 @@
 export { WithdrawModal } from './WithdrawModal';
-export { ClaimModal } from './ClaimModal';
+export { ClaimBalanceBanner } from './ClaimBalanceBanner';
