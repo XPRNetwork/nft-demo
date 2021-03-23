@@ -5,10 +5,10 @@ import TableRow from '../TableRow';
 import TableContentWrapper from '../TableContentWraper';
 import SalesHistoryTableCell from '../SalesHistoryTableCell';
 import { Sale } from '../../services/sales';
-import { addPrecisionDecimal, parseTimestamp, asyncForEach } from '../../utils';
+import { addPrecisionDecimal, parseTimestamp } from '../../utils';
 import { StyledTable } from './SalesHistoryTable.styled';
-import proton from '../../services/proton-rpc';
 import { useWindowSize } from '../../hooks';
+import { getFromApi } from '../../utils/browser-fetch';
 
 type Props = {
   tableData: Sale[];
@@ -36,6 +36,28 @@ const mobileSalesHistoryTableHeaders = [
   { title: 'TX', id: 'tx' },
 ];
 
+const getAvatars = async (
+  chainAccounts: string[]
+): Promise<{ [chainAccount: string]: string }> => {
+  try {
+    const queryString = chainAccounts
+      .map((account) => encodeURIComponent(account))
+      .join('&accounts=');
+
+    const res = await getFromApi<{ [account: string]: string }>(
+      `/api/profile?accounts=${queryString}`
+    );
+
+    if (!res.success) {
+      throw new Error((res.message as unknown) as string);
+    }
+
+    return res.message;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
 const SalesHistoryTable = ({ tableData, error }: Props): JSX.Element => {
   const [avatars, setAvatars] = useState({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -52,21 +74,11 @@ const SalesHistoryTable = ({ tableData, error }: Props): JSX.Element => {
 
   useEffect(() => {
     (async () => {
-      const allAvatars = {};
-      await asyncForEach(tableData, async (sale: Sale) => {
-        const account = sale.buyer;
-        if (!avatars[account]) {
-          try {
-            const avatar = await proton.getProfileImage({
-              account,
-            });
-            allAvatars[account] = avatar;
-          } catch (e) {
-            allAvatars[account] = '';
-          }
-        }
-      });
-      setAvatars(allAvatars);
+      if (tableData.length) {
+        const chainAccounts = tableData.map(({ buyer }) => buyer);
+        const res = await getAvatars(chainAccounts);
+        setAvatars(res);
+      }
       setIsLoading(false);
     })();
   }, [tableData]);

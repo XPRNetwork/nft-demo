@@ -54,8 +54,8 @@ class ProtonJs {
       lower_bound: account,
       upper_bound: account,
     });
-    const { avatar } = rows[0];
-    return avatar;
+
+    return !rows.length ? '' : rows[0].avatar;
   };
 }
 
