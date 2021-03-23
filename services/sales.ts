@@ -1,4 +1,3 @@
-import NodeFetch from '../utils/node-fetch';
 import { Asset } from './assets';
 import { Collection } from './templates';
 import { getFromApi } from '../utils/browser-fetch';
@@ -52,8 +51,6 @@ export type SaleAssetRecord = {
   assets: SaleAsset[];
 };
 
-export const salesApiService = new NodeFetch<Sale>('/atomicmarket/v1/sales');
-
 /**
  * Get the fulfilled sales for a specific templates (sales that were successful)
  * Mostly used in viewing sales history of a specific template
@@ -65,14 +62,22 @@ export const getSalesHistoryForTemplate = async (
   templateId: string
 ): Promise<Sale[]> => {
   try {
-    const latestSales = await salesApiService.getAll({
+    const queryObject = {
       state: '3', // Valid sale, Sale was bought
       template_id: templateId,
       sort: 'updated',
       order: 'desc',
-    });
-    if (!latestSales.success) throw new Error(latestSales.message);
-    return latestSales.data;
+    };
+    const queryString = toQueryString(queryObject);
+    const latestSalesRes = await getFromApi<Sale[]>(
+      `https://proton.api.atomicassets.io/atomicmarket/v1/sales?${queryString}`
+    );
+
+    if (!latestSalesRes.success) {
+      throw new Error((latestSalesRes.message as unknown) as string);
+    }
+
+    return latestSalesRes.data;
   } catch (e) {
     throw new Error(e);
   }
@@ -89,14 +94,22 @@ export const getSalesHistoryForAsset = async (
   assetId: string
 ): Promise<Sale[]> => {
   try {
-    const latestSales = await salesApiService.getAll({
+    const queryObject = {
       state: '3', // Valid sale, Sale was bought
       asset_id: assetId,
       sort: 'updated',
       order: 'desc',
-    });
-    if (!latestSales.success) throw new Error(latestSales.message);
-    return latestSales.data;
+    };
+    const queryString = toQueryString(queryObject);
+    const latestSalesRes = await getFromApi<Sale[]>(
+      `https://proton.api.atomicassets.io/atomicmarket/v1/sales?${queryString}`
+    );
+
+    if (!latestSalesRes.success) {
+      throw new Error((latestSalesRes.message as unknown) as string);
+    }
+
+    return latestSalesRes.data;
   } catch (e) {
     throw new Error(e);
   }
@@ -111,13 +124,13 @@ export const getSalesHistoryForAsset = async (
 
 export const getAssetSale = async (
   assetId: string,
-  seller: string
+  seller?: string
 ): Promise<Sale[]> => {
   try {
     const queryObject = {
       asset_id: assetId,
       state: '1',
-      seller: seller,
+      seller: seller ? seller : '',
     };
 
     const queryString = toQueryString(queryObject);
@@ -215,6 +228,64 @@ export const getAllTemplateSales = async (
       rawPrices: pricesBySaleIdRaw,
       assets: saleAssets,
     };
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+export const getHighestPriceAsset = async (
+  collection: string,
+  templateId: string
+): Promise<Sale[]> => {
+  try {
+    const queryObject = {
+      collection_name: collection,
+      template_id: templateId,
+      sort: 'price',
+      order: 'desc',
+      state: '1', // assets listed for sale
+      limit: '1',
+    };
+    const queryString = toQueryString(queryObject);
+
+    const saleRes = await getFromApi<Sale[]>(
+      `https://proton.api.atomicassets.io/atomicmarket/v1/sales?${queryString}`
+    );
+
+    if (!saleRes.success) {
+      throw new Error((saleRes.message as unknown) as string);
+    }
+
+    return saleRes.data;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+export const getLowestPriceAsset = async (
+  collection: string,
+  templateId: string
+): Promise<Sale[]> => {
+  try {
+    const queryObject = {
+      collection_name: collection,
+      template_id: templateId,
+      sort: 'price',
+      order: 'asc',
+      state: '1', // assets listed for sale
+      limit: '1',
+    };
+    const queryString = toQueryString(queryObject);
+
+    const saleRes = await getFromApi<Sale[]>(
+      `https://proton.api.atomicassets.io/atomicmarket/v1/sales?${queryString}`
+    );
+
+    if (!saleRes.success) {
+      throw new Error((saleRes.message as unknown) as string);
+    }
+
+    return saleRes.data;
   } catch (e) {
     throw new Error(e);
   }

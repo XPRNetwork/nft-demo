@@ -1,6 +1,5 @@
-import NodeFetch from '../utils/node-fetch';
 import { getFromApi } from '../utils/browser-fetch';
-import { salesApiService, Sale } from './sales';
+import { Sale, getLowestPriceAsset, getHighestPriceAsset } from './sales';
 import { asyncForEach, addPrecisionDecimal, toQueryString } from '../utils/';
 import { TOKEN_SYMBOL } from '../utils/constants';
 
@@ -57,10 +56,6 @@ type GetCollectionOptions = {
   page?: number;
 };
 
-export const templatesApiService = new NodeFetch<Template>(
-  '/atomicassets/v1/templates'
-);
-
 /**
  * Get a specific template detail
  * Mostly used in viewing a specific template's detail page
@@ -68,19 +63,24 @@ export const templatesApiService = new NodeFetch<Template>(
  * @param  {string} templateId       The specific template id number you need to look up details for
  * @return {Template[]}              Returns array of templates, most likely will only return one item in the array
  */
-export const getTemplateDetail = async (
+
+export const getTemplateDetails = async (
   collectionName: string,
   templateId: string
 ): Promise<Template> => {
   try {
-    const template = await templatesApiService.getOne(
-      `${collectionName}/${templateId}`
+    const templateResponse = await getFromApi<Template>(
+      `https://proton.api.atomicassets.io/atomicassets/v1/templates/${collectionName}/${templateId}`
     );
-    if (!template.success) throw new Error(template.message);
+
+    if (!templateResponse.success) {
+      throw new Error((templateResponse.message as unknown) as string);
+    }
 
     const templateWithLowestHighestPrice = await parseTemplatesForHighLowPrice([
-      template.data,
+      templateResponse.data,
     ]);
+
     return templateWithLowestHighestPrice[0];
   } catch (e) {
     throw new Error(e);
@@ -138,23 +138,17 @@ const parseTemplatesForHighLowPrice = async (
   const templateIdsByPrice = {};
 
   await asyncForEach(allTemplates, async (template: Template) => {
-    const saleForTemplateAsc = await salesApiService.getAll({
-      collection_name: template.collection.collection_name,
-      template_id: template.template_id,
-      sort: 'price',
-      order: 'asc',
-      state: '1', // assets listed for sale
-    });
-    const saleForTemplateDesc = await salesApiService.getAll({
-      collection_name: template.collection.collection_name,
-      template_id: template.template_id,
-      sort: 'price',
-      order: 'desc',
-      state: '1', // assets listed for sale
-    });
+    const saleForTemplateAsc = await getLowestPriceAsset(
+      template.collection.collection_name,
+      template.template_id
+    );
+    const saleForTemplateDesc = await getHighestPriceAsset(
+      template.collection.collection_name,
+      template.template_id
+    );
 
-    const highestPriceSale = saleForTemplateDesc.data[0];
-    const lowestPriceSale = saleForTemplateAsc.data[0];
+    const highestPriceSale = saleForTemplateDesc[0];
+    const lowestPriceSale = saleForTemplateAsc[0];
     templateIdsByPrice[template.template_id] = {
       highestPrice: highestPriceSale
         ? `${addPrecisionDecimal(
