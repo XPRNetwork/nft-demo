@@ -101,9 +101,7 @@ const BuyAssetForm = ({
     if (amount > balanceAmount) {
       setIsBalanceInsufficient(true);
       setPurchasingError(
-        `Insufficient funds: this NFT is listed for ${formatPrice(
-          priceString
-        )} and your account balance is ${currentUserBalance}. Please deposit more funds to continue this transaction.`
+        `Insufficient funds: this NFT is listed for ${priceString} and your account balance is ${currentUserBalance}. Please deposit more funds to continue this transaction.`
       );
     }
 
