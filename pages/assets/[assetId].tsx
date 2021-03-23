@@ -9,7 +9,6 @@ import AssetSaleDetails from '../../components/AssetSaleDetails';
 import AssetSaleForm from '../../components/AssetSaleForm';
 import { useAuthContext } from '../../components/Provider';
 import PageLayout from '../../components/PageLayout';
-import { formatPrice } from '../../utils';
 
 type Props = {
   asset: Asset;
@@ -68,7 +67,7 @@ const CollectionAssetDetail = ({ asset, sales, error }: Props): JSX.Element => {
         {isForSale ? (
           <AssetSaleDetails
             saleId={saleId}
-            salePrice={formatPrice(salePrice)}
+            salePrice={salePrice}
             isOwner={isOwner}
             template_id={template_id}
           />
