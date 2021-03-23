@@ -406,7 +406,7 @@ class ProtonSDK {
       },
     ];
     try {
-      const balanceResult = await proton.getAtomicMarketBalance(buyer);
+      const balanceResult = await proton.getAccountBalance(buyer);
       const [balance, _] = balanceResult.split(' ');
 
       if (parseFloat(balance) === 0) {

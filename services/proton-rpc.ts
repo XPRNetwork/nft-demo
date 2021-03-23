@@ -1,5 +1,6 @@
 import { JsonRpc } from '@proton/js';
-import { EMPTY_BALANCE } from '../utils/constants';
+import { formatPrice } from '../utils';
+import { TOKEN_SYMBOL } from '../utils/constants';
 
 class ProtonJs {
   rpc: JsonRpc;
@@ -35,7 +36,7 @@ class ProtonJs {
     });
   };
 
-  getProfileImage = async ({ account }): Promise<void> => {
+  getProfileImage = async ({ account }): Promise<string> => {
     const { rows } = await this.rpc.get_table_rows({
       scope: 'eosio.proton',
       code: 'eosio.proton',
@@ -48,39 +49,13 @@ class ProtonJs {
     return avatar;
   };
 
-  getAtomicMarketBalance = (chainAccount: string) => {
-    return new Promise<string>((resolve, _) => {
-      this.rpc
-        .get_table_rows({
-          json: true,
-          code: 'atomicmarket',
-          scope: 'atomicmarket',
-          table: 'balances',
-          lower_bound: chainAccount,
-          limit: 1,
-          reverse: false,
-          show_payer: false,
-        })
-        .then((res) => {
-          if (!res.rows.length) {
-            throw new Error('No balances found for Atomic Market.');
-          }
-
-          const [balance] = res.rows;
-          if (balance.owner !== chainAccount || !balance.quantities.length) {
-            throw new Error(
-              `No Atomic Market balances found for chain account: ${chainAccount}.`
-            );
-          }
-
-          const [amount] = balance.quantities;
-          resolve(amount);
-        })
-        .catch((err) => {
-          console.warn(err);
-          resolve(EMPTY_BALANCE);
-        });
-    });
+  getAccountBalance = async (account: string): Promise<string> => {
+    const res = await this.rpc.get_currency_balance(
+      'xtokens',
+      account,
+      TOKEN_SYMBOL
+    );
+    return formatPrice(res[0]);
   };
 }
 
