@@ -7,22 +7,23 @@ import {
   Background,
   Nav,
   Section,
+  UserMenuButton,
+  UserMenuText,
   AvatarContainer,
   ImageLink,
-  NavLink,
+  DropdownLink,
   GradientBackground,
+  DropdownList,
   MobileIcon,
-  MobileDropdownList,
   DesktopIcon,
   DesktopNavLink,
-  DesktopDropdownList,
   DesktopOnlySection,
   Name,
   Subtitle,
   Balance,
 } from './NavBar.styled';
 import { useScrollLock } from '../../hooks';
-import { useAuthContext, useModalContext, MODAL_TYPES } from '../Provider';
+import { useAuthContext } from '../Provider';
 
 type DropdownProps = {
   isOpen: boolean;
@@ -60,10 +61,15 @@ const Logo = (): JSX.Element => {
 };
 
 const UserAvatar = ({ isOpen, avatar, toggleNavDropdown }) => {
+  const { currentUserBalance } = useAuthContext();
+
   const currentUserAvatar = (
-    <AvatarContainer>
-      <Image priority layout="fill" alt="chain account avatar" src={avatar} />
-    </AvatarContainer>
+    <UserMenuButton>
+      <UserMenuText>{currentUserBalance}</UserMenuText>
+      <AvatarContainer>
+        <Image priority layout="fill" alt="chain account avatar" src={avatar} />
+      </AvatarContainer>
+    </UserMenuButton>
   );
 
   const mobileNavbarIcon = isOpen ? (
@@ -88,37 +94,10 @@ const UserAvatar = ({ isOpen, avatar, toggleNavDropdown }) => {
 
 const Dropdown = ({ isOpen, closeNavDropdown }: DropdownProps): JSX.Element => {
   const { currentUser, currentUserBalance, logout } = useAuthContext();
-  const { openModal } = useModalContext();
 
-  const desktopRoutes = [
+  const routes = [
     {
-      name: 'Deposit',
-      path: '',
-      onClick: () => openModal(MODAL_TYPES.DEPOSIT),
-    },
-    {
-      name: 'Withdraw',
-      path: '',
-      onClick: () => openModal(MODAL_TYPES.WITHDRAW),
-    },
-    {
-      name: 'Sign out',
-      path: '',
-      onClick: () => {
-        closeNavDropdown();
-        logout();
-      },
-    },
-  ];
-
-  const mobileRoutes = [
-    {
-      name: 'Deposit / Withdraw',
-      path: '',
-      onClick: () => openModal(MODAL_TYPES.DEPOSIT),
-    },
-    {
-      name: "My NFT's",
+      name: 'My NFTs',
       path: `/my-nfts/${currentUser ? currentUser.actor : ''}`,
       onClick: closeNavDropdown,
     },
@@ -134,37 +113,27 @@ const Dropdown = ({ isOpen, closeNavDropdown }: DropdownProps): JSX.Element => {
         closeNavDropdown();
         logout();
       },
+      isRed: true,
     },
   ];
 
-  const getContent = (routes) => (
-    <>
+  return (
+    <DropdownList isOpen={isOpen}>
       <Name>{currentUser ? currentUser.name : ''}</Name>
       <Subtitle>Balance</Subtitle>
       <Balance>{currentUserBalance ? currentUserBalance : 0}</Balance>
-      {routes.map(({ name, path, onClick }) =>
+      {routes.map(({ name, path, onClick, isRed }) =>
         path ? (
           <Link href={path} passHref key={name}>
-            <NavLink onClick={onClick}>{name}</NavLink>
+            <DropdownLink onClick={onClick}>{name}</DropdownLink>
           </Link>
         ) : (
-          <NavLink onClick={onClick} key={name}>
+          <DropdownLink onClick={onClick} key={name} red={isRed}>
             {name}
-          </NavLink>
+          </DropdownLink>
         )
       )}
-    </>
-  );
-
-  return (
-    <>
-      <DesktopDropdownList isOpen={isOpen}>
-        {getContent(desktopRoutes)}
-      </DesktopDropdownList>
-      <MobileDropdownList isOpen={isOpen}>
-        {getContent(mobileRoutes)}
-      </MobileDropdownList>
-    </>
+    </DropdownList>
   );
 };
 

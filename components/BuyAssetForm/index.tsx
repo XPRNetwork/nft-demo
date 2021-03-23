@@ -5,8 +5,7 @@ import { SaleAsset, getAllTemplateSales } from '../../services/sales';
 import Button from '../Button';
 import { General, Amount, Row, Divider } from '../../styles/details.styled';
 import { ErrorMessage, DropdownMenu } from './BuyAssetForm.styled';
-import { useAuthContext, useModalContext, MODAL_TYPES } from '../Provider';
-import { formatPrice } from '../../utils';
+import { useAuthContext } from '../Provider';
 
 type Props = {
   templateId: string;
@@ -22,7 +21,6 @@ const BuyAssetForm = ({
   maxSupply,
 }: Props): JSX.Element => {
   const router = useRouter();
-  const { openModal } = useModalContext();
   const { currentUser, currentUserBalance, login } = useAuthContext();
   const [sales, setSales] = useState<SaleAsset[]>([]);
   const [pricesBySaleId, setPricesBySaleId] = useState<{
@@ -77,17 +75,15 @@ const BuyAssetForm = ({
     }
   };
 
-  const openDepositModal = () => openModal(MODAL_TYPES.DEPOSIT);
-
   const handleButtonClick = currentUser
     ? isBalanceInsufficient
-      ? openDepositModal
+      ? () => window.open('https://foobar.protonchain.com/')
       : buyAsset
     : login;
 
   const buttonText = currentUser
     ? isBalanceInsufficient
-      ? 'Deposit funds to buy'
+      ? 'Visit Foobar Faucet'
       : 'Buy'
     : 'Connect wallet to buy';
 
@@ -101,12 +97,11 @@ const BuyAssetForm = ({
 
     const id = e.target.value;
     const priceString = pricesBySaleId[id];
-    const amount = parseFloat(priceString.split(' ')[0]);
-
+    const amount = parseFloat(priceString.split(' ')[0].replace(',', ''));
     if (amount > balanceAmount) {
       setIsBalanceInsufficient(true);
       setPurchasingError(
-        `Insufficient funds: this NFT is listed for ${priceString} and your account balance is ${currentUserBalance}. Please deposit more funds to continue this transaction.`
+        `Insufficient funds: this NFT is listed for ${priceString} and your account balance is ${currentUserBalance}. Please visit Foobar Faucet for more funds to continue this transaction.`
       );
     }
 
@@ -125,9 +120,9 @@ const BuyAssetForm = ({
       </Row>
       <Divider />
       <General>Lowest Price</General>
-      <Amount>{lowestPrice ? formatPrice(lowestPrice) : 'None'}</Amount>
+      <Amount>{lowestPrice ? lowestPrice : 'None'}</Amount>
       <General>Highest Price</General>
-      <Amount>{highestPrice ? formatPrice(highestPrice) : 'None'}</Amount>
+      <Amount>{highestPrice ? highestPrice : 'None'}</Amount>
       <General>Serial number</General>
       <DropdownMenu
         isLoading={isLoadingPrices}
