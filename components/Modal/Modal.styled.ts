@@ -4,7 +4,7 @@ import { breakpoint } from '../../styles/Breakpoints';
 import { StyledButton } from '../Button/Button.styled';
 
 export const Background = styled.div`
-  z-index: 2;
+  z-index: 3;
   position: fixed;
   top: 0;
   left: 0;
