@@ -232,7 +232,7 @@ class ProtonSDK {
         data: {
           seller,
           asset_ids: [asset_id],
-          maker_marketplace: '',
+          maker_marketplace: 'fees.market',
           listing_price: price,
           settlement_symbol: currency,
         },
@@ -364,7 +364,7 @@ class ProtonSDK {
           sale_id,
           buyer,
           intended_delphi_median: 0,
-          taker_marketplace: '',
+          taker_marketplace: 'fees.market',
         },
       },
     ];
