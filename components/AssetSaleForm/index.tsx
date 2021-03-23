@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Dispatch, SetStateAction } from 'react';
 import ProtonSDK from '../../services/proton';
 import Button from '../Button';
 import PriceInput from '../PriceInput';
@@ -8,13 +8,10 @@ import { TOKEN_SYMBOL, TOKEN_PRECISION } from '../../utils/constants';
 
 type Props = {
   asset_id: string;
-  setShouldGetAssetDetails: (boolean) => void;
+  setShouldReload: Dispatch<SetStateAction<boolean>>;
 };
 
-const AssetSaleForm = ({
-  asset_id,
-  setShouldGetAssetDetails,
-}: Props): JSX.Element => {
+const AssetSaleForm = ({ asset_id, setShouldReload }: Props): JSX.Element => {
   const { currentUser } = useAuthContext();
   const [amount, setAmount] = useState<string>('');
 
@@ -28,7 +25,7 @@ const AssetSaleForm = ({
     });
 
     if (res.success) {
-      setShouldGetAssetDetails(true);
+      setShouldReload(true);
     }
   };
 
