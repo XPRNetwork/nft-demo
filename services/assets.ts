@@ -57,6 +57,8 @@ export const getUserAssets = async (
       owner: owner,
       page: pageParam,
       limit: 10,
+      order: 'desc',
+      sort: 'transferred',
     };
     const queryString = toQueryString(queryObject);
     const userAssetsRes = await getFromApi<Asset[]>(
