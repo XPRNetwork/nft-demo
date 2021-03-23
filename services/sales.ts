@@ -15,9 +15,7 @@ type Price = {
 export type SaleAsset = {
   saleId: string;
   templateMint: string;
-  owner: string;
   salePrice: string;
-  saleToken?: string;
 };
 
 export type Sale = {
@@ -42,6 +40,13 @@ export type Sale = {
   created_at_time: string;
   state: number;
   asset_serial: string;
+};
+
+export type SaleAssetRecord = {
+  prices: {
+    [templateMint: string]: string;
+  };
+  assets: SaleAsset[];
 };
 
 export const salesApiService = new NodeFetch<Sale>('/atomicmarket/v1/sales');
@@ -131,13 +136,13 @@ export const getAssetSale = async (
 /**
  * Get the unfulfilled sales for a specific template
  * Mostly used in purchasing an asset of a specific template
- * @param  {string} templateId   The template id of an asset you want to purchase
- * @return {SaleAsset[]}         Returns an array of SaleAssets for that specific template id
+ * @param  {string} templateId     The template id of an asset you want to purchase
+ * @return {SaleAssetRecord}       Returns a SaleAssetRecord including a record of prices by sale ID and an array of assets for sale
  */
 
 export const getAllTemplateSales = async (
   templateId: string
-): Promise<SaleAsset[]> => {
+): Promise<SaleAssetRecord> => {
   try {
     let sales = [];
     let hasResults = true;
@@ -169,6 +174,7 @@ export const getAllTemplateSales = async (
     }
 
     let saleAssets = [];
+    const pricesBySaleId = {};
     for (const sale of sales) {
       const {
         assets,
@@ -178,18 +184,26 @@ export const getAllTemplateSales = async (
         price: { token_precision },
       } = sale;
 
-      const formattedAssets = assets.map(({ owner, template_mint }) => ({
+      const salePrice = `${addPrecisionDecimal(
+        listing_price,
+        token_precision
+      )} ${listing_symbol}`;
+
+      pricesBySaleId[sale_id] = salePrice;
+
+      const formattedAssets = assets.map(({ template_mint }) => ({
         saleId: sale_id,
         templateMint: template_mint,
-        owner,
-        salePrice: `${addPrecisionDecimal(listing_price, token_precision)}`,
-        saleToken: listing_symbol,
-        listing_price,
+        salePrice,
       }));
+
       saleAssets = saleAssets.concat(formattedAssets);
     }
 
-    return saleAssets as SaleAsset[];
+    return {
+      prices: pricesBySaleId,
+      assets: saleAssets,
+    };
   } catch (e) {
     throw new Error(e);
   }
