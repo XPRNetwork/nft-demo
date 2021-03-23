@@ -6,10 +6,11 @@ import { usePrevious } from '../../hooks';
 interface AuthContext {
   currentUser: User;
   currentUserBalance: string;
+  atomicMarketBalance: string;
   authError: string;
   login: () => Promise<void>;
   logout: () => Promise<void>;
-  updateCurrentUserBalance: (chainAccount: string) => Promise<void>;
+  updateBalances: (chainAccount: string) => Promise<void>;
 }
 
 interface Props {
@@ -19,10 +20,11 @@ interface Props {
 const AuthContext = createContext<AuthContext>({
   currentUser: undefined,
   currentUserBalance: '',
+  atomicMarketBalance: '',
   authError: '',
   login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
-  updateCurrentUserBalance: () => Promise.resolve(),
+  updateBalances: () => Promise.resolve(),
 });
 
 export const useAuthContext = (): AuthContext => {
@@ -33,6 +35,7 @@ export const useAuthContext = (): AuthContext => {
 export const AuthProvider = ({ children }: Props): JSX.Element => {
   const [currentUser, setCurrentUser] = useState<User>(undefined);
   const [currentUserBalance, setCurrentUserBalance] = useState<string>('');
+  const [atomicMarketBalance, setAtomicMarketBalance] = useState<string>('');
   const [authError, setAuthError] = useState<string>('');
   const prevError = usePrevious(authError);
 
@@ -68,7 +71,7 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
           return;
         }
 
-        await updateCurrentUserBalance(user.actor);
+        await updateBalances(user.actor);
         setCurrentUser(user);
       };
 
@@ -76,10 +79,23 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
     }
   }, []);
 
-  const updateCurrentUserBalance = async (chainAccount: string) => {
-    const balance = await proton.getAccountBalance(chainAccount);
+  const updateBalances = async (chainAccount: string) => {
+    let balance = await proton.getAtomicMarketBalance(chainAccount);
+    setAtomicMarketBalance(balance);
+
+    balance = await proton.getAccountBalance(chainAccount);
     setCurrentUserBalance(balance);
   };
+
+  // const updateAtomicMarketBalance = async (chainAccount: string) => {
+  //   const balance = await proton.getAtomicMarketBalance(chainAccount);
+  //   setAtomicMarketBalance(balance);
+  // };
+
+  // const updateCurrentUserBalance = async (chainAccount: string) => {
+  //   const balance = await proton.getAccountBalance(chainAccount);
+  //   setCurrentUserBalance(balance);
+  // };
 
   const login = async (): Promise<void> => {
     const { user, error } = await ProtonSDK.login();
@@ -91,7 +107,7 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
       return;
     }
 
-    await updateCurrentUserBalance(user.actor);
+    await updateBalances(user.actor);
     setCurrentUser(user);
   };
 
@@ -104,10 +120,11 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
     () => ({
       currentUser,
       currentUserBalance,
+      atomicMarketBalance,
       authError,
       login,
       logout,
-      updateCurrentUserBalance,
+      updateBalances,
     }),
     [currentUser, authError, currentUserBalance]
   );
