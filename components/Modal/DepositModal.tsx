@@ -19,7 +19,7 @@ import {
 import PriceInput from '../PriceInput';
 import ProtonSDK from '../../services/proton';
 import { ReactComponent as CloseIcon } from '../../public/close.svg';
-import { TOKEN_SYMBOL } from '../../utils/constants';
+import { TOKEN_SYMBOL, TOKEN_PRECISION } from '../../utils/constants';
 
 export const DepositModal = (): JSX.Element => {
   const {
@@ -37,9 +37,10 @@ export const DepositModal = (): JSX.Element => {
 
   const deposit = async () => {
     try {
+      const formattedAmount = parseFloat(amount).toFixed(TOKEN_PRECISION);
       const res = await ProtonSDK.deposit({
         actor: currentUser ? currentUser.actor : '',
-        amount: `${amount} ${TOKEN_SYMBOL}`,
+        amount: `${formattedAmount} ${TOKEN_SYMBOL}`,
       });
 
       if (!res.success) {

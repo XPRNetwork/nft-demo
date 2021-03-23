@@ -17,10 +17,11 @@ const AssetSaleForm = ({ asset_id }: Props): JSX.Element => {
   const [amount, setAmount] = useState<string>('');
 
   const createSale = async () => {
+    const formattedAmount = parseFloat(amount).toFixed(TOKEN_PRECISION);
     const res = await ProtonSDK.createSale({
       seller: currentUser ? currentUser.actor : '',
       asset_id,
-      price: `${amount} ${TOKEN_SYMBOL}`,
+      price: `${formattedAmount} ${TOKEN_SYMBOL}`,
       currency: `${TOKEN_PRECISION},${TOKEN_SYMBOL}`,
     });
 
