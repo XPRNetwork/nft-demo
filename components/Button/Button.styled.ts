@@ -30,14 +30,4 @@ export const StyledButton = styled.button<ButtonProps>`
     box-shadow: 0 8px 12px -4px rgba(130, 136, 148, 0.24),
       0 0 4px 0 rgba(141, 141, 148, 0.16), 0 0 2px 0 rgba(141, 141, 148, 0.12);
   }
-
-  :disabled {
-    background-color: #8a9ef5;
-    cursor: default;
-
-    :hover {
-      background-color: #8a9ef5;
-      box-shadow: none;
-    }
-  }
 `;
