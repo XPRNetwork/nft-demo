@@ -62,9 +62,11 @@ const BuyAssetForm = ({
         setPurchasingError('Must be logged in');
         return;
       }
+
       const chainAccount = currentUser.actor;
       const purchaseResult = await ProtonSDK.purchaseSale({
         buyer: chainAccount,
+        amount: salePrice,
         sale_id: saleId,
       });
       if (purchaseResult.success) {
@@ -129,19 +131,24 @@ const BuyAssetForm = ({
       <DropdownMenu
         isLoading={isLoadingPrices}
         name="Available Assets For Sale"
-        value={saleId}
+        value={`${saleId} ${salePrice}`}
         onChange={handleDropdownSelect}>
         <option key="blank" value="" disabled>
           - - Select a serial number - -
         </option>
         {sales.length > 0 &&
           sales.map(({ saleId, templateMint, salePrice }) => (
-            <option key={templateMint} value={saleId}>
+            <option key={templateMint} value={`${saleId} ${salePrice}`}>
               #{templateMint} - {salePrice}
             </option>
           ))}
       </DropdownMenu>
-      <Button fullWidth filled rounded onClick={handleButtonClick}>
+      <Button
+        fullWidth
+        filled
+        rounded
+        onClick={handleButtonClick}
+        disabled={buttonText === 'Insufficient Funds'}>
         {buttonText}
       </Button>
       {purchasingError ? <ErrorMessage>{purchasingError}</ErrorMessage> : null}
