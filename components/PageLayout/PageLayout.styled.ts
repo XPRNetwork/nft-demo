@@ -4,7 +4,6 @@ import { breakpoint } from '../../styles/Breakpoints';
 
 export const Main = styled.main`
   min-height: calc(100vh - 83px - 73px);
-  margin-top: 73px;
 
   ${breakpoint.tablet`
     min-height: calc(100vh - 250px - 66px);

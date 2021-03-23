@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Router from 'next/router';
 import { Main, Container } from './PageLayout.styled';
 import { useModalContext, MODAL_TYPES } from '../Provider';
-import { WithdrawModal } from '../Modal';
+import { WithdrawModal, ClaimModal } from '../Modal';
 
 type Props = {
   title: string;
@@ -21,6 +21,8 @@ const PageLayout = ({ title, children }: Props): JSX.Element => {
     switch (modalType) {
       case MODAL_TYPES.WITHDRAW:
         return <WithdrawModal />;
+      case MODAL_TYPES.CLAIM:
+        return <ClaimModal />;
       default:
         return null;
     }

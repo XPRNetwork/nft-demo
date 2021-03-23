@@ -130,6 +130,7 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
         />
       );
     }
+
     return (
       <>
         <Grid items={renderedAssets} type={GRID_TYPE.ASSET} />
