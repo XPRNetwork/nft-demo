@@ -70,7 +70,7 @@ export const formatPrice = (priceString: string): string => {
 
 const formatThousands = (numberString: string): string => {
   const [integers, decimals] = numberString.split('.');
-  let salePrice = parseFloat(integers).toLocaleString();
+  let salePrice = parseFloat(integers.replace(',', '')).toLocaleString();
   salePrice = decimals ? salePrice + '.' + decimals : salePrice;
   return salePrice;
 };

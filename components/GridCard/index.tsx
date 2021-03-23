@@ -41,7 +41,7 @@ const Card = ({
 
   const showPrice = () => {
     if (!priceText) return <EmptyPrice />;
-    return <Price>{formatPrice(priceText)}</Price>;
+    return <Price>{priceText}</Price>;
   };
 
   return (
