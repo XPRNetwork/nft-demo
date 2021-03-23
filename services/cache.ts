@@ -37,7 +37,9 @@ class Cache {
       return '';
     }
 
-    return this.cache.get(key).value;
+    const { value } = this.cache.get(key);
+    this.set(key, value);
+    return value;
   }
 
   delete(key: string) {
@@ -62,7 +64,6 @@ class Cache {
 
     for (const key of keys) {
       cacheValue[key] = this.getValue(key);
-      this.set(key, this.getValue(key));
     }
 
     return cacheValue;

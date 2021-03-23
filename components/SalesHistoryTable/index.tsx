@@ -9,6 +9,7 @@ import { addPrecisionDecimal, parseTimestamp } from '../../utils';
 import { StyledTable } from './SalesHistoryTable.styled';
 import { useWindowSize } from '../../hooks';
 import { getFromApi } from '../../utils/browser-fetch';
+import { useAuthContext } from '../Provider';
 
 type Props = {
   tableData: Sale[];
@@ -59,6 +60,7 @@ const getAvatars = async (
 };
 
 const SalesHistoryTable = ({ tableData, error }: Props): JSX.Element => {
+  const { currentUser } = useAuthContext();
   const [avatars, setAvatars] = useState({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [tableHeaders, setTableHeaders] = useState<TableHeader[]>([]);
@@ -82,6 +84,15 @@ const SalesHistoryTable = ({ tableData, error }: Props): JSX.Element => {
       setIsLoading(false);
     })();
   }, [tableData]);
+
+  useEffect(() => {
+    if (currentUser) {
+      setAvatars({
+        ...avatars,
+        [currentUser.actor]: currentUser.avatar,
+      });
+    }
+  }, [currentUser]);
 
   const getTableContent = () => {
     return tableData.map((sale) => {
