@@ -14,7 +14,7 @@ const Banner = (): JSX.Element => {
   useEffect(() => {
     if (!atomicMarketBalance) return;
 
-    const balance = parseInt(atomicMarketBalance.match(/\d/g)[0]);
+    const balance = parseFloat(atomicMarketBalance.replace(',', ''));
 
     if (path === 'my-nfts' && balance > 0) {
       setIsBannerVisible(true);
