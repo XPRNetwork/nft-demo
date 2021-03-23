@@ -71,6 +71,7 @@ export const getSalesHistoryForTemplate = async (
       sort: 'updated',
       order: 'desc',
       page: pageParam,
+      limit: 10,
     };
     const queryString = toQueryString(queryObject);
     const latestSalesRes = await getFromApi<Sale[]>(
@@ -107,6 +108,7 @@ export const getSalesHistoryForAsset = async (
       sort: 'updated',
       order: 'desc',
       page: pageParam,
+      limit: 10,
     };
     const queryString = toQueryString(queryObject);
     const latestSalesRes = await getFromApi<Sale[]>(
