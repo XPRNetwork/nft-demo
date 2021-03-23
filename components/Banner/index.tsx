@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAuthContext, useModalContext, MODAL_TYPES } from '../Provider';
 import { Background } from './Banner.styled';
+import { formatPrice } from '../../utils';
 
 const Banner = (): JSX.Element => {
   const { currentUserBalance } = useAuthContext();
@@ -29,7 +30,7 @@ const Banner = (): JSX.Element => {
       <span className="money" role="img" aria-label="Money">
         💸
       </span>
-      Claim {currentUserBalance} from sales
+      Claim {formatPrice(currentUserBalance)} from sales
       <span className="money" role="img" aria-label="Money">
         💸
       </span>
