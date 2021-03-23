@@ -43,7 +43,10 @@ export type Sale = {
 };
 
 export type SaleAssetRecord = {
-  prices: {
+  rawPrices: {
+    [templateMint: string]: string;
+  };
+  formattedPrices: {
     [templateMint: string]: string;
   };
   assets: SaleAsset[];
@@ -175,6 +178,7 @@ export const getAllTemplateSales = async (
 
     let saleAssets = [];
     const pricesBySaleId = {};
+    const pricesBySaleIdRaw = {};
     for (const sale of sales) {
       const {
         assets,
@@ -189,7 +193,13 @@ export const getAllTemplateSales = async (
         token_precision
       )} ${listing_symbol}`;
 
+      const rawListingPrice = `${addPrecisionDecimal(
+        listing_price,
+        token_precision,
+        true
+      )} ${listing_symbol}`;
       pricesBySaleId[sale_id] = salePrice;
+      pricesBySaleIdRaw[sale_id] = rawListingPrice;
 
       const formattedAssets = assets.map(({ template_mint }) => ({
         saleId: sale_id,
@@ -201,7 +211,8 @@ export const getAllTemplateSales = async (
     }
 
     return {
-      prices: pricesBySaleId,
+      formattedPrices: pricesBySaleId,
+      rawPrices: pricesBySaleIdRaw,
       assets: saleAssets,
     };
   } catch (e) {
