@@ -34,6 +34,7 @@
       "@typescript-eslint/explicit-function-return-type": "off",
       "prettier/prettier": ["error", {}, { "usePrettierrc": true }],  // Use our .prettierrc file as source
       "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }], // ignore args with _ (needed for React.forwardRef fix
+      "jsx-a11y/accessible-emoji": "off",
       "jsx-a11y/anchor-is-valid": [
           "error",
           {

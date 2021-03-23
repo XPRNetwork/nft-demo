@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAuthContext, useModalContext, MODAL_TYPES } from '../Provider';
-import { Background } from './Banner.styled';
+import { Background, Money } from './Banner.styled';
 import { formatPrice } from '../../utils';
 
 const Banner = (): JSX.Element => {
@@ -27,13 +27,13 @@ const Banner = (): JSX.Element => {
 
   return (
     <Background onClick={() => openModal(MODAL_TYPES.CLAIM)}>
-      <span className="money" role="img" aria-label="Money">
+      <Money role="img" aria-label="Money" right>
         💸
-      </span>
+      </Money>
       Claim {formatPrice(atomicMarketBalance)} from sales
-      <span className="money" role="img" aria-label="Money">
+      <Money role="img" aria-label="Money">
         💸
-      </span>
+      </Money>
     </Background>
   );
 };

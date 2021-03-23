@@ -28,7 +28,7 @@ export const ClaimModal = (): JSX.Element => {
     try {
       const res = await ProtonSDK.withdraw({
         actor: currentUser ? currentUser.actor : '',
-        amount: `${atomicMarketBalance}`,
+        amount: atomicMarketBalance,
       });
 
       if (!res.success) {
