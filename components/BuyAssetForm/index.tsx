@@ -32,7 +32,9 @@ const BuyAssetForm = ({
   );
   const [isLoadingPrices, setIsLoadingPrices] = useState<boolean>(true);
   const [saleId, setSaleId] = useState('');
-  const balanceAmount = parseFloat(currentUserBalance.split(' ')[0]);
+  const balanceAmount = parseFloat(
+    currentUserBalance.split(' ')[0].replace(',', '')
+  );
 
   useEffect(() => {
     setPurchasingError('');
