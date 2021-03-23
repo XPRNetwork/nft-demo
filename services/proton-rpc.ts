@@ -1,10 +1,6 @@
 import { JsonRpc } from '@proton/js';
 import { formatPrice } from '../utils';
-import {
-  TOKEN_SYMBOL,
-  TOKEN_PRECISION,
-  TOKEN_CONTRACT,
-} from '../utils/constants';
+import { TOKEN_SYMBOL, TOKEN_CONTRACT } from '../utils/constants';
 
 class ProtonJs {
   rpc: JsonRpc;

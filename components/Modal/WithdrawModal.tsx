@@ -1,5 +1,5 @@
 import { useState, useEffect, MouseEvent } from 'react';
-import { useAuthContext, useModalContext, MODAL_TYPES } from '../Provider';
+import { useAuthContext } from '../Provider';
 import Button from '../Button';
 import {
   Background,
@@ -10,7 +10,6 @@ import {
   Description,
   InputLabel,
   ErrorMessage,
-  LinkButton,
   WithdrawInputLabel,
   AvailableBalance,
 } from './Modal.styled';
@@ -25,7 +24,6 @@ export const WithdrawModal = (): JSX.Element => {
     currentUserBalance,
     updateCurrentUserBalance,
   } = useAuthContext();
-  const { openModal, closeModal } = useModalContext();
   const [amount, setAmount] = useState<string>('');
   const [error, setError] = useState<string>('');
 
