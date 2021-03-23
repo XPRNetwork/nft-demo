@@ -1,4 +1,3 @@
-import NodeFetch from '../utils/node-fetch';
 import { Asset } from './assets';
 import { toQueryString } from '../utils';
 import { getFromApi } from '../utils/browser-fetch';
@@ -19,8 +18,6 @@ export type Offer = {
   created_at_block: string;
   created_at_time: string;
 };
-
-export const offersApiService = new NodeFetch<Offer>('/atomicassets/v1/offers');
 
 /**
  * Get list of assets that user has listed for sale

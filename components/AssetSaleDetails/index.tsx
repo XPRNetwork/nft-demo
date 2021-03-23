@@ -11,6 +11,7 @@ type Props = {
   salePrice: string;
   isOwner: boolean;
   template_id: string;
+  setShouldGetAssetDetails: (boolean) => void;
 };
 
 const AssetSaleDetails = ({
@@ -18,6 +19,7 @@ const AssetSaleDetails = ({
   salePrice,
   isOwner,
   template_id,
+  setShouldGetAssetDetails,
 }: Props): JSX.Element => {
   const router = useRouter();
   const { currentUser } = useAuthContext();
@@ -29,7 +31,7 @@ const AssetSaleDetails = ({
     });
 
     if (res.success) {
-      router.replace(router.asPath);
+      setShouldGetAssetDetails(true);
     }
   };
 
