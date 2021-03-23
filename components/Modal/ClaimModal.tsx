@@ -12,6 +12,7 @@ import {
   HalfButton,
 } from './Modal.styled';
 import ProtonSDK from '../../services/proton';
+import { formatPrice } from '../../utils';
 import { ReactComponent as CloseIcon } from '../../public/close.svg';
 
 export const ClaimModal = (): JSX.Element => {
@@ -55,14 +56,14 @@ export const ClaimModal = (): JSX.Element => {
     <Background onClick={handleBackgroundClick}>
       <ModalBox>
         <Section>
-          <Title>Claim {currentUserBalance}</Title>
+          <Title>Claim {formatPrice(currentUserBalance)}</Title>
           <CloseIconContainer role="button" onClick={closeModal}>
             <CloseIcon />
           </CloseIconContainer>
         </Section>
         <Description>
-          Congratulations, You sold {currentUserBalance} of NFTs. Claim them
-          now!
+          Congratulations, You sold {formatPrice(currentUserBalance)} of NFTs.
+          Claim them now!
         </Description>
         <Row>
           <Spacer />
