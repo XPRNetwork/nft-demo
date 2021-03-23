@@ -10,7 +10,8 @@ interface AuthContext {
   authError: string;
   login: () => Promise<void>;
   logout: () => Promise<void>;
-  updateBalances: (chainAccount: string) => Promise<void>;
+  updateCurrentUserBalance: (chainAccount: string) => Promise<void>;
+  updateAtomicBalance: (chainAccount: string) => Promise<void>;
 }
 
 interface Props {
@@ -24,7 +25,8 @@ const AuthContext = createContext<AuthContext>({
   authError: '',
   login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
-  updateBalances: () => Promise.resolve(),
+  updateCurrentUserBalance: () => Promise.resolve(),
+  updateAtomicBalance: () => Promise.resolve(),
 });
 
 export const useAuthContext = (): AuthContext => {
@@ -71,7 +73,8 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
           return;
         }
 
-        await updateBalances(user.actor);
+        await updateCurrentUserBalance(user.actor);
+        await updateAtomicBalance(user.actor);
         setCurrentUser(user);
       };
 
@@ -79,12 +82,14 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
     }
   }, []);
 
-  const updateBalances = async (chainAccount: string) => {
-    let balance = await proton.getAtomicMarketBalance(chainAccount);
-    setAtomicMarketBalance(balance);
-
-    balance = await proton.getAccountBalance(chainAccount);
+  const updateCurrentUserBalance = async (chainAccount: string) => {
+    const balance = await proton.getAccountBalance(chainAccount);
     setCurrentUserBalance(balance);
+  };
+
+  const updateAtomicBalance = async (chainAccount: string) => {
+    const balance = await proton.getAtomicMarketBalance(chainAccount);
+    setAtomicMarketBalance(balance);
   };
 
   const login = async (): Promise<void> => {
@@ -97,7 +102,8 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
       return;
     }
 
-    await updateBalances(user.actor);
+    await updateCurrentUserBalance(user.actor);
+    await updateAtomicBalance(user.actor);
     setCurrentUser(user);
   };
 
@@ -114,7 +120,8 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
       authError,
       login,
       logout,
-      updateBalances,
+      updateCurrentUserBalance,
+      updateAtomicBalance,
     }),
     [currentUser, authError, currentUserBalance]
   );

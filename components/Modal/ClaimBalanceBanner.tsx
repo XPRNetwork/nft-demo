@@ -15,8 +15,12 @@ import ProtonSDK from '../../services/proton';
 import { formatPrice } from '../../utils';
 import { ReactComponent as CloseIcon } from '../../public/close.svg';
 
-export const ClaimModal = (): JSX.Element => {
-  const { currentUser, atomicMarketBalance, updateBalances } = useAuthContext();
+export const ClaimBalanceBanner = (): JSX.Element => {
+  const {
+    currentUser,
+    atomicMarketBalance,
+    updateAtomicBalance,
+  } = useAuthContext();
   const { closeModal } = useModalContext();
   const [error, setError] = useState<string>('');
 
@@ -36,7 +40,7 @@ export const ClaimModal = (): JSX.Element => {
       }
 
       closeModal();
-      await updateBalances(currentUser.actor);
+      await updateAtomicBalance(currentUser.actor);
     } catch (err) {
       setError(err.message);
     }

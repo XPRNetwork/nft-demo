@@ -5,8 +5,8 @@ type MoneyProps = {
 };
 
 export const Background = styled.section`
-  margin-top: 64px;
-  margin-bottom: -73px;
+  position: fixed;
+  top: 64px;
   width: 100%;
   height: 40px;
   background: #ebf4ee;
@@ -17,6 +17,7 @@ export const Background = styled.section`
   font-size: 14px;
   font-family: GilroySemiBold;
   cursor: pointer;
+  z-index: 3;
 `;
 
 export const Money = styled.span<MoneyProps>`
