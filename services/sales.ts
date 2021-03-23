@@ -54,19 +54,23 @@ export type SaleAssetRecord = {
 /**
  * Get the fulfilled sales for a specific templates (sales that were successful)
  * Mostly used in viewing sales history of a specific template
- * @param  {string} templateId   The template id of the history you want to look up
- * @return {Sales[]}             Returns an array of Sales for that specific template id
+ * @param {string} templateId The template id of the history you want to look up
+ * @param {number} page       The page to look up from atomicassets api if number of assets returned is greater than given limit (default 100)
+ * @return {Sales[]}          Returns an array of Sales for that specific template id
  */
 
 export const getSalesHistoryForTemplate = async (
-  templateId: string
+  templateId: string,
+  page?: number
 ): Promise<Sale[]> => {
   try {
+    const pageParam = page ? page : 1;
     const queryObject = {
       state: '3', // Valid sale, Sale was bought
       template_id: templateId,
       sort: 'updated',
       order: 'desc',
+      page: pageParam,
     };
     const queryString = toQueryString(queryObject);
     const latestSalesRes = await getFromApi<Sale[]>(
@@ -86,19 +90,23 @@ export const getSalesHistoryForTemplate = async (
 /**
  * Get the fulfilled sales for a specific asset (sales that were successful)
  * Mostly used in viewing sales history of a specific asset
- * @param  {string} assetId   The asset id of the history you want to look up
- * @return {Sales[]}          Returns an array of Sales for that specific template id
+ * @param {string} assetId The asset id of the history you want to look up
+ * @param {number} page    The page to look up from atomicassets api if number of assets returned is greater than given limit (default 100)
+ * @return {Sales[]}       Returns an array of Sales for that specific template id
  */
 
 export const getSalesHistoryForAsset = async (
-  assetId: string
+  assetId: string,
+  page?: number
 ): Promise<Sale[]> => {
   try {
+    const pageParam = page ? page : 1;
     const queryObject = {
       state: '3', // Valid sale, Sale was bought
       asset_id: assetId,
       sort: 'updated',
       order: 'desc',
+      page: pageParam,
     };
     const queryString = toQueryString(queryObject);
     const latestSalesRes = await getFromApi<Sale[]>(
