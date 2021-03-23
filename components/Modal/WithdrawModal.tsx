@@ -17,7 +17,7 @@ import {
 import PriceInput from '../PriceInput';
 import ProtonSDK from '../../services/proton';
 import { ReactComponent as CloseIcon } from '../../public/close.svg';
-import { TOKEN_SYMBOL } from '../../utils/constants';
+import { TOKEN_SYMBOL, TOKEN_PRECISION } from '../../utils/constants';
 
 export const WithdrawModal = (): JSX.Element => {
   const {
