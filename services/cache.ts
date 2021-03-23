@@ -6,10 +6,12 @@ interface CacheValue {
 class Cache {
   cache: Map<string, CacheValue>;
   maxLength: number;
+  length: number;
 
   constructor() {
     this.cache = new Map();
-    this.maxLength = 100;
+    this.maxLength = 1000;
+    this.length = 0;
   }
 
   has(key: string) {
@@ -17,10 +19,12 @@ class Cache {
   }
 
   set(key: string, value: string) {
-    if (this.length() > this.maxLength) {
+    if (this.length >= this.maxLength) {
       const leastUsed = this.leastRecentlyUsed();
       this.delete(leastUsed);
     }
+
+    if (!this.has(key)) this.length += 1;
 
     return this.cache.set(key, {
       value,
@@ -37,15 +41,13 @@ class Cache {
   }
 
   delete(key: string) {
+    this.length -= 1;
     return this.cache.delete(key);
   }
 
   clear() {
+    this.length = 0;
     return this.cache.clear();
-  }
-
-  length() {
-    return Array.from(this.cache.keys()).length;
   }
 
   leastRecentlyUsed() {
