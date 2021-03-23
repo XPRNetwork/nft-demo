@@ -1,6 +1,5 @@
 import { ConnectWallet } from '@proton/web-sdk';
 import { LinkSession, Link } from '@proton/link';
-import proton from './proton-rpc';
 import logoUrl from '../public/logo.svg';
 
 export interface User {
@@ -392,8 +391,6 @@ class ProtonSDK {
       };
     }
   };
-
-
 }
 
 export default new ProtonSDK();

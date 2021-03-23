@@ -1,7 +1,6 @@
 import { JsonRpc } from '@proton/js';
 import { formatPrice } from '../utils';
 import {
-  EMPTY_BALANCE,
   TOKEN_SYMBOL,
   TOKEN_PRECISION,
   TOKEN_CONTRACT,
@@ -47,8 +46,7 @@ class ProtonJs {
       account,
       TOKEN_SYMBOL
     );
-    // return formatPrice(res[0]);
-    return balance[0];
+    return formatPrice(balance[0]);
   };
 
   getProfileImage = async ({ account }): Promise<string> => {
