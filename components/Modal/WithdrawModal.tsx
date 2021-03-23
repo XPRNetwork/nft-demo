@@ -22,6 +22,7 @@ export const WithdrawModal = (): JSX.Element => {
   const {
     currentUser,
     currentUserBalance,
+    updateCurrentUserBalance,
     updateAtomicBalance,
   } = useAuthContext();
   const { closeModal } = useModalContext();
@@ -45,6 +46,7 @@ export const WithdrawModal = (): JSX.Element => {
       }
 
       closeModal();
+      await updateCurrentUserBalance(currentUser.actor);
       await updateAtomicBalance(currentUser.actor);
     } catch (err) {
       setError(err.message);

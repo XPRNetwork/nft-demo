@@ -123,7 +123,7 @@ export const AuthProvider = ({ children }: Props): JSX.Element => {
       updateCurrentUserBalance,
       updateAtomicBalance,
     }),
-    [currentUser, authError, currentUserBalance]
+    [currentUser, authError, currentUserBalance, atomicMarketBalance]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

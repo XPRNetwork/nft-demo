@@ -23,8 +23,5 @@ export const Background = styled.section`
 export const Money = styled.span<MoneyProps>`
   font-size: 16px;
   margin-right: ${({ right }) => (right ? '8px' : '0')};
-
-  &:last-of-type {
-    margin: 0 0 0 8px;
-  }
+  margin-left: ${({ right }) => (!right ? '8px' : '0')};
 `;
