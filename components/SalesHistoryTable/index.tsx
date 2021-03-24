@@ -131,10 +131,10 @@ const SalesHistoryTable = ({
         }
         router.prefetch('/');
         await prefetchNextPage();
-        setIsLoading(false);
       } catch (e) {
         setErrorMessage(e.message);
       }
+      setIsLoading(false);
     })();
   }, [renderedData]);
 
