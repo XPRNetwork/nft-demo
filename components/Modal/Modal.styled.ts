@@ -1,7 +1,12 @@
 import styled from 'styled-components';
 import { MaxWidth } from '../../styles/MaxWidth.styled';
 import { breakpoint } from '../../styles/Breakpoints';
-import { StyledButton } from '../Button/Button.styled';
+import { StyledButton, ButtonProps } from '../Button/Button.styled';
+
+interface HalfButtonProps extends ButtonProps {
+  color?: string;
+  hoverColor?: string;
+}
 
 export const Background = styled.div`
   z-index: 3;
@@ -65,6 +70,7 @@ export const Description = styled.p`
 
 export const InputLabel = styled(Description).attrs({ as: 'label' })`
   font-size: 12px;
+  line-height: 24px;
   display: flex;
   flex-direction: column;
   margin: 0;
@@ -92,57 +98,26 @@ export const ErrorMessage = styled(Description).attrs({ as: 'span' })`
   margin-bottom: 0;
 `;
 
-export const Input = styled.input`
-  font-family: GilroyMedium;
-  font-size: 14px;
-  line-height: 24px;
-  color: #7578b5;
-  border-radius: 4px;
-  padding: 8px;
-  border: solid 1px #e8ecfd;
-  margin-bottom: 12px;
-
-  ::-webkit-inner-spin-button,
-  ::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    margin: 0;
-  }
-
-  ::placeholder {
-    color: #7578b5;
-  }
-`;
-
-export const StyledLink = styled.a`
-  font-family: GilroySemiBold;
-  font-size: 14px;
-  line-height: 24px;
-  color: #8a9ef5;
-  width: 100%;
-  text-decoration: underline;
-  cursor: pointer;
-  transition: 0.2s;
-  text-align: left;
-
-  :hover {
-    color: #4d5dc1;
-  }
-`;
-
-export const LinkButton = styled(StyledLink).attrs({ as: 'button' })`
-  padding: 0;
-  border: none;
-  background: none;
-`;
-
 export const Row = styled.div`
   display: flex;
 `;
 
-export const HalfButton = styled(StyledButton)`
+export const HalfButton = styled(StyledButton)<HalfButtonProps>`
   flex: 1;
+
+  ${({ color }) =>
+    color &&
+    `
+    background-color: ${color};
+  `}
+
+  ${({ hoverColor }) =>
+    hoverColor &&
+    `
+    :hover {
+      background-color: ${hoverColor};
+    }
+  `}
 `;
 
 export const Spacer = styled.div`

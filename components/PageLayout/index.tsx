@@ -3,7 +3,13 @@ import Head from 'next/head';
 import Router from 'next/router';
 import { Main, Container } from './PageLayout.styled';
 import { useModalContext, MODAL_TYPES } from '../Provider';
-import { ClaimBalanceModal } from '../Modal';
+import {
+  ClaimBalanceModal,
+  CreateSaleModal,
+  CreateMultipleSalesModal,
+  CancelSaleModal,
+  CancelMultipleSalesModal,
+} from '../Modal';
 
 type Props = {
   title: string;
@@ -21,6 +27,14 @@ const PageLayout = ({ title, children }: Props): JSX.Element => {
     switch (modalType) {
       case MODAL_TYPES.CLAIM:
         return <ClaimBalanceModal />;
+      case MODAL_TYPES.CREATE_SALE:
+        return <CreateSaleModal />;
+      case MODAL_TYPES.CREATE_MULTIPLE_SALES:
+        return <CreateMultipleSalesModal />;
+      case MODAL_TYPES.CANCEL_SALE:
+        return <CancelSaleModal />;
+      case MODAL_TYPES.CANCEL_MULTIPLE_SALES:
+        return <CancelMultipleSalesModal />;
       default:
         return null;
     }

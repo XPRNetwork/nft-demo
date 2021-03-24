@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 
-type ButtonProps = {
+export interface ButtonProps {
   filled?: boolean;
   rounded?: boolean;
   fullWidth?: boolean;
-};
+}
 
 export const StyledButton = styled.button<ButtonProps>`
   padding: 8px 16px;
