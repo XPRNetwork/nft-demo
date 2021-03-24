@@ -8,7 +8,7 @@ import {
   CreateSaleModal,
   CreateMultipleSalesModal,
   CancelSaleModal,
-  CancelAllSalesModal,
+  CancelMultipleSalesModal,
 } from '../Modal';
 
 type Props = {
@@ -33,8 +33,8 @@ const PageLayout = ({ title, children }: Props): JSX.Element => {
         return <CreateMultipleSalesModal />;
       case MODAL_TYPES.CANCEL_SALE:
         return <CancelSaleModal />;
-      case MODAL_TYPES.CANCEL_ALL_SALES:
-        return <CancelAllSalesModal />;
+      case MODAL_TYPES.CANCEL_MULTIPLE_SALES:
+        return <CancelMultipleSalesModal />;
       default:
         return null;
     }
