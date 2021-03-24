@@ -104,6 +104,7 @@ const SalesHistoryTable = ({
   const { currentUser } = useAuthContext();
   const router = useRouter();
   const [avatars, setAvatars] = useState({});
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState<boolean>(true);
   const [renderedData, setRenderedData] = useState<Sale[]>(tableData);
   const [prefetchedData, setPrefetchedData] = useState<Sale[]>([]);
@@ -122,12 +123,13 @@ const SalesHistoryTable = ({
 
   useEffect(() => {
     (async () => {
-      if (renderedData.length) {
-        const chainAccounts = renderedData.map(({ buyer }) => buyer);
-        const res = await getAvatars(chainAccounts);
-        setAvatars(res);
-      }
       try {
+        if (renderedData.length) {
+          const chainAccounts = renderedData.map(({ buyer }) => buyer);
+          const res = await getAvatars(chainAccounts);
+          setIsLoading(false);
+          setAvatars(res);
+        }
         router.prefetch('/');
         await prefetchNextPage();
       } catch (e) {
@@ -201,7 +203,7 @@ const SalesHistoryTable = ({
             error={
               errorMessage ? `An error has occurred: ${errorMessage}` : null
             }
-            loading={false}
+            loading={isLoading}
             noData={!renderedData.length}
             noDataMessage={'No Recent Sales'}
             columns={tableHeaders.length}>
