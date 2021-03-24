@@ -93,6 +93,7 @@ const UserAvatar = ({ isOpen, avatar, toggleNavDropdown }) => {
 };
 
 const Dropdown = ({ isOpen, closeNavDropdown }: DropdownProps): JSX.Element => {
+  const router = useRouter();
   const { currentUser, currentUserBalance, logout } = useAuthContext();
 
   const routes = [
@@ -112,6 +113,7 @@ const Dropdown = ({ isOpen, closeNavDropdown }: DropdownProps): JSX.Element => {
       onClick: () => {
         closeNavDropdown();
         logout();
+        router.push('/');
       },
       isRed: true,
     },
