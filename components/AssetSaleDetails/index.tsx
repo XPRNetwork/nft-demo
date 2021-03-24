@@ -50,7 +50,7 @@ const AssetSaleDetails = ({
             filled
             rounded
             onClick={() => {
-              openModal(MODAL_TYPES.CANCEL_ALL_SALES);
+              openModal(MODAL_TYPES.CANCEL_MULTIPLE_SALES);
               setModalProps({
                 saleIds: [saleId],
                 setShouldReload,
