@@ -1,10 +1,8 @@
-import React, { useState, Dispatch, SetStateAction } from 'react';
-import ProtonSDK from '../../services/proton';
+import React, { Dispatch, SetStateAction } from 'react';
 import Button from '../Button';
-import PriceInput from '../PriceInput';
-import { useAuthContext } from '../Provider';
+import { useModalContext, MODAL_TYPES } from '../Provider';
 import { General } from '../../styles/details.styled';
-import { TOKEN_SYMBOL, TOKEN_PRECISION } from '../../utils/constants';
+import { TOKEN_SYMBOL } from '../../utils/constants';
 
 type Props = {
   asset_id: string;
@@ -12,34 +10,35 @@ type Props = {
 };
 
 const AssetSaleForm = ({ asset_id, setShouldReload }: Props): JSX.Element => {
-  const { currentUser } = useAuthContext();
-  const [amount, setAmount] = useState<string>('');
-
-  const createSale = async () => {
-    const formattedAmount = parseFloat(amount).toFixed(TOKEN_PRECISION);
-    const res = await ProtonSDK.createSale({
-      seller: currentUser ? currentUser.actor : '',
-      asset_id,
-      price: `${formattedAmount} ${TOKEN_SYMBOL}`,
-      currency: `${TOKEN_PRECISION},${TOKEN_SYMBOL}`,
-    });
-
-    if (res.success) {
-      setShouldReload(true);
-    }
-  };
-
+  const { openModal, setModalProps } = useModalContext();
   return (
     <section>
       <General>Sales Price ({TOKEN_SYMBOL})</General>
-      <PriceInput
-        amount={amount}
-        setAmount={setAmount}
-        submit={() => createSale()}
-        placeholder="Enter Price"
-      />
-      <Button filled rounded fullWidth onClick={createSale}>
+      <Button
+        filled
+        rounded
+        fullWidth
+        onClick={() => {
+          openModal(MODAL_TYPES.CREATE_SALE);
+          setModalProps({
+            assetId: asset_id,
+            setShouldReload,
+          });
+        }}>
         Mark for sale
+      </Button>
+      <Button
+        filled
+        rounded
+        fullWidth
+        onClick={() => {
+          openModal(MODAL_TYPES.CREATE_MULTIPLE_SALES);
+          setModalProps({
+            assetIds: [asset_id],
+            setShouldReload,
+          });
+        }}>
+        (TEST) Mark all for sale
       </Button>
     </section>
   );
