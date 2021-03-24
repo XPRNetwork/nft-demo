@@ -77,7 +77,9 @@ const BuyAssetForm = ({
         sale_id: saleId,
       });
       if (purchaseResult.success) {
-        router.push(`/my-nfts/${chainAccount}`);
+        setTimeout(() => {
+          router.push(`/my-nfts/${chainAccount}`);
+        }, 1000);
       } else {
         throw purchaseResult.error;
       }
