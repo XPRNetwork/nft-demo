@@ -22,7 +22,12 @@ const BuyAssetForm = ({
   maxSupply,
 }: Props): JSX.Element => {
   const router = useRouter();
-  const { currentUser, currentUserBalance, login } = useAuthContext();
+  const {
+    updateCurrentUserBalance,
+    currentUser,
+    currentUserBalance,
+    login,
+  } = useAuthContext();
   const [sales, setSales] = useState<SaleAsset[]>([]);
   const [formattedPricesBySaleId, setFormattedPricesBySaleId] = useState<{
     [templateMint: string]: string;
@@ -86,6 +91,7 @@ const BuyAssetForm = ({
 
       if (purchaseResult.success) {
         gtag.event({ action: 'buy_nft' });
+        updateCurrentUserBalance(chainAccount);
         setTimeout(() => {
           router.push(`/my-nfts/${chainAccount}`);
         }, 1000);

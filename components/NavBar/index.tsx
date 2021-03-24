@@ -60,9 +60,8 @@ const Logo = (): JSX.Element => {
   );
 };
 
-const UserAvatar = ({ currentUser, isOpen, avatar, toggleNavDropdown }) => {
-  const { currentUserBalance, updateCurrentUserBalance } = useAuthContext();
-  updateCurrentUserBalance(currentUser);
+const UserAvatar = ({ isOpen, avatar, toggleNavDropdown }) => {
+  const { currentUserBalance } = useAuthContext();
 
   const currentUserAvatar = (
     <UserMenuButton>
@@ -194,7 +193,6 @@ const NavBar = (): JSX.Element => {
           <DesktopNavRoutes />
           {currentUser && currentUser.avatar ? (
             <UserAvatar
-              currentUser={currentUser.actor}
               isOpen={isOpen}
               avatar={currentUser.avatar}
               toggleNavDropdown={toggleNavDropdown}
