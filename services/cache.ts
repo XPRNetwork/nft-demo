@@ -3,7 +3,7 @@ interface CacheValue {
   updatedAt: number;
 }
 
-class Cache {
+export class Cache {
   cache: Map<string, CacheValue>;
   maxLength: number;
   length: number;
@@ -14,49 +14,48 @@ class Cache {
     this.length = 0;
   }
 
-  has(key: string) {
+  has(key: string): boolean {
     return this.cache.has(key);
   }
 
-  set(key: string, value: string) {
+  set(key: string, value: string): number {
     if (this.length >= this.maxLength) {
-      const leastUsed = this.leastRecentlyUsed();
-      this.delete(leastUsed);
+      const leastUsedKey = this.leastRecentlyUsed();
+      this.delete(leastUsedKey);
     }
 
     if (!this.has(key)) this.length += 1;
-
-    return this.cache.set(key, {
+    this.cache.set(key, {
       value,
       updatedAt: Date.now(),
     });
+
+    return this.length;
   }
 
   getValue(key: string): string {
-    if (!this.has(key)) {
-      return '';
-    }
-
     const { value } = this.cache.get(key);
     this.set(key, value);
     return value;
   }
 
-  delete(key: string) {
+  delete(key: string): number {
     this.length -= 1;
-    return this.cache.delete(key);
+    this.cache.delete(key);
+    return this.length;
   }
 
-  clear() {
+  clear(): number {
     this.length = 0;
-    return this.cache.clear();
+    this.cache.clear();
+    return this.length;
   }
 
-  leastRecentlyUsed() {
-    const leastUsed = Array.from(this.cache.keys()).sort(
+  leastRecentlyUsed(): string {
+    const leastUsedKey = Array.from(this.cache.keys()).sort(
       (a, b) => this.cache.get(a).updatedAt - this.cache.get(b).updatedAt
     )[0];
-    return leastUsed;
+    return leastUsedKey;
   }
 
   getValues(keys: string[]): { [key: string]: string } {
