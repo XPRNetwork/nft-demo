@@ -86,7 +86,9 @@ const BuyAssetForm = ({
 
       if (purchaseResult.success) {
         gtag.event({ action: 'buy_nft' });
-        router.push(`/my-nfts/${chainAccount}`);
+        setTimeout(() => {
+          router.push(`/my-nfts/${chainAccount}`);
+        }, 1000);
       } else {
         throw purchaseResult.error;
       }
