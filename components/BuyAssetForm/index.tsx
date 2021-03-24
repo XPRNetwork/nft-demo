@@ -6,6 +6,7 @@ import Button from '../Button';
 import { General, Amount, Row, Divider } from '../../styles/details.styled';
 import { ErrorMessage, DropdownMenu } from './BuyAssetForm.styled';
 import { useAuthContext } from '../Provider';
+import * as gtag from '../../utils/gtag';
 
 type Props = {
   templateId: string;
@@ -76,7 +77,9 @@ const BuyAssetForm = ({
         amount: rawPriceOfSale,
         sale_id: saleId,
       });
+
       if (purchaseResult.success) {
+        gtag.event({ action: 'buy_nft' });
         router.push(`/my-nfts/${chainAccount}`);
       } else {
         throw purchaseResult.error;
@@ -115,6 +118,7 @@ const BuyAssetForm = ({
         `Insufficient funds: this NFT is listed for ${priceString} and your account balance is ${currentUserBalance}. Please visit Foobar Faucet for more funds to continue this transaction.`
       );
     }
+
     setRawPriceOfSale(rawPricesBySaleId[id]);
     setSaleId(id);
   };
