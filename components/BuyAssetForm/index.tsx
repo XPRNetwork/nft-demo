@@ -51,6 +51,12 @@ const BuyAssetForm = ({
       const { formattedPrices, rawPrices, assets } = await getAllTemplateSales(
         templateId
       );
+
+      assets.forEach((asset) => {
+        if (asset.salePrice === lowestPrice) {
+          setSaleId(asset.saleId);
+        }
+      });
       setSales(assets);
       setFormattedPricesBySaleId(formattedPrices);
       setRawPricesBySaleId(rawPrices);
