@@ -17,6 +17,11 @@ interface CreateSaleOptions {
   currency: string;
 }
 
+interface CreateMultipleSalesOptions
+  extends Omit<CreateSaleOptions, 'asset_id'> {
+  assetIds: string[];
+}
+
 interface PurchaseSaleOptions {
   buyer: string;
   amount: string;
@@ -26,6 +31,11 @@ interface PurchaseSaleOptions {
 interface SaleOptions {
   actor: string;
   sale_id: string;
+}
+
+interface CancelMultipleSalesOptions {
+  actor: string;
+  saleIds: string[];
 }
 
 interface DepositWithdrawOptions {
@@ -280,11 +290,88 @@ class ProtonSDK {
   };
 
   /**
+   * Announce multiple asset sales and create initial offers for the assets on atomic market.
+   *
+   * @param {string}   seller     Chain account of the asset's current owner.
+   * @param {string[]} assetIds   Array of IDs for the assets to sell.
+   * @param {string}   price      Listing price of the sale (i.e. '1.000000').
+   * @param {string}   currency   Token precision (number of decimal points) and token symbol that the sale will be paid in (i.e. '6,FOOBAR').
+   * @return {SaleResponse}       Returns an object indicating the success of the transaction and transaction ID.
+   */
+
+  createMultipleSales = async ({
+    seller,
+    assetIds,
+    price,
+    currency,
+  }: CreateMultipleSalesOptions): Promise<SaleResponse> => {
+    const announceSaleActions = assetIds.map((asset_id) => ({
+      account: 'atomicmarket',
+      name: 'announcesale',
+      authorization: [
+        {
+          actor: seller,
+          permission: 'active',
+        },
+      ],
+      data: {
+        seller,
+        asset_ids: [asset_id],
+        maker_marketplace: 'fees.market',
+        listing_price: price,
+        settlement_symbol: currency,
+      },
+    }));
+
+    const createOfferActions = assetIds.map((asset_id) => ({
+      account: 'atomicassets',
+      name: 'createoffer',
+      authorization: [
+        {
+          actor: seller,
+          permission: 'active',
+        },
+      ],
+      data: {
+        sender: seller,
+        recipient: 'atomicmarket',
+        sender_asset_ids: [asset_id],
+        recipient_asset_ids: [],
+        memo: 'sale',
+      },
+    }));
+
+    const actions = [...announceSaleActions, ...createOfferActions];
+
+    try {
+      if (!this.session) {
+        throw new Error('Unable to create a sale offer without logging in.');
+      }
+
+      const result = await this.session.transact(
+        { actions: actions },
+        { broadcast: true }
+      );
+
+      return {
+        success: true,
+        transactionId: result.processed.id,
+      };
+    } catch (e) {
+      return {
+        success: false,
+        error:
+          e.message || 'An error has occurred while creating the sale offer.',
+      };
+    }
+  };
+
+  /**
    * Cancel the announcement of an asset sale and its initial offer on atomic market.
    *
    * @param {string}   actor     Chain account of the asset's current owner.
    * @param {string}   sale_id   ID of the sale to cancel.
-   * @return {SaleResponse}       Returns an object indicating the success of the transaction and transaction ID.
+   * @return {SaleResponse}      Returns an object indicating the success of the transaction and transaction ID.
    */
 
   cancelSale = async ({
@@ -306,6 +393,54 @@ class ProtonSDK {
         },
       },
     ];
+
+    try {
+      if (!this.session) {
+        throw new Error('Unable to cancel a sale without logging in.');
+      }
+
+      const result = await this.session.transact(
+        { actions: actions },
+        { broadcast: true }
+      );
+
+      return {
+        success: true,
+        transactionId: result.processed.id,
+      };
+    } catch (e) {
+      return {
+        success: false,
+        error: e.message || 'An error has occurred while cancelling the sale.',
+      };
+    }
+  };
+
+  /**
+   * Cancel the announcements of several asset sales and their initial offers on atomic market.
+   *
+   * @param {string}   actor      Chain account of the asset's current owner.
+   * @param {string[]} saleIds    Array of IDs for the sales to cancel.
+   * @return {SaleResponse}       Returns an object indicating the success of the transaction and transaction ID.
+   */
+
+  cancelMultipleSales = async ({
+    actor,
+    saleIds,
+  }: CancelMultipleSalesOptions): Promise<SaleResponse> => {
+    const actions = saleIds.map((sale_id) => ({
+      account: 'atomicmarket',
+      name: 'cancelsale',
+      authorization: [
+        {
+          actor,
+          permission: 'active',
+        },
+      ],
+      data: {
+        sale_id,
+      },
+    }));
 
     try {
       if (!this.session) {

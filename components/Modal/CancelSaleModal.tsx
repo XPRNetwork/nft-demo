@@ -104,13 +104,15 @@ export const CancelMultipleSalesModal = (): JSX.Element => {
 
   const onButtonClick = async () => {
     try {
-      console.log(
-        `${currentUser.actor} is canceling the following sales: ${saleIds.join(
-          ', '
-        )}`
-      );
-      closeModal();
-      setShouldReload(true);
+      const res = await ProtonSDK.cancelMultipleSales({
+        actor: currentUser ? currentUser.actor : '',
+        saleIds,
+      });
+
+      if (res.success) {
+        closeModal();
+        setShouldReload(true);
+      }
     } catch (err) {
       throw new Error(err.message);
     }
