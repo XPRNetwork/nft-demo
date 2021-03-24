@@ -9,6 +9,8 @@ import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 import { AuthProvider, ModalProvider } from '../components/Provider';
 import '../styles/customprogress.css';
+import * as gtag from '../utils/gtag';
+const isProduction = process.env.NODE_ENV === 'production';
 
 NProgress.configure({
   minimum: 0.3,
@@ -19,7 +21,10 @@ NProgress.configure({
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   const start = () => NProgress.start();
-  const end = () => NProgress.done();
+  const end = (url) => {
+    NProgress.done();
+    if (isProduction) gtag.pageview(url);
+  };
 
   useEffect(() => {
     if (process.env.NODE_ENV !== 'production') {
