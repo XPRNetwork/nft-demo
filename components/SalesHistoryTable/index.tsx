@@ -104,7 +104,6 @@ const SalesHistoryTable = ({
   const { currentUser } = useAuthContext();
   const router = useRouter();
   const [avatars, setAvatars] = useState({});
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState<boolean>(true);
   const [renderedData, setRenderedData] = useState<Sale[]>(tableData);
   const [prefetchedData, setPrefetchedData] = useState<Sale[]>([]);
@@ -202,7 +201,7 @@ const SalesHistoryTable = ({
             error={
               errorMessage ? `An error has occurred: ${errorMessage}` : null
             }
-            loading={isLoading}
+            loading={false}
             noData={!renderedData.length}
             noDataMessage={'No Recent Sales'}
             columns={tableHeaders.length}>
