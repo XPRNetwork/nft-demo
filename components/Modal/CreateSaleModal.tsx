@@ -5,7 +5,6 @@ import {
   CreateSaleModalProps,
   CreateMultipleSalesModalProps,
 } from '../Provider';
-import Button from '../Button';
 import PriceInput from '../PriceInput';
 import {
   Background,
@@ -15,6 +14,9 @@ import {
   Title,
   Description,
   InputLabel,
+  Row,
+  Spacer,
+  HalfButton,
 } from './Modal.styled';
 import { ReactComponent as CloseIcon } from '../../public/close.svg';
 import { TOKEN_SYMBOL, TOKEN_PRECISION } from '../../utils/constants';
@@ -64,9 +66,12 @@ const SaleModal = ({
             placeholder={`Enter amount (${TOKEN_SYMBOL})`}
           />
         </InputLabel>
-        <Button fullWidth filled rounded onClick={onButtonClick}>
-          {buttonText}
-        </Button>
+        <Row>
+          <Spacer />
+          <HalfButton filled rounded onClick={onButtonClick}>
+            {buttonText}
+          </HalfButton>
+        </Row>
       </ModalBox>
     </Background>
   );
