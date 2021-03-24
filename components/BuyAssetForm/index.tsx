@@ -117,6 +117,7 @@ const BuyAssetForm = ({
 
   const handleDropdownSelect = (e: ChangeEvent<HTMLSelectElement>) => {
     setPurchasingError('');
+    setIsBalanceInsufficient(false);
 
     if (!currentUser) {
       setPurchasingError('You must log in to purchase an asset.');
