@@ -48,8 +48,8 @@ interface DepositWithdrawResponse {
   error?: string;
 }
 
-interface SaleResponse {
-  success: boolean;
+export interface SaleResponse {
+  success?: boolean;
   transactionId?: string;
   error?: string;
 }
