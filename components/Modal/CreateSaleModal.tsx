@@ -116,13 +116,18 @@ export const CreateMultipleSalesModal = (): JSX.Element => {
 
   const createMultipleSales = async () => {
     try {
-      console.log(
-        `${currentUser.actor} is selling the following assets: ${assetIds.join(
-          ', '
-        )}`
-      );
-      closeModal();
-      setShouldReload(true);
+      const formattedAmount = parseFloat(amount).toFixed(TOKEN_PRECISION);
+      const res = await ProtonSDK.createMultipleSales({
+        seller: currentUser ? currentUser.actor : '',
+        assetIds,
+        price: `${formattedAmount} ${TOKEN_SYMBOL}`,
+        currency: `${TOKEN_PRECISION},${TOKEN_SYMBOL}`,
+      });
+
+      if (res.success) {
+        closeModal();
+        setShouldReload(true);
+      }
     } catch (err) {
       throw new Error(err.message);
     }
