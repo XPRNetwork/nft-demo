@@ -127,11 +127,11 @@ const SalesHistoryTable = ({
         if (renderedData.length) {
           const chainAccounts = renderedData.map(({ buyer }) => buyer);
           const res = await getAvatars(chainAccounts);
-          setIsLoading(false);
           setAvatars(res);
         }
         router.prefetch('/');
         await prefetchNextPage();
+        setIsLoading(false);
       } catch (e) {
         setErrorMessage(e.message);
       }
