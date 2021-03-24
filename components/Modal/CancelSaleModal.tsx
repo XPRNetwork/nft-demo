@@ -5,7 +5,6 @@ import {
   CancelSaleModalProps,
   CancelAllSalesModalProps,
 } from '../Provider';
-import Button from '../Button';
 import {
   Background,
   ModalBox,
@@ -13,6 +12,9 @@ import {
   CloseIconContainer,
   Title,
   Description,
+  Row,
+  Spacer,
+  HalfButton,
 } from './Modal.styled';
 import { ReactComponent as CloseIcon } from '../../public/close.svg';
 import ProtonSDK from '../../services/proton';
@@ -48,15 +50,17 @@ const CancelModal = ({
           </CloseIconContainer>
         </Section>
         <Description>{description}</Description>
-        <Button
-          fullWidth
-          filled
-          rounded
-          color="#fb849a"
-          hoverColor="#ff778e"
-          onClick={onButtonClick}>
-          {buttonText}
-        </Button>
+        <Row>
+          <Spacer />
+          <HalfButton
+            filled
+            rounded
+            color="#fb849a"
+            hoverColor="#ff778e"
+            onClick={onButtonClick}>
+            {buttonText}
+          </HalfButton>
+        </Row>
       </ModalBox>
     </Background>
   );

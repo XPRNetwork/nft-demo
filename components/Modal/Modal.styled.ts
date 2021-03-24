@@ -1,7 +1,16 @@
 import styled from 'styled-components';
 import { MaxWidth } from '../../styles/MaxWidth.styled';
 import { breakpoint } from '../../styles/Breakpoints';
+<<<<<<< HEAD
 import { StyledButton } from '../Button/Button.styled';
+=======
+import { StyledButton, ButtonProps } from '../Button/Button.styled';
+
+interface HalfButtonProps extends ButtonProps {
+  color?: string;
+  hoverColor?: string;
+}
+>>>>>>> 88d2e04... Update sale creation and cancellation modal buttons
 
 export const Background = styled.div`
   z-index: 3;
@@ -97,8 +106,22 @@ export const Row = styled.div`
   display: flex;
 `;
 
-export const HalfButton = styled(StyledButton)`
+export const HalfButton = styled(StyledButton)<HalfButtonProps>`
   flex: 1;
+
+  ${({ color }) =>
+    color &&
+    `
+    background-color: ${color};
+  `}
+
+  ${({ hoverColor }) =>
+    hoverColor &&
+    `
+    :hover {
+      background-color: ${hoverColor};
+    }
+  `}
 `;
 
 export const Spacer = styled.div`
