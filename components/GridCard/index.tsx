@@ -97,7 +97,7 @@ export const TemplateCard = ({
     <Card
       isLoading={isLoading}
       text={name}
-      secondaryText={`Edition Size / ${formatNumber(max_supply)}`}
+      secondaryText={`Edition Size: ${formatNumber(max_supply)}`}
       priceText={lowestPrice}
       image={image as string}
       redirectPath={`/${template_id}`}
