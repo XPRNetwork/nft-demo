@@ -167,7 +167,7 @@ export const getAllTemplateSales = async (
     while (hasResults) {
       const queryObject = {
         state: '1',
-        sort: 'price',
+        sort: 'template_mint',
         order: 'asc',
         template_id: templateId,
         page,
