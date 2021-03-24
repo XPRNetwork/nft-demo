@@ -10,19 +10,19 @@ export const Background = styled.section`
   width: 100%;
   height: 40px;
   background: #ebf4ee;
-  z-index: 0;
-`;
-
-export const Content = styled.div`
-  color: #75b587;
-  font-size: 14px;
-  font-family: GilroySemiBold;
-  cursor: pointer;
+  z-index: 2;
   display: flex;
   justify-content: center;
   align-items: center;
+  color: #75b587;
+  position: fixed;
+  font-size: 14px;
+  font-family: GilroySemiBold;
+  cursor: pointer;
+`;
+
+export const Spacer = styled.div`
   height: 40px;
-  z-index: 1;
 `;
 
 export const Money = styled.span<MoneyProps>`
