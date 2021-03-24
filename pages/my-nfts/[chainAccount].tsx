@@ -9,6 +9,7 @@ import { Asset } from '../../services/assets';
 import { Title } from '../../styles/Title.styled';
 import { getUserAssets } from '../../services/assets';
 import LoadingPage from '../../components/LoadingPage';
+import Banner from '../../components/Banner';
 
 type Props = {
   chainAccount: string;
@@ -130,6 +131,7 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
         />
       );
     }
+
     return (
       <>
         <Grid items={renderedAssets} type={GRID_TYPE.ASSET} />
@@ -143,10 +145,13 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
   };
 
   return (
-    <PageLayout title="My NFTs">
-      <Title>Collection</Title>
-      {getContent()}
-    </PageLayout>
+    <>
+      <PageLayout title="My NFTs">
+        <Banner />
+        <Title>Collection</Title>
+        {getContent()}
+      </PageLayout>
+    </>
   );
 };
 

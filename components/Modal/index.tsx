@@ -1,1 +1,1 @@
-export { WithdrawModal } from './WithdrawModal';
+export { ClaimBalanceModal } from './ClaimBalanceModal';

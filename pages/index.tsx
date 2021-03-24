@@ -6,6 +6,7 @@ import PaginationButton from '../components/PaginationButton';
 import ErrorComponent from '../components/Error';
 import LoadingPage from '../components/LoadingPage';
 import { useAuthContext } from '../components/Provider';
+import Banner from '../components/Banner';
 import { Title } from '../styles/Title.styled';
 import {
   Template,
@@ -125,6 +126,7 @@ const MarketPlace = (): JSX.Element => {
 
   return (
     <PageLayout title="MarketPlace">
+      <Banner />
       <Title>MarketPlace</Title>
       {getContent()}
     </PageLayout>
