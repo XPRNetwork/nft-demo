@@ -1,6 +1,5 @@
 import { useState, useEffect, MouseEvent } from 'react';
 import { useAuthContext, useModalContext } from '../Provider';
-import Button from '../Button';
 import {
   Background,
   ModalBox,
@@ -8,24 +7,21 @@ import {
   CloseIconContainer,
   Title,
   Description,
-  InputLabel,
-  ErrorMessage,
-  WithdrawInputLabel,
-  AvailableBalance,
+  Row,
+  Spacer,
+  HalfButton,
 } from './Modal.styled';
-import PriceInput from '../PriceInput';
 import ProtonSDK from '../../services/proton';
+import { formatPrice } from '../../utils';
 import { ReactComponent as CloseIcon } from '../../public/close.svg';
-import { TOKEN_SYMBOL, TOKEN_PRECISION } from '../../utils/constants';
 
-export const WithdrawModal = (): JSX.Element => {
+export const ClaimBalanceModal = (): JSX.Element => {
   const {
     currentUser,
-    currentUserBalance,
-    updateCurrentUserBalance,
+    atomicMarketBalance,
+    updateAtomicBalance,
   } = useAuthContext();
   const { closeModal } = useModalContext();
-  const [amount, setAmount] = useState<string>('');
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
@@ -34,10 +30,9 @@ export const WithdrawModal = (): JSX.Element => {
 
   const withdraw = async () => {
     try {
-      const formattedAmount = parseFloat(amount).toFixed(TOKEN_PRECISION);
       const res = await ProtonSDK.withdraw({
         actor: currentUser ? currentUser.actor : '',
-        amount: `${formattedAmount} ${TOKEN_SYMBOL}`,
+        amount: atomicMarketBalance,
       });
 
       if (!res.success) {
@@ -45,7 +40,7 @@ export const WithdrawModal = (): JSX.Element => {
       }
 
       closeModal();
-      await updateCurrentUserBalance(currentUser.actor);
+      await updateAtomicBalance(currentUser.actor);
     } catch (err) {
       setError(err.message);
     }
@@ -61,31 +56,21 @@ export const WithdrawModal = (): JSX.Element => {
     <Background onClick={handleBackgroundClick}>
       <ModalBox>
         <Section>
-          <Title>Withdraw balance</Title>
+          <Title>Claim {formatPrice(atomicMarketBalance)}</Title>
           <CloseIconContainer role="button" onClick={closeModal}>
             <CloseIcon />
           </CloseIconContainer>
         </Section>
         <Description>
-          You have tokens stored in a smart contract. Withdraw them to your
-          Proton wallet at any time.
+          Congratulations, You sold {formatPrice(atomicMarketBalance)} of NFTs.
+          Claim them now!
         </Description>
-        <InputLabel>
-          <WithdrawInputLabel>
-            <span>Withdraw Funds</span>
-            <AvailableBalance>{currentUserBalance}</AvailableBalance>
-          </WithdrawInputLabel>
-          <PriceInput
-            amount={amount}
-            setAmount={setAmount}
-            submit={() => withdraw()}
-            placeholder={`Enter amount (${TOKEN_SYMBOL})`}
-          />
-          {error && <ErrorMessage>{error}</ErrorMessage>}
-        </InputLabel>
-        <Button fullWidth filled onClick={withdraw}>
-          Withdraw Funds
-        </Button>
+        <Row>
+          <Spacer />
+          <HalfButton rounded filled onClick={withdraw}>
+            Claim Now
+          </HalfButton>
+        </Row>
       </ModalBox>
     </Background>
   );
