@@ -1,16 +1,12 @@
 import styled from 'styled-components';
 import { MaxWidth } from '../../styles/MaxWidth.styled';
 import { breakpoint } from '../../styles/Breakpoints';
-<<<<<<< HEAD
-import { StyledButton } from '../Button/Button.styled';
-=======
 import { StyledButton, ButtonProps } from '../Button/Button.styled';
 
 interface HalfButtonProps extends ButtonProps {
   color?: string;
   hoverColor?: string;
 }
->>>>>>> 88d2e04... Update sale creation and cancellation modal buttons
 
 export const Background = styled.div`
   z-index: 3;

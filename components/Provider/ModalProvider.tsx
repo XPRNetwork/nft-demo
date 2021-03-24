@@ -14,7 +14,7 @@ export const MODAL_TYPES = {
   CREATE_SALE: 'CREATE_SALE',
   CREATE_MULTIPLE_SALES: 'CREATE_MULTIPLE_SALES',
   CANCEL_SALE: 'CANCEL_SALE',
-  CANCEL_ALL_SALES: 'CANCEL_ALL_SALES',
+  CANCEL_MULTIPLE_SALES: 'CANCEL_MULTIPLE_SALES',
 };
 
 type Props = {
@@ -29,7 +29,7 @@ export interface CancelSaleModalProps extends SaleModalProps {
   saleId: string;
 }
 
-export interface CancelAllSalesModalProps extends SaleModalProps {
+export interface CancelMultipleSalesModalProps extends SaleModalProps {
   saleIds: string[];
 }
 
@@ -43,7 +43,7 @@ export interface CreateMultipleSalesModalProps extends SaleModalProps {
 
 type ModalProps =
   | CancelSaleModalProps
-  | CancelAllSalesModalProps
+  | CancelMultipleSalesModalProps
   | CreateSaleModalProps
   | CreateMultipleSalesModalProps;
 

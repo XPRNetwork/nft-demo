@@ -3,7 +3,7 @@ import {
   useAuthContext,
   useModalContext,
   CancelSaleModalProps,
-  CancelAllSalesModalProps,
+  CancelMultipleSalesModalProps,
 } from '../Provider';
 import {
   Background,
@@ -94,10 +94,13 @@ export const CancelSaleModal = (): JSX.Element => {
   );
 };
 
-export const CancelAllSalesModal = (): JSX.Element => {
+export const CancelMultipleSalesModal = (): JSX.Element => {
   const { currentUser } = useAuthContext();
   const { closeModal, modalProps } = useModalContext();
-  const { saleIds, setShouldReload } = modalProps as CancelAllSalesModalProps;
+  const {
+    saleIds,
+    setShouldReload,
+  } = modalProps as CancelMultipleSalesModalProps;
 
   const onButtonClick = async () => {
     try {
