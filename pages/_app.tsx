@@ -9,7 +9,6 @@ import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 import { AuthProvider, ModalProvider } from '../components/Provider';
 import '../styles/customprogress.css';
-import Banner from '../components/Banner';
 
 NProgress.configure({
   minimum: 0.3,
@@ -45,7 +44,6 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
     <ModalProvider>
       <AuthProvider>
         <NavBar />
-        <Banner />
         <Component {...pageProps} />
         <Footer />
       </AuthProvider>

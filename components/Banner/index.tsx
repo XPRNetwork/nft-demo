@@ -1,27 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import { useAuthContext, useModalContext, MODAL_TYPES } from '../Provider';
 import { Background, Money } from './Banner.styled';
 import { formatPrice } from '../../utils';
 
 const Banner = (): JSX.Element => {
   const { atomicMarketBalance } = useAuthContext();
-  const router = useRouter();
   const { openModal } = useModalContext();
   const [isBannerVisible, setIsBannerVisible] = useState<boolean>(false);
-  const path = router.pathname.split('/')[1];
 
   useEffect(() => {
     if (!atomicMarketBalance) return;
 
     const balance = parseFloat(atomicMarketBalance.replace(',', ''));
 
-    if (path === 'my-nfts' && balance > 0) {
+    if (balance > 0) {
       setIsBannerVisible(true);
     } else {
       setIsBannerVisible(false);
     }
-  }, [path, atomicMarketBalance]);
+  }, [atomicMarketBalance]);
 
   if (!isBannerVisible) return null;
 
