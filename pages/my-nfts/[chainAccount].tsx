@@ -9,6 +9,7 @@ import { Asset } from '../../services/assets';
 import { Title } from '../../styles/Title.styled';
 import { getUserAssets } from '../../services/assets';
 import LoadingPage from '../../components/LoadingPage';
+import Banner from '../../components/Banner';
 
 type Props = {
   chainAccount: string;
@@ -144,10 +145,13 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
   };
 
   return (
-    <PageLayout title="My NFTs" bannerSpacing>
-      <Title>Collection</Title>
-      {getContent()}
-    </PageLayout>
+    <>
+      <Banner />
+      <PageLayout title="My NFTs" bannerSpacing>
+        <Title>Collection</Title>
+        {getContent()}
+      </PageLayout>
+    </>
   );
 };
 

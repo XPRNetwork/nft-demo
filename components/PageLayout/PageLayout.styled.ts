@@ -7,11 +7,15 @@ type TitleProps = {
 };
 
 export const Main = styled.main<TitleProps>`
-  min-height: calc(100vh - 83px - 64px);
+  min-height: ${({ bannerSpacing }) =>
+    bannerSpacing ? 'calc(100vh - 83px - 104px)' : 'calc(100vh - 83px - 64px)'};
   margin-top: ${({ bannerSpacing }) => (bannerSpacing ? '104px' : '64px')};
 
   ${breakpoint.tablet`
-    min-height: calc(100vh - 250px - 66px);
+    min-height: ${({ bannerSpacing }) =>
+      bannerSpacing
+        ? 'calc(100vh - 83px - 106px)'
+        : 'calc(100vh - 83px - 66px)'};
     margin-top: ${({ bannerSpacing }) => (bannerSpacing ? '106px' : '66px')};
   `}
 `;
