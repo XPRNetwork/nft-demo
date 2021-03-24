@@ -86,8 +86,8 @@ export const CancelSaleModal = (): JSX.Element => {
   return (
     <CancelModal
       title="Cancel Sale?"
-      description="By canceling sale your NFT will be removed from the marketplace until
-          you market for sale again."
+      description="By canceling the sale, your NFT will be removed from the marketplace until
+          you mark it for sale again."
       buttonText="Cancel Sale"
       onButtonClick={cancelSale}
     />
@@ -121,8 +121,8 @@ export const CancelMultipleSalesModal = (): JSX.Element => {
   return (
     <CancelModal
       title="Cancel Sales?"
-      description={`You are canceling ${saleIds.length} items for sale. By canceling sales your NFTs will be removed from the marketplace until
-          you market them for sale again.`}
+      description={`You are canceling ${saleIds.length} items for sale. By canceling the sales, your NFTs will be removed from the marketplace until
+          you mark them for sale again.`}
       buttonText="Cancel All Sales"
       onButtonClick={onButtonClick}
     />
