@@ -55,10 +55,10 @@ jobs:
           --tag "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA" \
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
           --build-arg GITHUB_REF="$GITHUB_REF" \
-          --build-arg NFT_ENDPOINT="${{ secrets.NFT_ENDPOINT }}" \
           --build-arg NEXT_PUBLIC_CHAIN_ID="${{ secrets.NEXT_PUBLIC_CHAIN_ID }}" \
           --build-arg NEXT_PUBLIC_CHAIN_ENDPOINT="${{ secrets.NEXT_PUBLIC_CHAIN_ENDPOINT }}" \
           --build-arg NEXT_PUBLIC_BLOCK_EXPLORER="https://proton.bloks.io/block/" \
+          --build-arg NEXT_PUBLIC_GA_TRACKING_ID="${{ secrets.NEXT_PUBLIC_GA_TRACKING_ID }}" \
           .
 
     # Push the Docker image to Google Container Registry
