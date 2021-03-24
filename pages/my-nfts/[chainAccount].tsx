@@ -146,8 +146,8 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
 
   return (
     <>
-      <Banner />
-      <PageLayout title="My NFTs" bannerSpacing>
+      <PageLayout title="My NFTs">
+        <Banner />
         <Title>Collection</Title>
         {getContent()}
       </PageLayout>

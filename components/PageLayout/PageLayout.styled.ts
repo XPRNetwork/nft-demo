@@ -2,21 +2,13 @@ import styled from 'styled-components';
 import { MaxWidth } from '../../styles/MaxWidth.styled';
 import { breakpoint } from '../../styles/Breakpoints';
 
-type TitleProps = {
-  bannerSpacing?: boolean;
-};
-
-export const Main = styled.main<TitleProps>`
-  min-height: ${({ bannerSpacing }) =>
-    bannerSpacing ? 'calc(100vh - 83px - 104px)' : 'calc(100vh - 83px - 64px)'};
-  margin-top: ${({ bannerSpacing }) => (bannerSpacing ? '104px' : '64px')};
+export const Main = styled.main`
+  position: relative;
+  min-height: calc(100vh - 83px);
+  padding-top: 64px;
 
   ${breakpoint.tablet`
-    min-height: ${({ bannerSpacing }) =>
-      bannerSpacing
-        ? 'calc(100vh - 83px - 106px)'
-        : 'calc(100vh - 83px - 66px)'};
-    margin-top: ${({ bannerSpacing }) => (bannerSpacing ? '106px' : '66px')};
+    min-height: calc(100vh - 83px);
   `}
 `;
 
