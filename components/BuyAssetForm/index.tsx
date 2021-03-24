@@ -21,7 +21,12 @@ const BuyAssetForm = ({
   maxSupply,
 }: Props): JSX.Element => {
   const router = useRouter();
-  const { currentUser, currentUserBalance, login } = useAuthContext();
+  const {
+    updateCurrentUserBalance,
+    currentUser,
+    currentUserBalance,
+    login,
+  } = useAuthContext();
   const [sales, setSales] = useState<SaleAsset[]>([]);
   const [formattedPricesBySaleId, setFormattedPricesBySaleId] = useState<{
     [templateMint: string]: string;
@@ -77,6 +82,7 @@ const BuyAssetForm = ({
         sale_id: saleId,
       });
       if (purchaseResult.success) {
+        updateCurrentUserBalance(chainAccount);
         setTimeout(() => {
           router.push(`/my-nfts/${chainAccount}`);
         }, 1000);
