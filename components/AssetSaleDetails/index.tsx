@@ -1,7 +1,6 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { useRouter } from 'next/router';
-import { useAuthContext } from '../Provider';
-import ProtonSDK from '../../services/proton';
+import { useModalContext, MODAL_TYPES } from '../Provider';
 import Button from '../Button';
 import { General, Amount } from '../../styles/details.styled';
 import { EMPTY_BALANCE } from '../../utils/constants';
@@ -22,18 +21,7 @@ const AssetSaleDetails = ({
   setShouldReload,
 }: Props): JSX.Element => {
   const router = useRouter();
-  const { currentUser } = useAuthContext();
-
-  const cancelSale = async () => {
-    const res = await ProtonSDK.cancelSale({
-      actor: currentUser ? currentUser.actor : '',
-      sale_id: saleId,
-    });
-
-    if (res.success) {
-      setShouldReload(true);
-    }
-  };
+  const { openModal, setModalProps } = useModalContext();
 
   return (
     <section>
@@ -43,9 +31,34 @@ const AssetSaleDetails = ({
         View Listing
       </Button>
       {isOwner ? (
-        <Button fullWidth filled rounded onClick={cancelSale}>
-          Cancel Sale
-        </Button>
+        <>
+          <Button
+            fullWidth
+            filled
+            rounded
+            onClick={() => {
+              openModal(MODAL_TYPES.CANCEL_SALE);
+              setModalProps({
+                saleId,
+                setShouldReload,
+              });
+            }}>
+            Cancel Sale
+          </Button>
+          <Button
+            fullWidth
+            filled
+            rounded
+            onClick={() => {
+              openModal(MODAL_TYPES.CANCEL_ALL_SALES);
+              setModalProps({
+                saleIds: [saleId],
+                setShouldReload,
+              });
+            }}>
+            (TEST) Cancel All Sales
+          </Button>
+        </>
       ) : (
         ''
       )}
