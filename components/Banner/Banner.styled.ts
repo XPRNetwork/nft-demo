@@ -5,19 +5,24 @@ type MoneyProps = {
 };
 
 export const Background = styled.section`
-  position: fixed;
-  top: 64px;
+  position: absolute;
+  left: 0;
   width: 100%;
   height: 40px;
   background: #ebf4ee;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  z-index: 0;
+`;
+
+export const Content = styled.div`
   color: #75b587;
   font-size: 14px;
   font-family: GilroySemiBold;
   cursor: pointer;
-  z-index: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  z-index: 1;
 `;
 
 export const Money = styled.span<MoneyProps>`

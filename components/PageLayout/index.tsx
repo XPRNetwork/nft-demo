@@ -8,10 +8,9 @@ import { WithdrawModal, ClaimBalanceBanner } from '../Modal';
 type Props = {
   title: string;
   children: ReactNode;
-  bannerSpacing?: boolean;
 };
 
-const PageLayout = ({ title, children, bannerSpacing }: Props): JSX.Element => {
+const PageLayout = ({ title, children }: Props): JSX.Element => {
   const { modalType } = useModalContext();
 
   Router.events.on('routeChangeComplete', () => {
@@ -30,7 +29,7 @@ const PageLayout = ({ title, children, bannerSpacing }: Props): JSX.Element => {
   };
 
   return (
-    <Main bannerSpacing={bannerSpacing}>
+    <Main>
       <Head>
         <title>{`${title} - NFT Demo`}</title>
         <link rel="shortcut icon" href="/favicon.png" />
