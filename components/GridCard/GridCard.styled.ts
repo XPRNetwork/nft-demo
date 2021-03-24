@@ -36,7 +36,7 @@ export const ImageContainer = styled(FadeInImageContainer)`
 
 export const Text = styled.span`
   font-family: GilroySemiBold;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 24px;
   color: #0e103c;
   margin-top: 16px;
@@ -44,15 +44,16 @@ export const Text = styled.span`
 
 export const SecondaryText = styled.span`
   font-family: GilroyMedium;
-  font-size: 16px;
-  line-height: 24px;
+  font-size: 12px;
+  line-height: 2;
   color: #7578b5;
 `;
 
 export const Price = styled(Text)`
-  font-size: 18px;
-  line-height: 32px;
-  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.71;
+  margin-top: 6px;
 `;
 
 export const Tag = styled.div`

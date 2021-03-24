@@ -1,7 +1,8 @@
 import { Asset } from './assets';
 import { Collection } from './templates';
 import { getFromApi } from '../utils/browser-fetch';
-import { toQueryString, addPrecisionDecimal } from '../utils';
+import { toQueryString, addPrecisionDecimal, asyncForEach } from '../utils';
+import { Template } from './templates';
 
 type Price = {
   token_contract: string;
@@ -49,6 +50,16 @@ export type SaleAssetRecord = {
     [templateMint: string]: string;
   };
   assets: SaleAsset[];
+};
+
+export type NumberOfListingsByTemplateId = {
+  [templateId: string]: number;
+};
+
+type GetNumberOfListingsProps = {
+  templates?: Template[];
+  collection_name?: string;
+  template_Ids?: string[];
 };
 
 /**
@@ -139,7 +150,7 @@ export const getAssetSale = async (
   try {
     const queryObject = {
       asset_id: assetId,
-      state: '1',
+      state: '1', // assets listed for sale
       seller: seller ? seller : '',
     };
 
@@ -296,6 +307,64 @@ export const getLowestPriceAsset = async (
     }
 
     return saleRes.data;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * Function to return number of listings currently on sale for given set of templates
+ * Requires either a list of templates of type Template or an array of template Ids with corresponding collection name
+ * @param templates
+ * @param collection_name
+ * @param template_Ids
+ * @return {NumberOfListingsByTemplateId}
+ */
+
+export const getNumberOfListingsByTemplateId = async ({
+  templates,
+  collection_name,
+  template_Ids,
+}: GetNumberOfListingsProps): Promise<NumberOfListingsByTemplateId> => {
+  try {
+    const collection =
+      collection_name || templates[0].collection.collection_name;
+    const templateIds =
+      template_Ids || templates.map(({ template_id }) => template_id);
+    const NumberOfListingsByTemplateId = {};
+
+    await asyncForEach(templateIds, async (templateId: string) => {
+      let sales = [];
+      let hasResults = true;
+      let page = 1;
+
+      while (hasResults) {
+        const queryObject = {
+          state: '1', // assets listed for sale
+          collection_name: collection,
+          template_id: templateId,
+          page,
+        };
+        const queryParams = toQueryString(queryObject);
+        const result = await getFromApi<SaleAsset[]>(
+          `https://proton.api.atomicassets.io/atomicmarket/v1/sales?${queryParams}`
+        );
+
+        if (!result.success) {
+          throw new Error((result.message as unknown) as string);
+        }
+
+        if (result.data.length === 0) {
+          hasResults = false;
+        }
+
+        sales = sales.concat(result.data);
+        page += 1;
+      }
+      NumberOfListingsByTemplateId[templateId] = sales.length;
+    });
+
+    return NumberOfListingsByTemplateId;
   } catch (e) {
     throw new Error(e);
   }
