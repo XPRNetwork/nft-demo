@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuthContext, useModalContext, MODAL_TYPES } from '../Provider';
 import { formatPrice } from '../../utils';
-import { Background, Content, Money } from './Banner.styled';
+import { Background, Spacer, Money } from './Banner.styled';
 
 const Banner = (): JSX.Element => {
   const { atomicMarketBalance } = useAuthContext();
@@ -24,8 +24,8 @@ const Banner = (): JSX.Element => {
 
   return (
     <>
-      <Background onClick={() => openModal(MODAL_TYPES.CLAIM)}></Background>
-      <Content>
+      <Spacer />
+      <Background onClick={() => openModal(MODAL_TYPES.CLAIM)}>
         <Money role="img" aria-label="Money" right>
           💸
         </Money>
@@ -33,7 +33,7 @@ const Banner = (): JSX.Element => {
         <Money role="img" aria-label="Money">
           💸
         </Money>
-      </Content>
+      </Background>
     </>
   );
 };
