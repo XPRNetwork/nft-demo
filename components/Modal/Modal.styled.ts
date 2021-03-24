@@ -1,9 +1,10 @@
 import styled from 'styled-components';
 import { MaxWidth } from '../../styles/MaxWidth.styled';
 import { breakpoint } from '../../styles/Breakpoints';
+import { StyledButton } from '../Button/Button.styled';
 
 export const Background = styled.div`
-  z-index: 2;
+  z-index: 3;
   position: fixed;
   top: 0;
   left: 0;
@@ -134,4 +135,16 @@ export const LinkButton = styled(StyledLink).attrs({ as: 'button' })`
   padding: 0;
   border: none;
   background: none;
+`;
+
+export const Row = styled.div`
+  display: flex;
+`;
+
+export const HalfButton = styled(StyledButton)`
+  flex: 1;
+`;
+
+export const Spacer = styled.div`
+  flex: 1;
 `;

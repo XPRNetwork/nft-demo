@@ -3,12 +3,12 @@ import { MaxWidth } from '../../styles/MaxWidth.styled';
 import { breakpoint } from '../../styles/Breakpoints';
 
 export const Main = styled.main`
-  min-height: calc(100vh - 83px - 73px);
-  margin-top: 73px;
+  position: relative;
+  min-height: calc(100vh - 83px);
+  padding-top: 64px;
 
   ${breakpoint.tablet`
-    min-height: calc(100vh - 250px - 66px);
-    margin-top: 66px;
+    min-height: calc(100vh - 83px);
   `}
 `;
 
