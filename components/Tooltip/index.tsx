@@ -9,16 +9,10 @@ type Props = {
 const Tooltip = ({ children, content }: Props): JSX.Element => {
   const [active, setActive] = useState(false);
 
-  const showTip = () => {
-    setActive(true);
-  };
-
-  const hideTip = () => {
-    setActive(false);
-  };
-
   return (
-    <Background onMouseEnter={showTip} onMouseLeave={hideTip}>
+    <Background
+      onMouseEnter={() => setActive(true)}
+      onMouseLeave={() => setActive(false)}>
       {children}
       {active && (
         <Content>
