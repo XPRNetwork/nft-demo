@@ -27,20 +27,36 @@ export type Offer = {
 
 export const getUserOffers = async (sender: string): Promise<Offer[]> => {
   try {
-    const queryObject = {
-      sender: sender,
-      state: '0',
-    };
-    const queryParams = toQueryString(queryObject);
-    const result = await getFromApi<Offer[]>(
-      `https://proton.api.atomicassets.io/atomicassets/v1/offers?${queryParams}`
-    );
+    let offers = [];
+    let hasResults = true;
+    let page = 1;
 
-    if (!result.success) {
-      throw new Error((result.message as unknown) as string);
+    while (hasResults) {
+      const queryObject = {
+        sender: sender,
+        state: '0', // Offer created and valid
+        page: page,
+      };
+      const queryParams = toQueryString(queryObject);
+      const result = await getFromApi<Offer[]>(
+        `https://proton.api.atomicassets.io/atomicassets/v1/offers?${queryParams}`
+      );
+
+      if (!result.success) {
+        throw new Error((result.message as unknown) as string);
+      }
+
+      if (result.data.length === 0) {
+        hasResults = false;
+      }
+
+      offers = offers.concat(result.data);
+      page += 1;
+
+      if (result.data.length < 100) break;
     }
 
-    return result.data;
+    return offers;
   } catch (e) {
     throw new Error(e);
   }

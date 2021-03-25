@@ -1,7 +1,7 @@
 import { getFromApi } from '../utils/browser-fetch';
 import { Sale, getLowestPriceAsset, getHighestPriceAsset } from './sales';
 import { asyncForEach, addPrecisionDecimal, toQueryString } from '../utils/';
-import { TOKEN_SYMBOL } from '../utils/constants';
+import { TOKEN_SYMBOL, DEFAULT_COLLECTION } from '../utils/constants';
 
 export type SchemaFormat = {
   name: string;
@@ -49,11 +49,37 @@ export interface Template {
   issued_supply?: string;
   lowestPrice?: string;
   highestPrice?: string;
+  totalAssets?: string;
+  assetsForSale?: string;
 }
 
 type GetCollectionOptions = {
   type: string;
   page?: number;
+};
+
+export type Account = {
+  assets: number;
+  collections: Collection[];
+  templates: {
+    assets: string;
+    collection_name: string;
+    template_id: string;
+  }[];
+};
+
+type formatTemplatesWithLowPriceAndAssetCountProps = {
+  templateIds: string[];
+  templates: Template[];
+  assetCountById: {
+    [templateId: string]: string;
+  };
+  assetCountByIdWithHidden: {
+    [templateId: string]: string;
+  };
+  lowPriceById: {
+    [templateId: string]: string;
+  };
 };
 
 /**
@@ -266,3 +292,139 @@ export const formatTemplatesWithPriceData = (
     ...template,
     lowestPrice: lowestPrices[template.template_id] || '',
   }));
+
+/***
+ * Function returns templates with the following added keys: (used primarily for diaplying user's owned assets in My NFT page)
+ *    totalAssets: Total number of assets owned by 'owner'
+ *    assetsForSale: Number of assets for sale by 'owner'
+ *    lowestPrice: Lowest price of an asset for sale in marketplace
+ * @param {string} owner Owner of assets to look up
+ * @param {number} page  Reference for pagination if number of template categories (based on owned assets) is greater than number of templates displayed per page
+ * @return {Template[]}
+ */
+
+export const getTemplatesWithUserAssetCount = async (
+  owner: string,
+  page: number
+): Promise<Template[]> => {
+  try {
+    const accountResponse = await getFromApi<Account>(
+      `https://proton.api.atomicassets.io/atomicassets/v1/accounts/${owner}`
+    );
+
+    if (!accountResponse.success) {
+      throw new Error((accountResponse.message as unknown) as string);
+    }
+
+    const accountResponseWithHidden = await getFromApi<Account>(
+      `https://proton.api.atomicassets.io/atomicassets/v1/accounts/${owner}?hide_offers=true`
+    );
+
+    if (!accountResponseWithHidden.success) {
+      throw new Error((accountResponseWithHidden.message as unknown) as string);
+    }
+
+    const userAssetsByTemplateId = {};
+    accountResponse.data.templates.map(({ assets, template_id }) => {
+      userAssetsByTemplateId[template_id] = assets;
+    });
+
+    const userAssetsWithHiddenByTemplateId = {};
+    accountResponseWithHidden.data.templates.map(({ assets, template_id }) => {
+      userAssetsWithHiddenByTemplateId[template_id] = assets;
+    });
+
+    const templateIds = accountResponse.data.templates
+      .map(({ template_id }) => template_id)
+      .splice((page - 1) * 10, 10);
+
+    if (!templateIds.length) return [];
+
+    const templates = await getTemplatesFromTemplateIds(templateIds);
+
+    const lowestPricesByTemplateId = await getLowestPricesForAllCollectionTemplates(
+      { type: DEFAULT_COLLECTION }
+    );
+
+    const templatesWithAssetsForSaleCount = formatTemplatesWithLowPriceAndAssetCount(
+      {
+        templateIds: templateIds,
+        templates: templates,
+        assetCountById: userAssetsByTemplateId,
+        assetCountByIdWithHidden: userAssetsWithHiddenByTemplateId,
+        lowPriceById: lowestPricesByTemplateId,
+      }
+    );
+    return templatesWithAssetsForSaleCount;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * Function to add total asset count, assets for sale, and lowest price to template data for each template
+ * Used in conjunction with function getTemplatesWithUserAssetCount
+ * @param templateIds list of templateIds of templates to add data to
+ * @param templates   templates of the template Ids listed in templateIds param
+ * @param assetCountById  total number of assets for each template that user owns
+ * @param assetCountByIdWithHidden  total number of assets for each template that user owns minus those currently offered for sale
+ * @param lowPriceById  lowest price of asset currently on offer for each template
+ * @returns {Template[]}
+ */
+
+const formatTemplatesWithLowPriceAndAssetCount = ({
+  templateIds,
+  templates,
+  assetCountById,
+  assetCountByIdWithHidden,
+  lowPriceById,
+}: formatTemplatesWithLowPriceAndAssetCountProps) => {
+  const templatesWithAssetsForSaleCount = templateIds.map((templateId) => {
+    const template = templates.find(({ template_id }) => {
+      return templateId == template_id;
+    });
+    if (template) {
+      template.totalAssets = `${assetCountById[templateId]}`;
+
+      const assetsForSale =
+        parseInt(assetCountById[templateId]) -
+        parseInt(assetCountByIdWithHidden[templateId]);
+
+      template.assetsForSale = `${assetsForSale}`;
+      template.lowestPrice = lowPriceById[templateId];
+    }
+    return template;
+  });
+  return templatesWithAssetsForSaleCount;
+};
+
+/**
+ * Function to get templates using an array of tempalte ids as reference
+ * @param templateIds templatesIds to grab templates for
+ * @returns {Template[]}
+ */
+
+export const getTemplatesFromTemplateIds = async (
+  templateIds: string[]
+): Promise<Template[]> => {
+  try {
+    const templatesQueryObject = {
+      symbol: TOKEN_SYMBOL,
+      collection_name: DEFAULT_COLLECTION,
+      ids: templateIds.join(','),
+    };
+
+    const templatesQueryParams = toQueryString(templatesQueryObject);
+    const templatesResponse = await getFromApi<Template[]>(
+      `https://proton.api.atomicassets.io/atomicassets/v1/templates?${templatesQueryParams}`
+    );
+
+    if (!templatesResponse.success) {
+      throw new Error((templatesResponse.message as unknown) as string);
+    }
+
+    return templatesResponse.data;
+  } catch (e) {
+    throw new Error(e);
+  }
+};

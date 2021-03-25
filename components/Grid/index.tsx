@@ -1,38 +1,24 @@
-import { AssetCard, TemplateCard } from '../GridCard';
-import { Asset } from '../../services/assets';
+import { TemplateCard } from '../GridCard';
 import { Template } from '../../services/templates';
 import { Container } from './Grid.styled';
 
-type Item = Asset | Template;
-
-export enum GRID_TYPE {
-  ASSET = 'ASSET',
-  TEMPLATE = 'TEMPLATE',
-}
-
 type Props = {
-  items: Item[];
-  type: GRID_TYPE;
+  items: Template[];
   isLoading?: boolean;
+  isUsersTemplates?: boolean;
 };
 
-const Grid = ({ isLoading, items, type }: Props): JSX.Element => {
-  const isAsset = type === GRID_TYPE.ASSET;
-  const idKey = isAsset ? 'asset_id' : 'template_id';
-
+const Grid = ({ isLoading, items, isUsersTemplates }: Props): JSX.Element => {
   return (
     <Container>
-      {items.map((item) =>
-        isAsset ? (
-          <AssetCard key={item[idKey]} {...(item as Asset)} />
-        ) : (
-          <TemplateCard
-            key={item[idKey]}
-            {...(item as Template)}
-            isLoading={isLoading}
-          />
-        )
-      )}
+      {items.map((item) => (
+        <TemplateCard
+          key={item.template_id}
+          {...(item as Template)}
+          isLoading={isLoading}
+          isUsersTemplates={isUsersTemplates}
+        />
+      ))}
     </Container>
   );
 };
