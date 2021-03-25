@@ -69,7 +69,7 @@ const CancelModal = ({
 export const CancelSaleModal = (): JSX.Element => {
   const { currentUser } = useAuthContext();
   const { closeModal, modalProps } = useModalContext();
-  const { saleId, setShouldReload } = modalProps as CancelSaleModalProps;
+  const { saleId, fetchPageData } = modalProps as CancelSaleModalProps;
 
   const cancelSale = async () => {
     const res = await ProtonSDK.cancelSale({
@@ -79,7 +79,7 @@ export const CancelSaleModal = (): JSX.Element => {
 
     if (res.success) {
       closeModal();
-      setShouldReload(true);
+      fetchPageData();
     }
   };
 
@@ -99,7 +99,7 @@ export const CancelMultipleSalesModal = (): JSX.Element => {
   const { closeModal, modalProps } = useModalContext();
   const {
     saleIds,
-    setShouldReload,
+    fetchPageData,
   } = modalProps as CancelMultipleSalesModalProps;
 
   const onButtonClick = async () => {
@@ -111,7 +111,7 @@ export const CancelMultipleSalesModal = (): JSX.Element => {
 
       if (res.success) {
         closeModal();
-        setShouldReload(true);
+        fetchPageData();
       }
     } catch (err) {
       throw new Error(err.message);
