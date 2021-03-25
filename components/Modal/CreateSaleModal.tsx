@@ -80,7 +80,7 @@ const SaleModal = ({
 export const CreateSaleModal = (): JSX.Element => {
   const { currentUser } = useAuthContext();
   const { closeModal, modalProps } = useModalContext();
-  const { assetId, setShouldReload } = modalProps as CreateSaleModalProps;
+  const { assetId, fetchPageData } = modalProps as CreateSaleModalProps;
   const [amount, setAmount] = useState<string>('');
 
   const createOneSale = async () => {
@@ -94,7 +94,7 @@ export const CreateSaleModal = (): JSX.Element => {
 
     if (res.success) {
       closeModal();
-      setShouldReload(true);
+      fetchPageData();
     }
   };
 
@@ -115,7 +115,7 @@ export const CreateMultipleSalesModal = (): JSX.Element => {
   const { closeModal, modalProps } = useModalContext();
   const {
     assetIds,
-    setShouldReload,
+    fetchPageData,
   } = modalProps as CreateMultipleSalesModalProps;
   const [amount, setAmount] = useState<string>('');
 
@@ -131,7 +131,7 @@ export const CreateMultipleSalesModal = (): JSX.Element => {
 
       if (res.success) {
         closeModal();
-        setShouldReload(true);
+        fetchPageData();
       }
     } catch (err) {
       throw new Error(err.message);
