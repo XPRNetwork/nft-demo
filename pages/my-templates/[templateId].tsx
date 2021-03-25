@@ -142,6 +142,7 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
 
     return (
       <DetailsLayout
+        templateId={templateId}
         templateName={name}
         collectionName={collection_name}
         collectionAuthor={author}
