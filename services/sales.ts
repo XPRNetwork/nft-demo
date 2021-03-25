@@ -1,7 +1,8 @@
 import { Asset } from './assets';
 import { Collection } from './templates';
 import { getFromApi } from '../utils/browser-fetch';
-import { toQueryString, addPrecisionDecimal } from '../utils';
+import { toQueryString, addPrecisionDecimal, asyncForEach } from '../utils';
+import { Template } from './templates';
 
 type Price = {
   token_contract: string;
@@ -51,22 +52,37 @@ export type SaleAssetRecord = {
   assets: SaleAsset[];
 };
 
+export type NumberOfListingsByTemplateId = {
+  [templateId: string]: number;
+};
+
+type GetNumberOfListingsProps = {
+  templates?: Template[];
+  collection_name?: string;
+  template_Ids?: string[];
+};
+
 /**
  * Get the fulfilled sales for a specific templates (sales that were successful)
  * Mostly used in viewing sales history of a specific template
- * @param  {string} templateId   The template id of the history you want to look up
- * @return {Sales[]}             Returns an array of Sales for that specific template id
+ * @param {string} templateId The template id of the history you want to look up
+ * @param {number} page       The page to look up from atomicassets api if number of assets returned is greater than given limit (default 100)
+ * @return {Sales[]}          Returns an array of Sales for that specific template id
  */
 
 export const getSalesHistoryForTemplate = async (
-  templateId: string
+  templateId: string,
+  page?: number
 ): Promise<Sale[]> => {
   try {
+    const pageParam = page ? page : 1;
     const queryObject = {
       state: '3', // Valid sale, Sale was bought
       template_id: templateId,
       sort: 'updated',
       order: 'desc',
+      page: pageParam,
+      limit: 10,
     };
     const queryString = toQueryString(queryObject);
     const latestSalesRes = await getFromApi<Sale[]>(
@@ -86,19 +102,24 @@ export const getSalesHistoryForTemplate = async (
 /**
  * Get the fulfilled sales for a specific asset (sales that were successful)
  * Mostly used in viewing sales history of a specific asset
- * @param  {string} assetId   The asset id of the history you want to look up
- * @return {Sales[]}          Returns an array of Sales for that specific template id
+ * @param {string} assetId The asset id of the history you want to look up
+ * @param {number} page    The page to look up from atomicassets api if number of assets returned is greater than given limit (default 100)
+ * @return {Sales[]}       Returns an array of Sales for that specific template id
  */
 
 export const getSalesHistoryForAsset = async (
-  assetId: string
+  assetId: string,
+  page?: number
 ): Promise<Sale[]> => {
   try {
+    const pageParam = page ? page : 1;
     const queryObject = {
       state: '3', // Valid sale, Sale was bought
       asset_id: assetId,
       sort: 'updated',
       order: 'desc',
+      page: pageParam,
+      limit: 10,
     };
     const queryString = toQueryString(queryObject);
     const latestSalesRes = await getFromApi<Sale[]>(
@@ -129,7 +150,7 @@ export const getAssetSale = async (
   try {
     const queryObject = {
       asset_id: assetId,
-      state: '1',
+      state: '1', // assets listed for sale
       seller: seller ? seller : '',
     };
 
@@ -286,6 +307,64 @@ export const getLowestPriceAsset = async (
     }
 
     return saleRes.data;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * Function to return number of listings currently on sale for given set of templates
+ * Requires either a list of templates of type Template or an array of template Ids with corresponding collection name
+ * @param templates
+ * @param collection_name
+ * @param template_Ids
+ * @return {NumberOfListingsByTemplateId}
+ */
+
+export const getNumberOfListingsByTemplateId = async ({
+  templates,
+  collection_name,
+  template_Ids,
+}: GetNumberOfListingsProps): Promise<NumberOfListingsByTemplateId> => {
+  try {
+    const collection =
+      collection_name || templates[0].collection.collection_name;
+    const templateIds =
+      template_Ids || templates.map(({ template_id }) => template_id);
+    const numberOfListingsByTemplateId = {};
+
+    await asyncForEach(templateIds, async (templateId: string) => {
+      let sales = [];
+      let hasResults = true;
+      let page = 1;
+
+      while (hasResults) {
+        const queryObject = {
+          state: '1', // assets listed for sale
+          collection_name: collection,
+          template_id: templateId,
+          page,
+        };
+        const queryParams = toQueryString(queryObject);
+        const result = await getFromApi<SaleAsset[]>(
+          `https://proton.api.atomicassets.io/atomicmarket/v1/sales?${queryParams}`
+        );
+
+        if (!result.success) {
+          throw new Error((result.message as unknown) as string);
+        }
+
+        if (result.data.length === 0) {
+          hasResults = false;
+        }
+
+        sales = sales.concat(result.data);
+        page += 1;
+      }
+      numberOfListingsByTemplateId[templateId] = sales.length;
+    });
+
+    return numberOfListingsByTemplateId;
   } catch (e) {
     throw new Error(e);
   }

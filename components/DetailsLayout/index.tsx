@@ -26,8 +26,9 @@ type Props = {
   sales?: Sale[];
   error?: string;
   serial_number?: string;
-  template_id?: string;
   max_supply: string;
+  id: string;
+  type: string;
 };
 
 const DetailsLayout = ({
@@ -38,8 +39,9 @@ const DetailsLayout = ({
   sales,
   error,
   serial_number,
-  template_id,
   max_supply,
+  id,
+  type,
 }: Props): JSX.Element => {
   const [salesTableActive, setSalesTableActive] = useState(true);
   const [width, setWidth] = useState(0);
@@ -76,7 +78,7 @@ const DetailsLayout = ({
             <Serial>
               {serial_number
                 ? `Serial number #${serial_number}/`
-                : `Template number #${template_id}/`}
+                : `Template number #${id}/`}
               {max_supply}
             </Serial>
             <Divider />
@@ -120,7 +122,12 @@ const DetailsLayout = ({
             </ArrowContainer>
           </ContentRow>
           <ToggleContainer active={salesTableActive}>
-            <SalesHistoryTable tableData={sales} error={error} />
+            <SalesHistoryTable
+              tableData={sales}
+              error={error}
+              id={id}
+              type={type}
+            />
           </ToggleContainer>
         </>
       ) : (

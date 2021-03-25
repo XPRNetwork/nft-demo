@@ -3,11 +3,11 @@ import { useRouter } from 'next/router';
 import PageLayout from '../../components/PageLayout';
 import PaginationButton from '../../components/PaginationButton';
 import ErrorComponent from '../../components/Error';
-import Grid, { GRID_TYPE } from '../../components/Grid';
+import Grid from '../../components/Grid';
 import { useAuthContext } from '../../components/Provider';
-import { Asset } from '../../services/assets';
+import { getTemplatesWithUserAssetCount } from '../../services/templates';
+import { Template } from '../../services/templates';
 import { Title } from '../../styles/Title.styled';
-import { getUserAssets } from '../../services/assets';
 import LoadingPage from '../../components/LoadingPage';
 import Banner from '../../components/Banner';
 
@@ -15,19 +15,21 @@ type Props = {
   chainAccount: string;
 };
 
-type GetMyAssetsOptions = {
+type GetMyTemplatesOptions = {
   chainAccount: string;
   page?: number;
 };
 
-const getMyAssets = async ({
+const getMyTemplates = async ({
   chainAccount,
   page,
-}: GetMyAssetsOptions): Promise<Asset[]> => {
+}: GetMyTemplatesOptions): Promise<Template[]> => {
   try {
     const pageParam = page ? page : 1;
-    const result = await getUserAssets(chainAccount, pageParam);
-
+    const result = await getTemplatesWithUserAssetCount(
+      chainAccount,
+      pageParam
+    );
     return result;
   } catch (e) {
     throw new Error(e);
@@ -37,19 +39,21 @@ const getMyAssets = async ({
 const Collection = ({ chainAccount }: Props): JSX.Element => {
   const router = useRouter();
   const { currentUser, login, authError } = useAuthContext();
-  const [renderedAssets, setRenderedAssets] = useState<Asset[]>([]);
-  const [prefetchedAssets, setPrefetchedAssets] = useState<Asset[]>([]);
+  const [renderedTemplates, setRenderedTemplates] = useState<Template[]>([]);
+  const [prefetchedTemplates, setPrefetchedTemplates] = useState<Template[]>(
+    []
+  );
   const [prefetchPageNumber, setPrefetchPageNumber] = useState<number>(2);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const prefetchNextPage = async () => {
-    const prefetchedResult = await getMyAssets({
+    const prefetchedResult = await getMyTemplates({
       chainAccount,
       page: prefetchPageNumber,
     });
-    setPrefetchedAssets(prefetchedResult as Asset[]);
+    setPrefetchedTemplates(prefetchedResult);
 
     if (!prefetchedResult.length) {
       setPrefetchPageNumber(-1);
@@ -61,8 +65,8 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
   };
 
   const showNextPage = async () => {
-    const allFetchedAssets = renderedAssets.concat(prefetchedAssets);
-    setRenderedAssets(allFetchedAssets);
+    const allFetchedTemplates = renderedTemplates.concat(prefetchedTemplates);
+    setRenderedTemplates(allFetchedTemplates);
     setIsLoadingNextPage(true);
     await prefetchNextPage();
   };
@@ -71,8 +75,8 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
     (async () => {
       try {
         router.prefetch('/');
-        const assets = await getMyAssets({ chainAccount, page: 1 });
-        setRenderedAssets(assets);
+        const templates = await getMyTemplates({ chainAccount });
+        setRenderedTemplates(templates);
         setIsLoading(false);
         await prefetchNextPage();
       } catch (e) {
@@ -87,6 +91,10 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
   };
 
   const getContent = () => {
+    if (isLoading) {
+      return <LoadingPage />;
+    }
+
     if (!currentUser) {
       return (
         <ErrorComponent
@@ -112,11 +120,7 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
       return;
     }
 
-    if (isLoading) {
-      return <LoadingPage />;
-    }
-
-    if (!renderedAssets.length) {
+    if (!renderedTemplates.length) {
       return (
         <ErrorComponent errorMessage="Looks like you don't own any monsters yet." />
       );
@@ -134,7 +138,7 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
 
     return (
       <>
-        <Grid items={renderedAssets} type={GRID_TYPE.ASSET} />
+        <Grid items={renderedTemplates} isUsersTemplates={true} />
         <PaginationButton
           onClick={showNextPage}
           isLoading={isLoadingNextPage}
