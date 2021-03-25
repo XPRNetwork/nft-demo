@@ -18,6 +18,7 @@ import { Sale } from '../../services/sales';
 type Props = {
   children: ReactNode;
   image: string;
+  templateId: string;
   templateName: string;
   collectionName: string;
   collectionAuthor: string;
@@ -40,6 +41,7 @@ const AssetImage = ({ image }: { image: string }): JSX.Element => (
 const DetailsLayout = ({
   children,
   image,
+  templateId,
   templateName,
   collectionName,
   collectionAuthor,
@@ -77,7 +79,7 @@ const DetailsLayout = ({
         </ArrowContainer>
       </ContentRow>
       <ToggleContainer active={salesTableActive}>
-        <SalesHistoryTable tableData={sales} error={error} />
+        <SalesHistoryTable id={templateId} tableData={sales} error={error} />
       </ToggleContainer>
     </Container>
   );
