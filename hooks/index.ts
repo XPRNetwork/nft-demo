@@ -53,3 +53,18 @@ export const useWindowSize = (): {
 
   return { windowWidth, isMobile };
 };
+
+export const useEscapeKeyClose = (close: () => void): void => {
+  const closeOnEscape = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      close();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', closeOnEscape);
+    return () => {
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, []);
+};

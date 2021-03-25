@@ -7,6 +7,11 @@ type DropdownProps = {
   isOpen: boolean;
 };
 
+type GradientBackgroundProps = {
+  isOpen: boolean;
+  isTransparent?: boolean;
+};
+
 type DropdownLinkProps = {
   red?: boolean;
 };
@@ -87,14 +92,14 @@ export const DropdownList = styled.section<DropdownProps>`
   border-radius: 8px;
   box-shadow: 0 12px 20px -4px rgba(0, 0, 0, 0.1), 0 0 8px 0 rgba(0, 0, 0, 0.08);
   min-width: 224px;
-  z-index: 1;
+  z-index: 2;
 
   ${breakpoint.tablet`
     display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
     flex-direction: column;
     position: absolute;
     right: 0;
-    z-index: 1;
+    z-index: 2;
     top: 65px;
     width: 100%;
 
@@ -111,9 +116,9 @@ export const DropdownList = styled.section<DropdownProps>`
   `}
 `;
 
-export const GradientBackground = styled.div<DropdownProps>`
+export const GradientBackground = styled.div<GradientBackgroundProps>`
   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
-  z-index: 0;
+  z-index: 1;
   width: 100%;
   height: 100%;
   position: fixed;
@@ -121,14 +126,18 @@ export const GradientBackground = styled.div<DropdownProps>`
   left: 0;
   cursor: pointer;
 
-  ${breakpoint.tablet`
-    background-image: linear-gradient(
-      rgba(14, 16, 60, 0.3),
-      rgba(14, 16, 60, 0.4),
-      rgba(14, 16, 60, 0.5),
-      rgba(14, 16, 60, 0.6),
-      rgba(14, 16, 60, 0.67)
-    );
+  ${({ isTransparent }) =>
+    !isTransparent &&
+    `
+    ${breakpoint.tablet`
+      background-image: linear-gradient(
+        rgba(14, 16, 60, 0.3),
+        rgba(14, 16, 60, 0.4),
+        rgba(14, 16, 60, 0.5),
+        rgba(14, 16, 60, 0.6),
+        rgba(14, 16, 60, 0.67)
+      );
+    `}
   `}
 `;
 

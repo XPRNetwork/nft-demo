@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { breakpoint } from '../../styles/Breakpoints';
 
 type MenuProps = {
   isOpen: boolean;
@@ -35,7 +36,11 @@ export const Menu = styled.ul<MenuProps>`
   border-radius: 8px;
   box-shadow: 0 12px 20px -4px rgba(0, 0, 0, 0.1), 0 0 8px 0 rgba(0, 0, 0, 0.08);
   width: 224px;
-  z-index: 1;
+  z-index: 2;
+
+  ${breakpoint.tablet`
+    left: -235px;
+  `}
 `;
 
 export const MenuItem = styled.li`
