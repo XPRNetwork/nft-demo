@@ -91,7 +91,6 @@ const BuyAssetForm = ({
       });
 
       if (purchaseResult.success) {
-        gtag.event({ action: 'buy_nft' });
         updateCurrentUserBalance(chainAccount);
         setTimeout(() => {
           router.push(`/my-nfts/${chainAccount}`);
