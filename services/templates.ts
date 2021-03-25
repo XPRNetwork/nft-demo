@@ -68,6 +68,20 @@ export type Account = {
   }[];
 };
 
+type formatTemplatesWithLowPriceAndAssetCountProps = {
+  templateIds: string[];
+  templates: Template[];
+  assetCountById: {
+    [templateId: string]: string;
+  };
+  assetCountByIdWithHidden: {
+    [templateId: string]: string;
+  };
+  lowPriceById: {
+    [templateId: string]: string;
+  };
+};
+
 /**
  * Get a specific template detail
  * Mostly used in viewing a specific template's detail page
@@ -326,6 +340,74 @@ export const getTemplatesWithUserAssetCount = async (
 
     if (!templateIds.length) return [];
 
+    const templates = await getTemplatesFromTemplateIds(templateIds);
+
+    const lowestPricesByTemplateId = await getLowestPricesForAllCollectionTemplates(
+      { type: DEFAULT_COLLECTION }
+    );
+
+    const templatesWithAssetsForSaleCount = formatTemplatesWithLowPriceAndAssetCount(
+      {
+        templateIds: templateIds,
+        templates: templates,
+        assetCountById: userAssetsByTemplateId,
+        assetCountByIdWithHidden: userAssetsWithHiddenByTemplateId,
+        lowPriceById: lowestPricesByTemplateId,
+      }
+    );
+    return templatesWithAssetsForSaleCount;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * Function to add total asset count, assets for sale, and lowest price to template data for each template
+ * Used in conjunction with function getTemplatesWithUserAssetCount
+ * @param templateIds list of templateIds of templates to add data to
+ * @param tempaltes   templates of the template Ids listed in templateIds param
+ * @param assetCountById  total number of assets for each template that user owns
+ * @param assetCountByIdWithHidden  total number of assets for each template that user owns minus those currently offered for sale
+ * @param lowPriceById  lowest price of asset currently on offer for each template
+ * @returns {Template[]}
+ */
+
+const formatTemplatesWithLowPriceAndAssetCount = ({
+  templateIds,
+  templates,
+  assetCountById,
+  assetCountByIdWithHidden,
+  lowPriceById,
+}: formatTemplatesWithLowPriceAndAssetCountProps) => {
+  const templatesWithAssetsForSaleCount = templateIds.map((templateId) => {
+    const template = templates.find(({ template_id }) => {
+      return templateId == template_id;
+    });
+    if (template) {
+      template.totalAssets = `${assetCountById[templateId]}`;
+
+      const assetsForSale =
+        parseInt(assetCountById[templateId]) -
+        parseInt(assetCountByIdWithHidden[templateId]);
+
+      template.assetsForSale = `${assetsForSale}`;
+      template.lowestPrice = lowPriceById[templateId];
+    }
+    return template;
+  });
+  return templatesWithAssetsForSaleCount;
+};
+
+/**
+ * Function to get templates using an array of tempalte ids as reference
+ * @param templateIds templatesIds to grab templates for
+ * @returns {Template[]}
+ */
+
+export const getTemplatesFromTemplateIds = async (
+  templateIds: string[]
+): Promise<Template[]> => {
+  try {
     const templatesQueryObject = {
       symbol: TOKEN_SYMBOL,
       collection_name: DEFAULT_COLLECTION,
@@ -341,29 +423,7 @@ export const getTemplatesWithUserAssetCount = async (
       throw new Error((templatesResponse.message as unknown) as string);
     }
 
-    const lowestPricesByTemplateId = await getLowestPricesForAllCollectionTemplates(
-      { type: DEFAULT_COLLECTION }
-    );
-
-    const { data: templates } = templatesResponse;
-
-    const templatesWithAssetAccount = templateIds.map((templateId) => {
-      const template = templates.find(({ template_id }) => {
-        return templateId == template_id;
-      });
-      if (template) {
-        template.totalAssets = `${userAssetsByTemplateId[templateId]}`;
-
-        const assetsForSale =
-          parseInt(userAssetsByTemplateId[templateId]) -
-          parseInt(userAssetsWithHiddenByTemplateId[templateId]);
-
-        template.assetsForSale = `${assetsForSale}`;
-        template.lowestPrice = lowestPricesByTemplateId[templateId];
-      }
-      return template;
-    });
-    return templatesWithAssetAccount;
+    return templatesResponse.data;
   } catch (e) {
     throw new Error(e);
   }

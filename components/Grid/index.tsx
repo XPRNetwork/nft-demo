@@ -13,7 +13,7 @@ const Grid = ({ isLoading, items, isUsersTemplates }: Props): JSX.Element => {
     <Container>
       {items.map((item) => (
         <TemplateCard
-          key={item['template_id']}
+          key={item.template_id}
           {...(item as Template)}
           isLoading={isLoading}
           isUsersTemplates={isUsersTemplates}
