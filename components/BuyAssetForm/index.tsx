@@ -57,16 +57,17 @@ const BuyAssetForm = ({
       const { formattedPrices, rawPrices, assets } = await getAllTemplateSales(
         templateId
       );
-
-      assets.forEach((asset) => {
-        if (asset.salePrice === lowestPrice) {
-          setSaleId(asset.saleId);
-        }
-      });
       setSales(assets);
       setFormattedPricesBySaleId(formattedPrices);
       setRawPricesBySaleId(rawPrices);
       setIsLoadingPrices(false);
+
+      assets.forEach((asset) => {
+        if (asset.salePrice === lowestPrice) {
+          setSaleId(asset.saleId);
+          setRawPriceOfSale(rawPrices[asset.saleId]);
+        }
+      });
     })();
   }, [templateId]);
 
@@ -90,7 +91,6 @@ const BuyAssetForm = ({
       });
 
       if (purchaseResult.success) {
-        gtag.event({ action: 'buy_nft' });
         updateCurrentUserBalance(chainAccount);
         setTimeout(() => {
           router.push(`/my-nfts/${chainAccount}`);
