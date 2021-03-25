@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const TitleContainer = styled.div`
+export const NameContainer = styled.div`
   display: flex;
   justify-content: space-between;
 `;
@@ -19,12 +19,12 @@ export const General = styled.p`
   font-family: GilroyMedium;
 `;
 
-export const CollectionName = styled(General)`
+export const Title = styled(General)`
   margin-left: 8px;
   color: #0e103c;
 `;
 
-export const CollectionCreator = styled(General).attrs({ as: 'span' })`
+export const Author = styled(General).attrs({ as: 'span' })`
   color: #8a9ef5;
 `;
 
