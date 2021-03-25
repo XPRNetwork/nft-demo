@@ -4,7 +4,7 @@ import { formatPrice } from '../../utils';
 import { Background, Spacer, Money } from './Banner.styled';
 
 const Banner = (): JSX.Element => {
-  const { atomicMarketBalance } = useAuthContext();
+  const { currentUser, atomicMarketBalance } = useAuthContext();
   const { openModal } = useModalContext();
   const [isBannerVisible, setIsBannerVisible] = useState<boolean>(false);
 
@@ -13,7 +13,7 @@ const Banner = (): JSX.Element => {
 
     const balance = parseFloat(atomicMarketBalance.replace(',', ''));
 
-    if (balance > 0) {
+    if (currentUser && balance > 0) {
       setIsBannerVisible(true);
     } else {
       setIsBannerVisible(false);
