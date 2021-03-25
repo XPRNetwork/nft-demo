@@ -3,7 +3,6 @@ import styled from 'styled-components';
 export const Background = styled.div`
   position: fixed;
   left: 0;
-  top: 64px;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -18,13 +17,12 @@ export const Header = styled.h1`
 
 export const Content = styled.div`
   font-family: GilroyMedium;
+  font-size: 12px;
   color: #7578b5;
   flex-direction: column;
-  justify-content: center;
-  max-width: 250px;
+  max-width: 300px;
   padding: 8px;
   border: 1px solid #7578b5;
-  font-size: 12px;
   border-radius: 4px;
   margin-top: 48px;
   position: absolute;
@@ -34,11 +32,9 @@ export const Content = styled.div`
     position: relative;
     left: 50%;
     border: solid transparent;
-    height: 0;
-    width: 0;
     position: absolute;
-    pointer-events: none;
-    top: -7%;
+    top: -12%;
+    border-width: 5px;
     border-bottom-color: #7578b5;
   }
 `;

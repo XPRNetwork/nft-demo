@@ -26,7 +26,7 @@ const Banner = (): JSX.Element => {
   return (
     <>
       <Spacer />
-      <Tooltip content="We changed the way we're doing withdrawls/deposits and this amount is how much unclaimed was left in your account prior to the change. Please claim before the end date!">
+      <Tooltip content="We have updated the withdrawal / deposits system. This is the amount of unclaimed FOOBAR left in your account prior to the change. Please click to claim before the end date!">
         <Background onClick={() => openModal(MODAL_TYPES.CLAIM)}>
           <Content>
             <Money role="img" aria-label="Money" right>
