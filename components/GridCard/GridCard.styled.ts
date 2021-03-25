@@ -24,7 +24,7 @@ export const Container = styled.article`
 
 export const ImageContainer = styled(FadeInImageContainer)`
   position: relative;
-  border-radius: 18px;
+  border-radius: 8px;
   overflow: hidden;
   backface-visibility: hidden;
   transform: translate3d(0, 0, 0);

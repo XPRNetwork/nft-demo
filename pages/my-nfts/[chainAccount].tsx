@@ -5,7 +5,7 @@ import PaginationButton from '../../components/PaginationButton';
 import ErrorComponent from '../../components/Error';
 import Grid from '../../components/Grid';
 import { useAuthContext } from '../../components/Provider';
-import { getTemplatesWithUserAssetCount } from '../../services/assets';
+import { getTemplatesWithUserAssetCount } from '../../services/templates';
 import { Template } from '../../services/templates';
 import { Title } from '../../styles/Title.styled';
 import LoadingPage from '../../components/LoadingPage';
@@ -40,7 +40,9 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
   const router = useRouter();
   const { currentUser, login, authError } = useAuthContext();
   const [renderedTemplates, setRenderedTemplates] = useState<Template[]>([]);
-  const [prefetchedTemplates, setPrefetchedTemplates] = useState<Template[]>([]);
+  const [prefetchedTemplates, setPrefetchedTemplates] = useState<Template[]>(
+    []
+  );
   const [prefetchPageNumber, setPrefetchPageNumber] = useState<number>(2);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState<boolean>(true);
@@ -89,6 +91,10 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
   };
 
   const getContent = () => {
+    if (isLoading) {
+      return <LoadingPage />;
+    }
+
     if (!currentUser) {
       return (
         <ErrorComponent
@@ -112,10 +118,6 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
     if (chainAccount !== currentUser.actor) {
       router.push(`/my-nfts/${currentUser.actor}`);
       return;
-    }
-
-    if (isLoading) {
-      return <LoadingPage />;
     }
 
     if (!renderedTemplates.length) {
