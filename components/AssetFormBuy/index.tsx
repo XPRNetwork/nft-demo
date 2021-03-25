@@ -27,7 +27,7 @@ type Props = {
   setSaleId: Dispatch<SetStateAction<string>>;
 };
 
-export const BuyAssetForm = ({
+export const AssetFormBuy = ({
   dropdownAssets,
   lowestPrice,
   maxSupply,
@@ -102,4 +102,4 @@ export const BuyAssetForm = ({
   );
 };
 
-export default BuyAssetForm;
+export default AssetFormBuy;
