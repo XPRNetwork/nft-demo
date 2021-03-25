@@ -331,7 +331,7 @@ export const getNumberOfListingsByTemplateId = async ({
       collection_name || templates[0].collection.collection_name;
     const templateIds =
       template_Ids || templates.map(({ template_id }) => template_id);
-    const NumberOfListingsByTemplateId = {};
+    const numberOfListingsByTemplateId = {};
 
     await asyncForEach(templateIds, async (templateId: string) => {
       let sales = [];
@@ -361,10 +361,10 @@ export const getNumberOfListingsByTemplateId = async ({
         sales = sales.concat(result.data);
         page += 1;
       }
-      NumberOfListingsByTemplateId[templateId] = sales.length;
+      numberOfListingsByTemplateId[templateId] = sales.length;
     });
 
-    return NumberOfListingsByTemplateId;
+    return numberOfListingsByTemplateId;
   } catch (e) {
     throw new Error(e);
   }
