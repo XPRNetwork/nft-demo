@@ -83,6 +83,9 @@ export const TemplateCard = ({
   totalAssets,
   isUsersTemplates,
 }: TemplateCardProps): JSX.Element => {
+  const redirectPath = isUsersTemplates
+    ? `/my-templates/${template_id}`
+    : `/${template_id}`;
   return (
     <Card
       isLoading={isLoading}
@@ -90,7 +93,7 @@ export const TemplateCard = ({
       secondaryText={`Edition Size: ${formatNumber(max_supply)}`}
       priceText={lowestPrice}
       image={image as string}
-      redirectPath={`/${template_id}`}
+      redirectPath={redirectPath}
       assetsForSale={assetsForSale}
       totalAssets={totalAssets}
       isUsersTemplates={isUsersTemplates}
