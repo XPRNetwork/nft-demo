@@ -62,7 +62,7 @@ const SaleModal = ({
           <PriceInput
             amount={amount}
             setAmount={setAmount}
-            submit={null}
+            submit={onButtonClick}
             placeholder={`Enter amount (${TOKEN_SYMBOL})`}
           />
         </InputLabel>
