@@ -35,7 +35,6 @@ export const Section = styled.section`
 `;
 
 export const FooterLink = styled.a`
-  font-family: GilroyMedium;
   color: #7578b5;
   font-weight: 500;
   cursor: pointer;

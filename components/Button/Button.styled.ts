@@ -19,7 +19,6 @@ export const StyledButton = styled.button<ButtonProps>`
   height: auto;
   font-size: 16px;
   line-height: 24px;
-  font-family: GilroyMedium;
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 
   :hover,

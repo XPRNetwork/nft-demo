@@ -39,7 +39,6 @@ export const Menu = styled.ul<MenuProps>`
 `;
 
 export const MenuItem = styled.li`
-  font-family: GilroyMedium;
   line-height: 24px;
   padding: 8px 16px;
   cursor: pointer;

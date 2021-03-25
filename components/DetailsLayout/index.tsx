@@ -1,6 +1,5 @@
-import { ReactNode, useState, useEffect } from 'react';
+import { ReactNode, useState } from 'react';
 import Image from 'next/image';
-import { breakpointValues } from '../../styles/Breakpoints';
 import {
   Container,
   Row,
@@ -48,47 +47,20 @@ const DetailsLayout = ({
   error,
 }: Props): JSX.Element => {
   const [salesTableActive, setSalesTableActive] = useState(true);
-  const [width, setWidth] = useState(0);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const handleResize = () => {
-        setWidth(window.innerWidth);
-      };
-
-      window.addEventListener('resize', handleResize);
-      handleResize();
-
-      return () => window.removeEventListener('resize', handleResize);
-    }
-  }, []);
-
   return (
     <Container>
-      {width > breakpointValues.mobile ? (
-        <Row>
-          <AssetImage image={image} />
-          <Column>
-            <AssetFormTitle
-              templateName={templateName}
-              collectionName={collectionName}
-              collectionAuthor={collectionAuthor}
-            />
-            <Divider />
-            {children}
-          </Column>
-        </Row>
-      ) : (
+      <Row>
+        <AssetImage image={image} />
         <Column>
           <AssetFormTitle
             templateName={templateName}
             collectionName={collectionName}
             collectionAuthor={collectionAuthor}
           />
-          <AssetImage image={image} />
+          <Divider />
           {children}
         </Column>
-      )}
+      </Row>
       <ContentRow>
         <Title>Recent Sales History</Title>
         <ArrowContainer
