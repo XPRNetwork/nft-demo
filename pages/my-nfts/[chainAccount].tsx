@@ -138,7 +138,6 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
   return (
     <>
       <PageLayout title="My NFTs">
-        <Banner />
         <Title>{currentProfile ? `${currentProfile}'s` : 'My'} NFTs</Title>
         {getContent()}
       </PageLayout>

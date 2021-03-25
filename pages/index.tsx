@@ -125,7 +125,6 @@ const MarketPlace = (): JSX.Element => {
 
   return (
     <PageLayout title="MarketPlace">
-      <Banner />
       <Title>MarketPlace</Title>
       {getContent()}
     </PageLayout>
