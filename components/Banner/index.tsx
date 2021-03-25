@@ -12,7 +12,6 @@ const Banner = (): JSX.Element => {
     if (!atomicMarketBalance) return;
 
     const balance = parseFloat(atomicMarketBalance.replace(',', ''));
-    console.log(currentUser);
 
     if (currentUser && balance > 0) {
       setIsBannerVisible(true);
