@@ -22,7 +22,7 @@ type Props = {
 };
 
 interface SaleModalProps {
-  setShouldReload: Dispatch<SetStateAction<boolean>>;
+  fetchPageData: () => Promise<void>;
 }
 
 export interface CancelSaleModalProps extends SaleModalProps {
