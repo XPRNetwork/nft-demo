@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { Asset } from '../../services/assets';
 import { Template } from '../../services/templates';
 import {
   Container,
@@ -12,7 +11,7 @@ import {
   EmptyPrice,
   ShimmerBlock,
 } from './GridCard.styled';
-import { formatNumber, formatPrice } from '../../utils';
+import { formatNumber } from '../../utils';
 
 type Props = {
   text: string;
@@ -20,12 +19,15 @@ type Props = {
   priceText: string;
   image: string;
   redirectPath: string;
-  isForSale?: boolean;
   isLoading?: boolean;
+  assetsForSale?: string;
+  totalAssets?: string;
+  isUsersTemplates?: boolean;
 };
 
 interface TemplateCardProps extends Template {
   isLoading: boolean;
+  isUsersTemplates?: boolean;
 }
 
 const Card = ({
@@ -34,8 +36,10 @@ const Card = ({
   priceText,
   image,
   redirectPath,
-  isForSale,
   isLoading,
+  assetsForSale,
+  totalAssets,
+  isUsersTemplates,
 }: Props): JSX.Element => {
   const router = useRouter();
 
@@ -55,33 +59,16 @@ const Card = ({
           alt={text}
           src={`https://ipfs.io/ipfs/${image}`}
         />
-        {isForSale ? <Tag>FOR SALE</Tag> : null}
+        {isUsersTemplates ? (
+          <Tag>
+            {assetsForSale}/{totalAssets} FOR SALE
+          </Tag>
+        ) : null}
       </ImageContainer>
       <Text>{text}</Text>
       <SecondaryText>{secondaryText}</SecondaryText>
       {isLoading ? <ShimmerBlock /> : showPrice()}
     </Container>
-  );
-};
-
-export const AssetCard = ({
-  name,
-  asset_id,
-  data: { image },
-  isForSale,
-  salePrice,
-  template_mint,
-  template: { max_supply },
-}: Asset): JSX.Element => {
-  return (
-    <Card
-      image={image as string}
-      text={name}
-      secondaryText={`Serial #${template_mint}/${max_supply}`}
-      priceText={salePrice as string}
-      isForSale={isForSale as boolean}
-      redirectPath={`/assets/${asset_id}`}
-    />
   );
 };
 
@@ -92,6 +79,9 @@ export const TemplateCard = ({
   immutable_data: { image },
   lowestPrice,
   isLoading,
+  assetsForSale,
+  totalAssets,
+  isUsersTemplates,
 }: TemplateCardProps): JSX.Element => {
   return (
     <Card
@@ -101,6 +91,9 @@ export const TemplateCard = ({
       priceText={lowestPrice}
       image={image as string}
       redirectPath={`/${template_id}`}
+      assetsForSale={assetsForSale}
+      totalAssets={totalAssets}
+      isUsersTemplates={isUsersTemplates}
     />
   );
 };
