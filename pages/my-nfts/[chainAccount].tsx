@@ -36,7 +36,7 @@ const getMyAssets = async ({
 
 const Collection = ({ chainAccount }: Props): JSX.Element => {
   const router = useRouter();
-  const { currentUser, login, authError } = useAuthContext();
+  const { currentUser } = useAuthContext();
   const [renderedAssets, setRenderedAssets] = useState<Asset[]>([]);
   const [prefetchedAssets, setPrefetchedAssets] = useState<Asset[]>([]);
   const [prefetchPageNumber, setPrefetchPageNumber] = useState<number>(2);
@@ -80,7 +80,7 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
         setErrorMessage(e.message);
       }
     })();
-  }, []);
+  }, [chainAccount]);
 
   useEffect(() => {
     if (currentUser) {
@@ -92,10 +92,11 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
         setCurrentProfile('');
       }
     } else if (chainAccount) {
-      setCurrentProfile(`${chainAccount.charAt(0).toUpperCase()}${chainAccount.slice(1)}`
+      setCurrentProfile(
+        `${chainAccount.charAt(0).toUpperCase()}${chainAccount.slice(1)}`
       );
     }
-  }, [currentUser]);
+  }, [currentUser, chainAccount]);
 
   const getContent = () => {
     if (isLoading) {
@@ -154,6 +155,7 @@ type GetServerSidePropsArgs = {
 export const getServerSideProps = async ({
   params: { chainAccount },
 }: GetServerSidePropsArgs): Promise<{ props: Props }> => {
+  console.log('changed???', chainAccount);
   return {
     props: {
       chainAccount,
