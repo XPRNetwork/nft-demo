@@ -25,6 +25,7 @@ export const Background = styled.div`
 export const ModalBox = styled(MaxWidth)`
   display: flex;
   flex-direction: column;
+  margin-bottom: 28vh;
   padding: 24px 24px 12px;
   border-radius: 8px;
   box-shadow: 0 8px 8px -4px rgba(0, 0, 0, 0.1), 0 0 4px 0 rgba(0, 0, 0, 0.08);
