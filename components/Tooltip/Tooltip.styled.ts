@@ -30,11 +30,10 @@ export const Content = styled.div`
 
   ::before {
     content: '';
-    position: relative;
+    position: absolute;
     left: 50%;
     border: solid transparent;
-    position: absolute;
-    top: -14%;
+    top: -11px;
     border-width: 5px;
     border-bottom-color: #7578b5;
   }
