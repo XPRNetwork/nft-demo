@@ -11,7 +11,12 @@ import {
   MODAL_TYPES,
 } from '../../components/Provider';
 import { getTemplateDetails, Template } from '../../services/templates';
-import { getUserTemplateAssets, Asset, RawPrices } from '../../services/assets';
+import {
+  getUserTemplateAssets,
+  Asset,
+  RawPrices,
+  SaleIds,
+} from '../../services/assets';
 import { getSalesHistoryForTemplate, Sale } from '../../services/sales';
 import { DEFAULT_COLLECTION } from '../../utils/constants';
 
@@ -42,6 +47,7 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
   const [sales, setSales] = useState<Sale[]>([]);
   const [templateAssets, setTemplateAssets] = useState<Asset[]>([]);
   const [rawPricesByAssetId, setRawPricesByAssetId] = useState<RawPrices>({});
+  const [saleIdsByAssetId, setSaleIdsByAssetId] = useState<SaleIds>({});
   const [isLoadingPrices, setIsLoadingPrices] = useState<boolean>(true);
   const [template, setTemplate] = useState<Template>(emptyTemplateDetails);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -80,7 +86,7 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
         assetIds,
         fetchPageData,
       });
-
+      setSaleIdsByAssetId(saleIds);
       setTemplateAssets(assets);
       setAssetId(assets[0].asset_id);
       setRawPricesByAssetId(rawPrices);
@@ -110,7 +116,7 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
   const cancelSale = () => {
     openModal(MODAL_TYPES.CANCEL_SALE);
     setModalProps({
-      saleId: rawPricesByAssetId[assetId].saleId,
+      saleId: saleIdsByAssetId[assetId],
       fetchPageData,
     });
   };
