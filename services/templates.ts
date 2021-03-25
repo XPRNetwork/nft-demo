@@ -411,7 +411,7 @@ export const getTemplatesFromTemplateIds = async (
     const templatesQueryObject = {
       symbol: TOKEN_SYMBOL,
       collection_name: DEFAULT_COLLECTION,
-      ids: `${templateIds.join(',')}`,
+      ids: templateIds.join(','),
     };
 
     const templatesQueryParams = toQueryString(templatesQueryObject);
