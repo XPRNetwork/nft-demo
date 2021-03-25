@@ -1,6 +1,6 @@
 import { Collection, Schema, Template } from './templates';
 import { Offer } from './offers';
-import { getAssetSale } from './sales';
+import { getAssetSale, getAllTemplateSales } from './sales';
 import { addPrecisionDecimal, toQueryString } from '../utils';
 import { getFromApi } from '../utils/browser-fetch';
 import { getUserOffers } from './offers';
@@ -36,12 +36,147 @@ export type Asset = {
   salePrice?: string;
 };
 
+export type RawPrices = {
+  [assetId: string]: {
+    rawPrice: string;
+    saleId: string;
+  };
+};
+
+export type SaleIds = {
+  [assetId: string]: string;
+};
+
+type UserTemplateAssetDetails = {
+  assets: Asset[];
+  rawPrices: RawPrices;
+  saleIds: SaleIds;
+};
+
+/**
+ * Gets a list of all user owned assets of a specific template
+ * Mostly used in viewing all your owned assets and see which one is listed for sale at a glance.
+ * @param owner       The account name of the owner of the assets to look up
+ * @param templateId  The ID of the template of a group of assets
+ * @returns {Asset[]}
+ */
+
+const getAllUserAssetsByTemplate = async (
+  owner: string,
+  templateId: string
+): Promise<Asset[]> => {
+  try {
+    let assets = [];
+    let hasResults = true;
+    let page = 1;
+
+    while (hasResults) {
+      const queryObject = {
+        owner,
+        page,
+        order: 'asc',
+        sort: 'template_mint',
+        template_id: templateId,
+      };
+      const queryString = toQueryString(queryObject);
+      const result = await getFromApi<Asset[]>(
+        `https://proton.api.atomicassets.io/atomicassets/v1/assets?${queryString}`
+      );
+
+      if (!result.success) {
+        throw new Error((result.message as unknown) as string);
+      }
+
+      if (result.data.length === 0) {
+        hasResults = false;
+      }
+
+      assets = assets.concat(result.data);
+      page += 1;
+    }
+
+    return assets;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * Gets an index of sale IDs organized by asset ID.
+ * Mostly used in viewing all your owned assets and see which one is listed for sale at a glance.
+ * @param owner       The account name of the owner of the assets to look up
+ * @param templateId  The ID of the template of a group of assets
+ * @returns {SaleIds} Returns object of sale IDs organized by asset ID
+ */
+
+const getSaleIdsByAsset = async (
+  owner: string,
+  templateId: string
+): Promise<SaleIds> => {
+  const { assets } = await getAllTemplateSales(templateId, owner);
+  const saleIdsByAssetId = {};
+  for (const asset of assets) {
+    saleIdsByAssetId[asset.assetId] = asset.saleId;
+  }
+  return saleIdsByAssetId;
+};
+
 /**
  * Gets a list of all user owned assets and checks whether there are open offers.
  * Mostly used in viewing all your owned assets and see which one is listed for sale at a glance.
- * @param owner The account name of the owner of the assets to look up
- * @param page  The page to look up from atomicassets api if number of assets returned is greater than given limit (default 100)
- * @returns {Asset[]}
+ * @param owner                         The account name of the owner of the assets to look up
+ * @param templateId                    The ID of the template of a group of assets
+ * @returns {UserTemplateAssetDetails}  Returns array of assets, raw prices organized by asset ID, and sale IDs organized by asset ID
+ */
+
+export const getUserTemplateAssets = async (
+  owner: string,
+  templateId: string
+): Promise<UserTemplateAssetDetails> => {
+  try {
+    const assets = await getAllUserAssetsByTemplate(owner, templateId);
+    const userOffers = await getUserOffers(owner);
+
+    if (!userOffers || !userOffers.length) {
+      return {
+        assets,
+        rawPrices: {},
+        saleIds: {},
+      };
+    }
+
+    const saleIdsByAssetId = await getSaleIdsByAsset(owner, templateId);
+    const myAssetsAndSaleItems = await findMySaleItems(
+      assets,
+      userOffers,
+      owner
+    );
+
+    const pricesByAssetIdRaw = {};
+    for (const asset of myAssetsAndSaleItems) {
+      const { asset_id, salePrice, saleId } = asset;
+      pricesByAssetIdRaw[asset_id] = {
+        rawPrice: salePrice.replace(',', ''),
+        saleId,
+      };
+    }
+
+    return {
+      assets: myAssetsAndSaleItems,
+      rawPrices: pricesByAssetIdRaw,
+      saleIds: saleIdsByAssetId,
+    };
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+/**
+ * Gets a list of all user owned assets and checks whether there are open offers.
+ * Mostly used in viewing all your owned assets and see which one is listed for sale at a glance.
+ * @param owner         The account name of the owner of the assets to look up
+ * @param page          The page to look up from atomicassets api if number of assets returned is greater than given limit (default 100)
+ * @returns {Asset[]}   Returns array of Assets with additional 'isForSale' and 'salePrice' flags
  */
 
 export const getUserAssets = async (
