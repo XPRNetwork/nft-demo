@@ -279,6 +279,16 @@ export const formatTemplatesWithPriceData = (
     lowestPrice: lowestPrices[template.template_id] || '',
   }));
 
+/***
+ * Function returns templates with the following added keys: (used primarily for diaplying user's owned assets in My NFT page)
+ *    totalAssets: Total number of assets owned by 'owner'
+ *    assetsForSale: Number of assets for sale by 'owner'
+ *    lowestPrice: Lowest price of an asset for sale in marketplace
+ * @param {string} owner Owner of assets to look up
+ * @param {number} page  Reference for pagination if number of template categories (based on owned assets) is greater than number of templates displayed per page
+ * @return {Template[]}
+ */
+
 export const getTemplatesWithUserAssetCount = async (
   owner: string,
   page: number
