@@ -47,25 +47,23 @@ export const AssetFormBuy = ({
   );
 
   const handleDropdownSelect = (e: ChangeEvent<HTMLSelectElement>) => {
-    setPurchasingError('');
-    setIsBalanceInsufficient(false);
-
-    if (!currentUser) {
-      setPurchasingError('You must log in to purchase an asset.');
-      return;
-    }
-
     const id = e.target.value;
     const priceString = formattedPricesBySaleId[id];
     const amount = parseFloat(priceString.split(' ')[0].replace(',', ''));
+    setPurchasingError('');
+    setIsBalanceInsufficient(false);
+    setSaleId(id);
+
+    if (!currentUser) {
+      setPurchasingError('You must log in to purchase an asset.');
+    }
+
     if (amount > balanceAmount) {
       setIsBalanceInsufficient(true);
       setPurchasingError(
         `Insufficient funds: this NFT is listed for ${priceString} and your account balance is ${currentUserBalance}. Please visit Foobar Faucet for more funds to continue this transaction.`
       );
     }
-
-    setSaleId(id);
   };
 
   return (
