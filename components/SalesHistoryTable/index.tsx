@@ -12,16 +12,11 @@ import { StyledTable } from './SalesHistoryTable.styled';
 import { useWindowSize } from '../../hooks';
 import { getFromApi } from '../../utils/browser-fetch';
 import { useAuthContext } from '../Provider';
-
-import {
-  getSalesHistoryForTemplate,
-  getSalesHistoryForAsset,
-} from '../../services/sales';
+import { getSalesHistoryForTemplate } from '../../services/sales';
 
 type Props = {
   tableData: Sale[];
   id: string;
-  type: string;
   error?: string;
 };
 
@@ -33,7 +28,6 @@ type TableHeader = {
 type GetSalesOptions = {
   id: string;
   page?: number;
-  type?: string;
 };
 
 const salesHistoryTableHeaders = [
@@ -77,17 +71,10 @@ const getAvatars = async (
 const getMySalesHistory = async ({
   id,
   page,
-  type,
 }: GetSalesOptions): Promise<Sale[]> => {
   try {
     const pageParam = page ? page : 1;
-    const typeParam = type ? type : 'Template';
-    let result;
-    if (typeParam === 'Template') {
-      result = await getSalesHistoryForTemplate(id, pageParam);
-    } else {
-      result = await getSalesHistoryForAsset(id, pageParam);
-    }
+    const result = await getSalesHistoryForTemplate(id, pageParam);
 
     return result;
   } catch (e) {
@@ -95,12 +82,7 @@ const getMySalesHistory = async ({
   }
 };
 
-const SalesHistoryTable = ({
-  tableData,
-  id,
-  type,
-  error,
-}: Props): JSX.Element => {
+const SalesHistoryTable = ({ tableData, id, error }: Props): JSX.Element => {
   const { currentUser } = useAuthContext();
   const router = useRouter();
   const [avatars, setAvatars] = useState({});
@@ -164,7 +146,6 @@ const SalesHistoryTable = ({
     const prefetchedResult = await getMySalesHistory({
       id,
       page: prefetchPageNumber,
-      type,
     });
     setPrefetchedData(prefetchedResult as Sale[]);
 

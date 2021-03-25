@@ -1,20 +1,27 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import {
-  TitleContainer,
+  NameContainer,
   Name,
   General,
-  CollectionName,
-  CollectionCreator,
+  Title,
+  Author,
   CollectionIconContainer,
 } from './AssetFormTitle.styled';
 import AssetFormSellPopupMenu from '../AssetFormSellPopupMenu';
+import { capitalize } from '../../utils';
 
 type Props = {
-  name: string;
+  templateName: string;
+  collectionName: string;
+  collectionAuthor: string;
 };
 
-const AssetFormTitle = ({ name }: Props): JSX.Element => {
+const AssetFormTitle = ({
+  templateName,
+  collectionName,
+  collectionAuthor,
+}: Props): JSX.Element => {
   const router = useRouter();
   const isMyTemplate = router.pathname.includes('my-templates');
   return (
@@ -28,14 +35,14 @@ const AssetFormTitle = ({ name }: Props): JSX.Element => {
           src="/icon-monsters.png"
           alt="Crypto Monsters icon"
         />
-        <CollectionName>Crypto Monsters</CollectionName>
+        <Title>Crypto {capitalize(collectionName)}</Title>
       </CollectionIconContainer>
-      <TitleContainer>
-        <Name>{name}</Name>
+      <NameContainer>
+        <Name>{templateName}</Name>
         {isMyTemplate && <AssetFormSellPopupMenu />}
-      </TitleContainer>
+      </NameContainer>
       <General>
-        Created by <CollectionCreator>Fred Krueger</CollectionCreator>
+        Created by <Author>{capitalize(collectionAuthor)}</Author>
       </General>
     </>
   );
