@@ -4,6 +4,7 @@ import { getAssetSale } from './sales';
 import { addPrecisionDecimal, toQueryString } from '../utils';
 import { getFromApi } from '../utils/browser-fetch';
 import { getUserOffers } from './offers';
+import { DEFAULT_COLLECTION } from '../utils/constants';
 
 export type Asset = {
   name: string;
@@ -34,6 +35,16 @@ export type Asset = {
   schema?: Schema;
   isForSale?: boolean;
   salePrice?: string;
+};
+
+export type Account = {
+  assets: number;
+  collections: Collection[];
+  templates: {
+    assets: string;
+    collection_name: string;
+    template_id: string;
+  }[];
 };
 
 /**
@@ -79,6 +90,80 @@ export const getUserAssets = async (
     );
 
     return myAssetsAndSaleItems;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+
+export const getTemplatesWithUserAssetCount = async (
+  owner: string,
+  page: number
+): Promise<Template[]> => {
+  try {
+    const accountResponse = await getFromApi<Account>(
+      `https://proton.api.atomicassets.io/atomicassets/v1/accounts/${owner}`
+    );
+
+    if (!accountResponse.success) {
+      throw new Error((accountResponse.message as unknown) as string);
+    }
+
+    const accountResponseWithHidden = await getFromApi<Account>(
+      `https://proton.api.atomicassets.io/atomicassets/v1/accounts/${owner}?hide_offers=true`
+    );
+
+    if (!accountResponseWithHidden.success) {
+      throw new Error((accountResponseWithHidden.message as unknown) as string);
+    }
+
+    const userAssetsByTemplateId = {};
+    accountResponse.data.templates.map(({ assets, template_id }) => {
+      userAssetsByTemplateId[template_id] = assets;
+    });
+
+    const userAssetsWithHiddenByTemplateId = {};
+    accountResponseWithHidden.data.templates.map(({ assets, template_id }) => {
+      userAssetsWithHiddenByTemplateId[template_id] = assets;
+    });
+
+    const templateIds = accountResponse.data.templates.map(
+      ({ template_id }) => template_id
+    );
+
+    const templatesQueryObject = {
+      collection_name: DEFAULT_COLLECTION,
+      ids: `${templateIds.join(',')}`,
+      page: page ? page : 1,
+      limit: 10,
+    };
+
+    const templatesQueryParams = toQueryString(templatesQueryObject);
+    const templatesResponse = await getFromApi<Template[]>(
+      `https://proton.api.atomicassets.io/atomicassets/v1/templates?${templatesQueryParams}`
+    );
+
+    if (!templatesResponse.success) {
+      throw new Error((templatesResponse.message as unknown) as string);
+    }
+
+    const { data: templates } = templatesResponse;
+
+    const templatesWithAssetAccount = templateIds.map((templateId) => {
+      const template = templates.find(({ template_id }) => {
+        return templateId == template_id;
+      });
+      if (template) {
+        template.totalAssets = `${userAssetsByTemplateId[templateId]}`;
+
+        const assetsForSale =
+          parseInt(userAssetsByTemplateId[templateId]) -
+          parseInt(userAssetsWithHiddenByTemplateId[templateId]);
+
+        template.assetsForSale = `${assetsForSale}`;
+      }
+      return template;
+    });
+    return templatesWithAssetAccount;
   } catch (e) {
     throw new Error(e);
   }
