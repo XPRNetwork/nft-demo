@@ -18,7 +18,7 @@ const Banner = (): JSX.Element => {
     } else {
       setIsBannerVisible(false);
     }
-  }, [atomicMarketBalance]);
+  }, [currentUser, atomicMarketBalance]);
 
   if (!isBannerVisible) return null;
 
