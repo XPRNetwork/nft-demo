@@ -29,7 +29,8 @@ const Banner = (): JSX.Element => {
         <Money role="img" aria-label="Money" right>
           💸
         </Money>
-        Claim {formatPrice(atomicMarketBalance)} from sales
+        Claim {formatPrice(atomicMarketBalance)} from sales (only available
+        until 3/29 12pm PDT)
         <Money role="img" aria-label="Money">
           💸
         </Money>
