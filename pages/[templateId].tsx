@@ -21,6 +21,10 @@ const emptyTemplateDetails = {
   lowestPrice: '',
   highestPrice: '',
   max_supply: '',
+  collection: {
+    author: '',
+    collection_name: '',
+  },
   immutable_data: {
     image: '',
     name: '',
@@ -66,6 +70,7 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
   const {
     lowestPrice,
     max_supply,
+    collection: { author, collection_name },
     immutable_data: { image, name },
   } = template;
 
@@ -174,10 +179,12 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
 
     return (
       <DetailsLayout
-        name={name}
+        templateName={name}
+        collectionName={collection_name}
+        collectionAuthor={author}
         sales={sales}
         error={error}
-        image={image as string}>
+        image={image}>
         <AssetFormBuy
           dropdownAssets={templateAssets}
           lowestPrice={lowestPrice}

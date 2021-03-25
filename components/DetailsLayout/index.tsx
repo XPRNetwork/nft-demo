@@ -18,8 +18,10 @@ import { Sale } from '../../services/sales';
 
 type Props = {
   children: ReactNode;
-  name: string;
   image: string;
+  templateName: string;
+  collectionName: string;
+  collectionAuthor: string;
   sales: Sale[];
   error?: string;
 };
@@ -38,8 +40,10 @@ const AssetImage = ({ image }: { image: string }): JSX.Element => (
 
 const DetailsLayout = ({
   children,
-  name,
   image,
+  templateName,
+  collectionName,
+  collectionAuthor,
   sales,
   error,
 }: Props): JSX.Element => {
@@ -65,14 +69,22 @@ const DetailsLayout = ({
         <Row>
           <AssetImage image={image} />
           <Column>
-            <AssetFormTitle name={name} />
+            <AssetFormTitle
+              templateName={templateName}
+              collectionName={collectionName}
+              collectionAuthor={collectionAuthor}
+            />
             <Divider />
             {children}
           </Column>
         </Row>
       ) : (
         <Column>
-          <AssetFormTitle name={name} />
+          <AssetFormTitle
+            templateName={templateName}
+            collectionName={collectionName}
+            collectionAuthor={collectionAuthor}
+          />
           <AssetImage image={image} />
           {children}
         </Column>

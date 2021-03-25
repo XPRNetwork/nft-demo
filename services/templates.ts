@@ -16,16 +16,16 @@ export type Schema = {
 };
 
 export type Collection = {
-  collection_name: string;
-  name: string | null;
-  img: string | null;
   author: string;
-  allow_notify: boolean;
-  authorized_accounts: string[];
-  notify_accounts: string[] | [];
-  market_fee: number;
-  created_at_block: string;
-  created_at_time: string;
+  collection_name: string;
+  name?: string | null;
+  img?: string | null;
+  allow_notify?: boolean;
+  authorized_accounts?: string[];
+  notify_accounts?: string[] | [];
+  market_fee?: number;
+  created_at_block?: string;
+  created_at_time?: string;
 };
 
 type ImmutableData = {
