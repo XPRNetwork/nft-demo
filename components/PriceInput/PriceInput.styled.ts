@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 export const Input = styled.input`
-  font-family: GilroyMedium;
   font-size: 14px;
   line-height: 24px;
   color: #7578b5;

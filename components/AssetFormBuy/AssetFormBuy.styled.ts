@@ -8,7 +8,6 @@ export const General = styled.p`
   color: #7578b5;
   font-size: 14px;
   line-height: 24px;
-  font-family: GilroyMedium;
 `;
 
 export const Amount = styled.h3`
@@ -16,7 +15,6 @@ export const Amount = styled.h3`
   font-weight: 600;
   line-height: 32px;
   margin-bottom: 28px;
-  font-family: GilroyMedium;
 `;
 
 export const Row = styled.div`
@@ -30,11 +28,9 @@ export const ErrorMessage = styled.p`
   color: #b57579;
   font-size: 16px;
   line-height: 24px;
-  font-family: GilroyMedium;
 `;
 
 export const DropdownMenu = styled.select<DropdownMenuProps>`
-  font-family: GilroyMedium;
   font-size: 16px;
   margin: 4px 0 12px;
   padding: 0 16px;
