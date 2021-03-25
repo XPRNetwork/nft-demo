@@ -14,6 +14,7 @@ type Price = {
 
 export type SaleAsset = {
   saleId: string;
+  assetId: string;
   templateMint: string;
   salePrice: string;
 };
@@ -178,7 +179,8 @@ export const getAssetSale = async (
  */
 
 export const getAllTemplateSales = async (
-  templateId: string
+  templateId: string,
+  owner?: string
 ): Promise<SaleAssetRecord> => {
   try {
     let sales = [];
@@ -192,6 +194,7 @@ export const getAllTemplateSales = async (
         order: 'asc',
         template_id: templateId,
         page,
+        owner: owner || '',
       };
       const queryParams = toQueryString(queryObject);
       const result = await getFromApi<SaleAsset[]>(
@@ -235,10 +238,11 @@ export const getAllTemplateSales = async (
       pricesBySaleId[sale_id] = salePrice;
       pricesBySaleIdRaw[sale_id] = rawListingPrice;
 
-      const formattedAssets = assets.map(({ template_mint }) => ({
+      const formattedAssets = assets.map(({ template_mint, asset_id }) => ({
         saleId: sale_id,
         templateMint: template_mint,
         salePrice,
+        assetId: asset_id,
       }));
 
       saleAssets = saleAssets.concat(formattedAssets);
