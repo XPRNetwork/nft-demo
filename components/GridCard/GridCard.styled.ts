@@ -43,7 +43,6 @@ export const Text = styled.span`
 `;
 
 export const SecondaryText = styled.span`
-  font-family: GilroyMedium;
   font-size: 12px;
   line-height: 2;
   color: #7578b5;

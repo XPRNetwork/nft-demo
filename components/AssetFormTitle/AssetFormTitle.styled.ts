@@ -16,7 +16,6 @@ export const General = styled.p`
   color: #7578b5;
   font-size: 14px;
   line-height: 24px;
-  font-family: GilroyMedium;
 `;
 
 export const Title = styled(General)`

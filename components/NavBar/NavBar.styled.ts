@@ -50,7 +50,6 @@ export const UserMenuButton = styled.button`
 `;
 
 export const UserMenuText = styled.span`
-  font-family: GilroyMedium;
   color: #0e103c;
   font-size: 14px;
   margin: 8px 8px 8px 16px;
@@ -149,7 +148,6 @@ export const Name = styled.span`
 `;
 
 export const Subtitle = styled.span`
-  font-family: GilroyMedium;
   color: #7578b5;
   font-weight: 500;
   font-size: 14px;
@@ -174,7 +172,6 @@ export const Balance = styled(Name)`
 `;
 
 export const DropdownLink = styled.a<DropdownLinkProps>`
-  font-family: GilroyMedium;
   font-weight: 500;
   color: ${({ red }) => (red ? '#fb849a' : '#0e103c')};
   font-size: 16px;
@@ -209,14 +206,13 @@ export const DesktopOnlySection = styled.section`
 `;
 
 export const DesktopNavLink = styled.a<NavLinkProps>`
-  font-family: GilroyMedium;
   color: ${({ isActive }) => (isActive ? '#0e103c' : '#0e103c')};
   font-weight: ${({ isActive }) => (isActive ? 600 : 500)};
   border-bottom: 2px solid ${({ isActive }) => (isActive ? '#8a9ef5' : 'white')};
   cursor: pointer;
   margin-right: 40px;
   font-size: 16px;
-  padding: 20px 0;
+  padding: 21px 0;
 `;
 
 export const MobileIcon = styled.div`

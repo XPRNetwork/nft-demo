@@ -27,6 +27,10 @@ export const Container = styled.div`
 export const Row = styled.div`
   width: 100%;
   display: flex;
+
+  ${breakpoint.mobile`
+    flex-direction: column;
+  `}
 `;
 
 export const Column = styled.div`
@@ -37,7 +41,7 @@ export const Column = styled.div`
 
   ${breakpoint.mobile`
     margin: 0;
-  `};
+  `}
 `;
 
 export const ImageContainer = styled(FadeInImageContainer)`
