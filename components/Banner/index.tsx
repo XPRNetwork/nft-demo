@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuthContext, useModalContext, MODAL_TYPES } from '../Provider';
 import { formatPrice } from '../../utils';
-import { Background, Spacer, Money } from './Banner.styled';
+import Tooltip from '../Tooltip';
+import { Background, Spacer, Content, Money } from './Banner.styled';
 
 const Banner = (): JSX.Element => {
   const { currentUser, atomicMarketBalance } = useAuthContext();
@@ -25,16 +26,20 @@ const Banner = (): JSX.Element => {
   return (
     <>
       <Spacer />
-      <Background onClick={() => openModal(MODAL_TYPES.CLAIM)}>
-        <Money role="img" aria-label="Money" right>
-          💸
-        </Money>
-        Claim {formatPrice(atomicMarketBalance)} from sales (only available
-        until 3/29 12pm PDT)
-        <Money role="img" aria-label="Money">
-          💸
-        </Money>
-      </Background>
+      <Tooltip content="We have updated the withdrawal / deposits system. This is the amount of unclaimed FOOBAR left in your account prior to the change. Please click to claim before the end date!">
+        <Background onClick={() => openModal(MODAL_TYPES.CLAIM)}>
+          <Content>
+            <Money role="img" aria-label="Money" right>
+              💸
+            </Money>
+            Claim {formatPrice(atomicMarketBalance)} from sales (only available
+            until 3/29 12pm PDT)
+            <Money role="img" aria-label="Money">
+              💸
+            </Money>
+          </Content>
+        </Background>
+      </Tooltip>
     </>
   );
 };
