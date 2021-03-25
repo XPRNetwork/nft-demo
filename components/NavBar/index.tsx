@@ -22,7 +22,7 @@ import {
   Subtitle,
   Balance,
 } from './NavBar.styled';
-import { useScrollLock } from '../../hooks';
+import { useScrollLock, useEscapeKeyClose } from '../../hooks';
 import { useAuthContext } from '../Provider';
 
 type DropdownProps = {
@@ -95,6 +95,7 @@ const UserAvatar = ({ isOpen, avatar, toggleNavDropdown }) => {
 const Dropdown = ({ isOpen, closeNavDropdown }: DropdownProps): JSX.Element => {
   const router = useRouter();
   const { currentUser, currentUserBalance, logout } = useAuthContext();
+  useEscapeKeyClose(closeNavDropdown);
 
   const routes = [
     {

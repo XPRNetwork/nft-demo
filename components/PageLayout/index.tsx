@@ -10,6 +10,7 @@ import {
   CancelSaleModal,
   CancelMultipleSalesModal,
 } from '../Modal';
+import { useEscapeKeyClose } from '../../hooks';
 
 type Props = {
   title: string;
@@ -17,7 +18,8 @@ type Props = {
 };
 
 const PageLayout = ({ title, children }: Props): JSX.Element => {
-  const { modalType } = useModalContext();
+  const { closeModal, modalType } = useModalContext();
+  useEscapeKeyClose(closeModal);
 
   Router.events.on('routeChangeComplete', () => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });

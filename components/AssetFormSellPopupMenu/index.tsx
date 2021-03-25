@@ -5,13 +5,18 @@ import {
   Menu,
   MenuItem,
 } from './AssetFormSellPopupMenu.styled';
+import { GradientBackground } from '../NavBar/NavBar.styled';
 import { ReactComponent as Ellipsis } from '../../public/ellipsis.svg';
 import { useModalContext, MODAL_TYPES } from '../Provider';
+import { useScrollLock, useEscapeKeyClose } from '../../hooks';
 
 const AssetFormSellPopupMenu = (): JSX.Element => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const togglePopupMenu = () => setIsOpen(!isOpen);
+  const closePopupMenu = () => setIsOpen(false);
   const { openModal } = useModalContext();
+  useScrollLock(isOpen);
+  useEscapeKeyClose(closePopupMenu);
 
   const popupMenuItems = [
     {
@@ -36,6 +41,11 @@ const AssetFormSellPopupMenu = (): JSX.Element => {
           </MenuItem>
         ))}
       </Menu>
+      <GradientBackground
+        isTransparent
+        isOpen={isOpen}
+        onClick={closePopupMenu}
+      />
     </MenuContainer>
   );
 };
