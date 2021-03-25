@@ -58,20 +58,6 @@ export const Title = styled.h1`
   font-family: GilroySemiBold;
 `;
 
-export const Name = styled.h1`
-  font-size: 40px;
-  line-height: 48px;
-  font-family: GilroySemiBold;
-`;
-
-export const Series = styled.p`
-  font-size: 22px;
-  color: #7578b5;
-  line-height: 32px;
-  margin-bottom: 16px;
-  font-family: GilroyMedium;
-`;
-
 export const ContentRow = styled.div`
   display: flex;
   justify-content: space-between;
@@ -92,17 +78,7 @@ export const ToggleContainer = styled.div<ToggleContainerProps>`
   width: 100%;
 `;
 
-export const Serial = styled.p`
-  line-height: 24px;
-  margin-bottom: 8px;
-  font-family: GilroyMedium;
-
-  ${breakpoint.mobile`
-    margin: 0;
-  `};
-`;
-
 export const Divider = styled.div`
-  margin: 12px 0 24px 0;
+  margin: 24px 0;
   border-bottom: 1px solid #e8ecfd;
 `;
