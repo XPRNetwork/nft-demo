@@ -155,7 +155,6 @@ type GetServerSidePropsArgs = {
 export const getServerSideProps = async ({
   params: { chainAccount },
 }: GetServerSidePropsArgs): Promise<{ props: Props }> => {
-  console.log('changed???', chainAccount);
   return {
     props: {
       chainAccount,
