@@ -1,9 +1,5 @@
 import styled from 'styled-components';
 
-type MoneyProps = {
-  right?: boolean;
-};
-
 export const Background = styled.section`
   left: 0;
   width: 100%;
@@ -22,12 +18,6 @@ export const Background = styled.section`
 
 export const Spacer = styled.div`
   height: 40px;
-`;
-
-export const Money = styled.span<MoneyProps>`
-  font-size: 16px;
-  margin-right: ${({ right }) => (right ? '8px' : '0')};
-  margin-left: ${({ right }) => (!right ? '8px' : '0')};
 `;
 
 export const Content = styled.span`
