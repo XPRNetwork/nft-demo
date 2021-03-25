@@ -365,7 +365,7 @@ export const getTemplatesWithUserAssetCount = async (
  * Function to add total asset count, assets for sale, and lowest price to template data for each template
  * Used in conjunction with function getTemplatesWithUserAssetCount
  * @param templateIds list of templateIds of templates to add data to
- * @param tempaltes   templates of the template Ids listed in templateIds param
+ * @param templates   templates of the template Ids listed in templateIds param
  * @param assetCountById  total number of assets for each template that user owns
  * @param assetCountByIdWithHidden  total number of assets for each template that user owns minus those currently offered for sale
  * @param lowPriceById  lowest price of asset currently on offer for each template
