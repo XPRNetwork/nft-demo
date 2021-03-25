@@ -43,6 +43,7 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [currentProfile, setCurrentProfile] = useState<string>('');
 
   const prefetchNextPage = async () => {
     const prefetchedResult = await getMyAssets({
@@ -81,44 +82,33 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
     })();
   }, []);
 
-  const connectWallet = () => {
-    login();
-    router.replace(router.asPath);
-  };
+  useEffect(() => {
+    if (currentUser) {
+      if (chainAccount !== currentUser.actor) {
+        setCurrentProfile(
+          `${chainAccount.charAt(0).toUpperCase()}${chainAccount.slice(1)}`
+        );
+      } else {
+        setCurrentProfile('');
+      }
+    } else if (chainAccount) {
+      setCurrentProfile(`${chainAccount.charAt(0).toUpperCase()}${chainAccount.slice(1)}`
+      );
+    }
+  }, [currentUser]);
 
   const getContent = () => {
-    if (!currentUser) {
-      return (
-        <ErrorComponent
-          errorMessage="You must log in to view your collection."
-          buttonText="Connect Wallet"
-          buttonOnClick={connectWallet}
-        />
-      );
-    }
-
-    if (authError) {
-      return (
-        <ErrorComponent
-          errorMessage={authError}
-          buttonText="Connect Wallet"
-          buttonOnClick={connectWallet}
-        />
-      );
-    }
-
-    if (chainAccount !== currentUser.actor) {
-      router.push(`/my-nfts/${currentUser.actor}`);
-      return;
-    }
-
     if (isLoading) {
       return <LoadingPage />;
     }
 
     if (!renderedAssets.length) {
       return (
-        <ErrorComponent errorMessage="Looks like you don't own any monsters yet." />
+        <ErrorComponent
+          errorMessage={`Looks like ${
+            currentProfile ? `${currentProfile} doesn't` : `you don't`
+          } own any monsters yet.`}
+        />
       );
     }
 
@@ -148,7 +138,7 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
     <>
       <PageLayout title="My NFTs">
         <Banner />
-        <Title>Collection</Title>
+        <Title>{currentProfile ? currentProfile : 'My'} NFTs</Title>
         {getContent()}
       </PageLayout>
     </>
