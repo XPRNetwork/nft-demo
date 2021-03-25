@@ -4,33 +4,27 @@ import Tooltip from '../Tooltip';
 import { Background, Spacer, Content } from './Banner.styled';
 
 type Props = {
-  useTooltip?: boolean;
   toolTipContent?: string;
   bannerContent: string;
   modalType: string;
 };
 
 const Banner = ({
-  useTooltip,
   toolTipContent,
   bannerContent,
   modalType,
 }: Props): JSX.Element => {
-  const { currentUser, atomicMarketBalance } = useAuthContext();
+  const { currentUser } = useAuthContext();
   const { openModal } = useModalContext();
   const [isBannerVisible, setIsBannerVisible] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!atomicMarketBalance) return;
-
-    const balance = parseFloat(atomicMarketBalance.replace(/[,]/g, ''));
-
-    if (currentUser && balance > 0) {
+    if (currentUser) {
       setIsBannerVisible(true);
     } else {
       setIsBannerVisible(false);
     }
-  }, [currentUser, atomicMarketBalance]);
+  }, [currentUser]);
 
   const getContent = () => {
     return (
@@ -45,7 +39,7 @@ const Banner = ({
   return (
     <>
       <Spacer />
-      {useTooltip ? (
+      {toolTipContent ? (
         <Tooltip content={toolTipContent}>{getContent()}</Tooltip>
       ) : (
         getContent()
