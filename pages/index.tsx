@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import PageLayout from '../components/PageLayout';
-import Grid, { GRID_TYPE } from '../components/Grid';
+import Grid from '../components/Grid';
 import PaginationButton from '../components/PaginationButton';
 import ErrorComponent from '../components/Error';
 import LoadingPage from '../components/LoadingPage';
@@ -109,11 +109,7 @@ const MarketPlace = (): JSX.Element => {
 
     return (
       <>
-        <Grid
-          isLoading={isLoading}
-          items={renderedTemplates}
-          type={GRID_TYPE.TEMPLATE}
-        />
+        <Grid isLoading={isLoading} items={renderedTemplates} />
         <PaginationButton
           onClick={showNextPage}
           isHidden={isLoading}

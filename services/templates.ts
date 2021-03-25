@@ -49,6 +49,8 @@ export interface Template {
   issued_supply?: string;
   lowestPrice?: string;
   highestPrice?: string;
+  totalAssets?: string;
+  assetsForSale?: string;
 }
 
 type GetCollectionOptions = {
