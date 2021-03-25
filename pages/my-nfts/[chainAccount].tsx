@@ -5,7 +5,7 @@ import PaginationButton from '../../components/PaginationButton';
 import ErrorComponent from '../../components/Error';
 import Grid from '../../components/Grid';
 import { useAuthContext } from '../../components/Provider';
-import { getTemplatesWithUserAssetCount } from '../../services/assets';
+import { getTemplatesWithUserAssetCount } from '../../services/templates';
 import { Template } from '../../services/templates';
 import { Title } from '../../styles/Title.styled';
 import LoadingPage from '../../components/LoadingPage';
