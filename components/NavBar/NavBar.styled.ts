@@ -210,7 +210,7 @@ export const DesktopOnlySection = styled.section`
 
 export const DesktopNavLink = styled.a<NavLinkProps>`
   font-family: GilroyMedium;
-  color: ${({ isActive }) => (isActive ? '#0e103c' : '#7578b5')};
+  color: ${({ isActive }) => (isActive ? '#0e103c' : '#0e103c')};
   font-weight: ${({ isActive }) => (isActive ? 600 : 500)};
   border-bottom: 2px solid ${({ isActive }) => (isActive ? '#8a9ef5' : 'white')};
   cursor: pointer;
