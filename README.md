@@ -2,7 +2,7 @@
 # Monsters NFT Demo
 
 This demo shows the basic functionality of NFTs on the Proton chain. Through the use of the [Proton Web SDK](https://www.npmjs.com/package/@proton/web-sdk), this demo allows for purchasing and 
-selling of `monsters` NFT.
+selling of `monsters` NFT. You may view the live version of this demo (which uses Protonchain mainnet) [here](https://nft.protonchain.com).
 
 This is built off of atomicassets NFT framework.
 
