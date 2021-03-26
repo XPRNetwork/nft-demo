@@ -15,7 +15,6 @@ export const StyledButton = styled.button<ButtonProps>`
   background-color: ${({ filled }) => (filled ? '#8a9ef5' : '#ffffff')};
   color: ${({ filled }) => (filled ? '#ffffff' : '#8a9ef5')};
   cursor: pointer;
-  outline: none;
   transition: 0.2s;
   height: auto;
   font-size: 16px;
@@ -23,7 +22,7 @@ export const StyledButton = styled.button<ButtonProps>`
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 
   :hover,
-  :focus {
+  :focus-visible {
     opacity: 1;
     color: #ffffff;
     background-color: ${({ filled }) => (filled ? '#4d5dc1' : '#8a9ef5')};

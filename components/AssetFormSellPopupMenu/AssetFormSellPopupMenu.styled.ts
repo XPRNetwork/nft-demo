@@ -11,7 +11,6 @@ export const MenuContainer = styled.div`
 
 export const PopupMenuButton = styled.button`
   background: none;
-  outline: none;
   border: 1px solid #e6e6e6;
   border-radius: 100%;
   width: 40px;
