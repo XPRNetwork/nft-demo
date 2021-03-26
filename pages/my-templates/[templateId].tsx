@@ -52,6 +52,7 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
   const [assetId, setAssetId] = useState('');
+  const [serialNumber, setSerialNumber] = useState('');
 
   const isSelectedAssetBeingSold =
     rawPricesByAssetId[assetId] && rawPricesByAssetId[assetId].rawPrice;
@@ -71,7 +72,6 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
         DEFAULT_COLLECTION,
         templateId
       );
-      const sales = await getSalesHistoryForTemplate(templateId);
       const { assets, rawPrices, saleIds } = await getUserTemplateAssets(
         owner,
         templateId
@@ -93,12 +93,26 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
       setRawPricesByAssetId(rawPrices);
       setIsLoadingPrices(false);
       setTemplate(templateDetails);
-      setSales(sales);
       setIsLoading(false);
     } catch (e) {
       setError(e.message);
     }
   };
+
+  useEffect(() => {
+    try {
+      (async () => {
+        console.log(serialNumber);
+        const sales = await getSalesHistoryForTemplate(
+          templateId,
+          serialNumber
+        );
+        setSales(sales);
+      })();
+    } catch (e) {
+      setError(e.message);
+    }
+  }, [serialNumber]);
 
   useEffect(() => {
     if (templateId) {
@@ -149,7 +163,8 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
         collectionAuthor={author}
         sales={sales}
         error={error}
-        image={image}>
+        image={image}
+        serialFilter={serialNumber}>
         <AssetFormSell
           dropdownAssets={templateAssets}
           lowestPrice={lowestPrice}
@@ -159,6 +174,7 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
           isLoadingPrices={isLoadingPrices}
           handleButtonClick={handleButtonClick}
           setAssetId={setAssetId}
+          setSerialNumber={setSerialNumber}
         />
       </DetailsLayout>
     );
