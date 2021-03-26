@@ -18,7 +18,7 @@ import {
   SaleIds,
 } from '../../services/assets';
 import { getSalesHistoryForTemplate, Sale } from '../../services/sales';
-import { DEFAULT_COLLECTION, TOKEN_SYMBOL } from '../../utils/constants';
+import { DEFAULT_COLLECTION } from '../../utils/constants';
 
 const emptyTemplateDetails = {
   lowestPrice: '',
