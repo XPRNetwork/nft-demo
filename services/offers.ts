@@ -27,15 +27,17 @@ export type Offer = {
 
 export const getUserOffers = async (sender: string): Promise<Offer[]> => {
   try {
+    const limit = 100;
     let offers = [];
     let hasResults = true;
     let page = 1;
 
     while (hasResults) {
       const queryObject = {
-        sender: sender,
+        sender,
         state: '0', // Offer created and valid
-        page: page,
+        page,
+        limit,
       };
       const queryParams = toQueryString(queryObject);
       const result = await getFromApi<Offer[]>(
@@ -46,14 +48,12 @@ export const getUserOffers = async (sender: string): Promise<Offer[]> => {
         throw new Error((result.message as unknown) as string);
       }
 
-      if (result.data.length === 0) {
+      if (result.data.length < limit) {
         hasResults = false;
       }
 
       offers = offers.concat(result.data);
       page += 1;
-
-      if (result.data.length < 100) break;
     }
 
     return offers;

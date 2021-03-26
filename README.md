@@ -64,9 +64,8 @@ The marketplace page consists of templates of a specific `collection_name`.
 
 ### Custom flags
 
-- The `Template` object is extended with the following custom properties: `lowestPrice` and `highestPrice`.
+- The `Template` object is extended with the following custom property: `lowestPrice`.
   - `lowestPrice` (string) is determined by checking the Sales API for assets listed for sale and finding the lowest price of the assets of that particular template.
-  - `highestPrice` (string) is determined by checking the Sales API and finding the highest price of the assets of that particular template.
 
 ## My NFTs
 

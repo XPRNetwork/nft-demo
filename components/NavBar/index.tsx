@@ -131,7 +131,7 @@ const Dropdown = ({ isOpen, closeNavDropdown }: DropdownProps): JSX.Element => {
             <DropdownLink onClick={onClick}>{name}</DropdownLink>
           </Link>
         ) : (
-          <DropdownLink onClick={onClick} key={name} red={isRed}>
+          <DropdownLink tabIndex={0} onClick={onClick} key={name} red={isRed}>
             {name}
           </DropdownLink>
         )
