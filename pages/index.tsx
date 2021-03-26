@@ -14,6 +14,7 @@ import {
   formatTemplatesWithPriceData,
   getLowestPricesForAllCollectionTemplates,
 } from '../services/templates';
+import { DEFAULT_COLLECTION } from '../utils/constants';
 
 const MarketPlace = (): JSX.Element => {
   const router = useRouter();
@@ -29,7 +30,9 @@ const MarketPlace = (): JSX.Element => {
   const [prefetchPageNumber, setPrefetchPageNumber] = useState<number>(2);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [collectionType, setCollectionType] = useState<string>('monsters');
+  const [collectionType, setCollectionType] = useState<string>(
+    DEFAULT_COLLECTION
+  );
 
   const prefetchNextPage = async () => {
     const prefetchedResult = await getTemplatesByCollection({

@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import { breakpoint } from '../../styles/Breakpoints';
 
 export const StyledTableHeaderCell = styled.th`
-  font-family: GilroyMedium;
   padding: 9px 0px;
   font-size: 12px;
   font-weight: 600;

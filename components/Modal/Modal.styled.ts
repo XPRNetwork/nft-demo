@@ -61,7 +61,6 @@ export const Title = styled.h1`
 `;
 
 export const Description = styled.p`
-  font-family: GilroyMedium;
   font-size: 14px;
   line-height: 24px;
   color: #7578b5;
