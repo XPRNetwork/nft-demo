@@ -9,7 +9,7 @@ import { useAuthContext } from '../components/Provider';
 import { getTemplateDetails, Template } from '../services/templates';
 import {
   getAllTemplateSales,
-  getSalesHistoryForTemplate,
+  getSalesHistoryForAsset,
   Sale,
   SaleAsset,
 } from '../services/sales';
@@ -61,6 +61,7 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
   const [saleId, setSaleId] = useState('');
+  const [assetId, setAssetId] = useState('');
 
   const balanceAmount = parseFloat(
     currentUserBalance.split(' ')[0].replace(/[,]/g, '')
@@ -81,7 +82,6 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
             DEFAULT_COLLECTION,
             templateId
           );
-          const sales = await getSalesHistoryForTemplate(templateId);
           const {
             formattedPrices,
             rawPrices,
@@ -93,7 +93,6 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
           setRawPricesBySaleId(rawPrices);
           setIsLoading(false);
           setTemplate(templateDetails);
-          setSales(sales);
           setIsLoading(false);
         })();
       } catch (e) {
@@ -101,6 +100,17 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
       }
     }
   }, [templateId]);
+
+  useEffect(() => {
+    try {
+      (async () => {
+        const sales = await getSalesHistoryForAsset(assetId);
+        setSales(sales);
+      })();
+    } catch (e) {
+      setError(e.message);
+    }
+  }, [assetId]);
 
   useEffect(() => {
     setPurchasingError('');
@@ -175,7 +185,8 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
         collectionAuthor={author}
         sales={sales}
         error={error}
-        image={image}>
+        image={image}
+        assetId={assetId}>
         <AssetFormBuy
           dropdownAssets={templateAssets}
           lowestPrice={lowestPrice}
@@ -188,6 +199,7 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
           setPurchasingError={setPurchasingError}
           setIsBalanceInsufficient={setIsBalanceInsufficient}
           setSaleId={setSaleId}
+          setAssetId={setAssetId}
         />
       </DetailsLayout>
     );

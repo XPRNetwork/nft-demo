@@ -24,6 +24,7 @@ type Props = {
   setPurchasingError: Dispatch<SetStateAction<string>>;
   setIsBalanceInsufficient: Dispatch<SetStateAction<boolean>>;
   setSaleId: Dispatch<SetStateAction<string>>;
+  setAssetId: Dispatch<SetStateAction<string>>;
 };
 
 export const AssetFormBuy = ({
@@ -38,6 +39,7 @@ export const AssetFormBuy = ({
   setPurchasingError,
   setIsBalanceInsufficient,
   setSaleId,
+  setAssetId,
 }: Props): JSX.Element => {
   const { currentUser, currentUserBalance } = useAuthContext();
 
@@ -59,6 +61,7 @@ export const AssetFormBuy = ({
     setPurchasingError('');
     setIsBalanceInsufficient(false);
     setSaleId(id);
+    setAssetId(dropdownAssets.find((asset) => asset.saleId === id).assetId);
 
     if (!currentUser) {
       setPurchasingError('You must log in to purchase an asset.');
