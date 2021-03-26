@@ -10,6 +10,7 @@ import { Template } from '../../services/templates';
 import { Title } from '../../styles/Title.styled';
 import LoadingPage from '../../components/LoadingPage';
 import Banner from '../../components/Banner';
+import { capitalize } from '../../utils';
 
 type Props = {
   chainAccount: string;
@@ -89,16 +90,12 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
   useEffect(() => {
     if (currentUser) {
       if (chainAccount !== currentUser.actor) {
-        setCurrentProfile(
-          `${chainAccount.charAt(0).toUpperCase()}${chainAccount.slice(1)}`
-        );
+        setCurrentProfile(capitalize(chainAccount));
       } else {
         setCurrentProfile('');
       }
     } else if (chainAccount) {
-      setCurrentProfile(
-        `${chainAccount.charAt(0).toUpperCase()}${chainAccount.slice(1)}`
-      );
+      setCurrentProfile(capitalize(chainAccount));
     }
   }, [currentUser, chainAccount]);
 
@@ -129,7 +126,10 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
 
     return (
       <>
-        <Grid items={renderedTemplates} isUsersTemplates={true} />
+        <Grid
+          items={renderedTemplates}
+          isUsersTemplates={currentProfile.length === 0}
+        />
         <PaginationButton
           onClick={showNextPage}
           isLoading={isLoadingNextPage}
@@ -143,7 +143,7 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
     <>
       <PageLayout title="My NFTs">
         <Banner />
-        <Title>{currentProfile ? currentProfile : 'My'} NFTs</Title>
+        <Title>{currentProfile ? `${currentProfile}'s` : 'My'} NFTs</Title>
         {getContent()}
       </PageLayout>
     </>
