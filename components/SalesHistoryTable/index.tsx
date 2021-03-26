@@ -18,6 +18,7 @@ type Props = {
   tableData: Sale[];
   id: string;
   error?: string;
+  serialFilter?: string;
 };
 
 type TableHeader = {
@@ -74,7 +75,7 @@ const getMySalesHistory = async ({
 }: GetSalesOptions): Promise<Sale[]> => {
   try {
     const pageParam = page ? page : 1;
-    const result = await getSalesHistoryForTemplate(id, pageParam);
+    const result = await getSalesHistoryForTemplate(id, null, pageParam);
 
     return result;
   } catch (e) {
@@ -82,18 +83,27 @@ const getMySalesHistory = async ({
   }
 };
 
-const SalesHistoryTable = ({ tableData, id, error }: Props): JSX.Element => {
+const SalesHistoryTable = ({
+  tableData,
+  id,
+  error,
+  serialFilter,
+}: Props): JSX.Element => {
   const { currentUser } = useAuthContext();
   const router = useRouter();
   const [avatars, setAvatars] = useState({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState<boolean>(true);
-  const [renderedData, setRenderedData] = useState<Sale[]>(tableData);
+  const [renderedData, setRenderedData] = useState<Sale[]>([]);
   const [prefetchedData, setPrefetchedData] = useState<Sale[]>([]);
   const [prefetchPageNumber, setPrefetchPageNumber] = useState<number>(2);
   const [errorMessage, setErrorMessage] = useState<string>(error);
   const [tableHeaders, setTableHeaders] = useState<TableHeader[]>([]);
   const { isMobile } = useWindowSize();
+
+  useEffect(() => {
+    setRenderedData(tableData);
+  }, [tableData, serialFilter]);
 
   useEffect(() => {
     if (isMobile) {
@@ -160,7 +170,11 @@ const SalesHistoryTable = ({ tableData, id, error }: Props): JSX.Element => {
 
   const showNextPage = async () => {
     const allFetchedData = renderedData.concat(prefetchedData);
-    setRenderedData(allFetchedData);
+    setRenderedData(
+      allFetchedData.filter(
+        (row) => row.assets[0].template_mint === serialFilter
+      )
+    );
     setIsLoadingNextPage(true);
     await prefetchNextPage();
   };

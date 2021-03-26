@@ -1,4 +1,4 @@
-import { ChangeEvent, Dispatch, SetStateAction } from 'react';
+import { useEffect, Dispatch, SetStateAction } from 'react';
 import Button from '../Button';
 import {
   DropdownMenu,
@@ -17,6 +17,7 @@ type Props = {
   isLoadingPrices: boolean;
   handleButtonClick: () => void;
   setAssetId: Dispatch<SetStateAction<string>>;
+  setSerialNumber: Dispatch<SetStateAction<string>>;
 };
 
 export const AssetFormSell = ({
@@ -28,9 +29,17 @@ export const AssetFormSell = ({
   isLoadingPrices,
   handleButtonClick,
   setAssetId,
+  setSerialNumber,
 }: Props): JSX.Element => {
-  const handleDropdownSelect = (e: ChangeEvent<HTMLSelectElement>) => {
-    setAssetId(e.target.value);
+  useEffect(() => {
+    handleDropdownSelect(dropdownAssets[0].asset_id);
+  }, []);
+
+  const handleDropdownSelect = (id: string) => {
+    setAssetId(id);
+    setSerialNumber(
+      dropdownAssets.filter((asset) => asset.asset_id === id)[0].template_mint
+    );
   };
 
   return (
@@ -48,7 +57,7 @@ export const AssetFormSell = ({
         isLoading={isLoadingPrices}
         name="Available Assets For Sale"
         value={assetId}
-        onChange={handleDropdownSelect}>
+        onChange={(e) => handleDropdownSelect(e.target.value)}>
         <option key="blank" value="" disabled>
           - - Select a serial number - -
         </option>

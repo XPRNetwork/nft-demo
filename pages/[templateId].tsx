@@ -62,6 +62,7 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
   const [saleId, setSaleId] = useState('');
+  const [serialNumber, setSerialNumber] = useState('');
 
   const balanceAmount = parseFloat(
     currentUserBalance.split(' ')[0].replace(/[,]/g, '')
@@ -82,7 +83,6 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
             DEFAULT_COLLECTION,
             templateId
           );
-          const sales = await getSalesHistoryForTemplate(templateId);
           const {
             formattedPrices,
             rawPrices,
@@ -94,7 +94,6 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
           setRawPricesBySaleId(rawPrices);
           setIsLoadingPrices(false);
           setTemplate(templateDetails);
-          setSales(sales);
           setIsLoading(false);
         })();
       } catch (e) {
@@ -102,6 +101,20 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
       }
     }
   }, [templateId]);
+
+  useEffect(() => {
+    try {
+      (async () => {
+        const sales = await getSalesHistoryForTemplate(
+          templateId,
+          serialNumber
+        );
+        setSales(sales);
+      })();
+    } catch (e) {
+      setError(e.message);
+    }
+  }, [serialNumber]);
 
   useEffect(() => {
     setPurchasingError('');
@@ -176,7 +189,8 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
         collectionAuthor={author}
         sales={sales}
         error={error}
-        image={image}>
+        image={image}
+        serialFilter={serialNumber}>
         <AssetFormBuy
           dropdownAssets={templateAssets}
           lowestPrice={lowestPrice}
@@ -190,6 +204,7 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
           setPurchasingError={setPurchasingError}
           setIsBalanceInsufficient={setIsBalanceInsufficient}
           setSaleId={setSaleId}
+          setSerialNumber={setSerialNumber}
         />
       </DetailsLayout>
     );
