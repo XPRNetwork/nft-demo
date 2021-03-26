@@ -19,7 +19,6 @@ import * as gtag from '../utils/gtag';
 
 const emptyTemplateDetails = {
   lowestPrice: '',
-  highestPrice: '',
   max_supply: '',
   collection: {
     author: '',
