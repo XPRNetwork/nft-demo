@@ -15,8 +15,10 @@ export const Container = styled.article`
   flex-direction: column;
   width: 100%;
   cursor: pointer;
+  outline: none;
 
-  :hover img {
+  :hover img,
+  :focus-visible img {
     transition: 0.1s;
     transform: scale(1.1);
   }

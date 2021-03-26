@@ -36,6 +36,6 @@ a {
   font-family: 'GilroyMedium';
 }
 
-*:focus {
+*:focus-visible {
   outline-color: #8a9ef5;
 }

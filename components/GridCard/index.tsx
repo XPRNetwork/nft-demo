@@ -49,7 +49,7 @@ const Card = ({
   };
 
   return (
-    <Container onClick={() => router.push(redirectPath)}>
+    <Container tabIndex={0} onClick={() => router.push(redirectPath)}>
       <ImageContainer>
         <Image
           priority
