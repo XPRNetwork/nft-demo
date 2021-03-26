@@ -96,6 +96,12 @@ const SalesHistoryTable = ({ tableData, id, error }: Props): JSX.Element => {
   const { isMobile } = useWindowSize();
 
   useEffect(() => {
+    if (tableData && !renderedData.length) {
+      setRenderedData(tableData);
+    }
+  }, [tableData]);
+
+  useEffect(() => {
     if (isMobile) {
       setTableHeaders(mobileSalesHistoryTableHeaders);
     } else {
