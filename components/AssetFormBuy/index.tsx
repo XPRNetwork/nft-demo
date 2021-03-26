@@ -63,9 +63,7 @@ export const AssetFormBuy = ({
     setPurchasingError('');
     setIsBalanceInsufficient(false);
     setSaleId(id);
-    setAssetId(
-      dropdownAssets.filter((asset) => asset.saleId === id)[0].assetId
-    );
+    setAssetId(dropdownAssets.find((asset) => asset.saleId === id).assetId);
 
     if (!currentUser) {
       setPurchasingError('You must log in to purchase an asset.');
