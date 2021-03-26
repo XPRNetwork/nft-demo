@@ -128,7 +128,6 @@ const SalesHistoryTable = ({
           setAvatars(res);
         }
         if (renderedData.length % 10 == 0) {
-          router.prefetch('/');
           await prefetchNextPage();
         }
       } catch (e) {
@@ -148,9 +147,9 @@ const SalesHistoryTable = ({
   }, [currentUser]);
 
   const getTableContent = () => {
-    return renderedData.map((sale, i) => {
+    return renderedData.map((sale) => {
       return (
-        <TableRow key={i}>
+        <TableRow key={sale.assets[0].asset_id}>
           {tableHeaders.map(({ id }) => {
             const content = getCellContent(sale, id, avatars);
             return <SalesHistoryTableCell key={id} id={id} content={content} />;
