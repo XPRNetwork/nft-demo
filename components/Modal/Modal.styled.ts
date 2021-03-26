@@ -17,12 +17,15 @@ export const Background = styled.div`
     rgba(14, 16, 60, 0.6),
     rgba(14, 16, 60, 0.67)
   );
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 `;
 
 export const ModalBox = styled(MaxWidth)`
   display: flex;
   flex-direction: column;
-  margin-top: 15vh;
+  margin-top: 232px;
   padding: 24px 24px 12px;
   border-radius: 8px;
   box-shadow: 0 8px 8px -4px rgba(0, 0, 0, 0.1), 0 0 4px 0 rgba(0, 0, 0, 0.08);
@@ -33,7 +36,7 @@ export const ModalBox = styled(MaxWidth)`
   }
 
   ${breakpoint.tablet`
-    margin-top: 7vh;
+    margin-top: 200px;
   `}
 `;
 
