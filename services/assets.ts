@@ -66,6 +66,7 @@ const getAllUserAssetsByTemplate = async (
   templateId: string
 ): Promise<Asset[]> => {
   try {
+    const limit = 100;
     let assets = [];
     let hasResults = true;
     let page = 1;
@@ -77,6 +78,7 @@ const getAllUserAssetsByTemplate = async (
         order: 'asc',
         sort: 'template_mint',
         template_id: templateId,
+        limit,
       };
       const queryString = toQueryString(queryObject);
       const result = await getFromApi<Asset[]>(
@@ -87,7 +89,7 @@ const getAllUserAssetsByTemplate = async (
         throw new Error((result.message as unknown) as string);
       }
 
-      if (result.data.length === 0) {
+      if (result.data.length < limit) {
         hasResults = false;
       }
 
