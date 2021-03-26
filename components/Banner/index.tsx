@@ -11,7 +11,7 @@ const Banner = (): JSX.Element => {
   useEffect(() => {
     if (!atomicMarketBalance) return;
 
-    const balance = parseFloat(atomicMarketBalance.replace(/[,]/g, ''));
+    const balance = parseFloat(atomicMarketBalance.replace(',', ''));
 
     if (currentUser && balance > 0) {
       setIsBannerVisible(true);

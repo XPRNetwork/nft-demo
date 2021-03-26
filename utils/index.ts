@@ -72,14 +72,14 @@ export const addPrecisionDecimal = (
 export const formatPrice = (priceString: string): string => {
   const [price, currency] = priceString.split(' ');
   const amount = formatThousands(
-    parseFloat(price.replace(/[,]/g, '')).toFixed(SHORTENED_TOKEN_PRECISION)
+    parseFloat(price.replace(',', '')).toFixed(SHORTENED_TOKEN_PRECISION)
   );
   return `${amount} ${currency}`;
 };
 
 const formatThousands = (numberString: string): string => {
   const [integers, decimals] = numberString.split('.');
-  let salePrice = parseFloat(integers.replace(/[,]/g, '')).toLocaleString();
+  let salePrice = parseFloat(integers.replace(',', '')).toLocaleString();
   salePrice = decimals ? salePrice + '.' + decimals : salePrice;
   return salePrice;
 };

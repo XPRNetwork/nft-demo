@@ -1,4 +1,4 @@
-import { ChangeEvent, Dispatch, SetStateAction, useEffect } from 'react';
+import { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import Button from '../Button';
 import { useAuthContext } from '../Provider';
 import {
@@ -42,22 +42,14 @@ export const AssetFormBuy = ({
   setSaleId,
 }: Props): JSX.Element => {
   const { currentUser, currentUserBalance } = useAuthContext();
-
-  useEffect(() => {
-    dropdownAssets.forEach((asset) => {
-      if (asset.salePrice === lowestPrice) {
-        handleDropdownSelect(asset.saleId);
-      }
-    });
-  }, [dropdownAssets, lowestPrice]);
-
   const balanceAmount = parseFloat(
-    currentUserBalance.split(' ')[0].replace(/[,]/g, '')
+    currentUserBalance.split(' ')[0].replace(',', '')
   );
 
-  const handleDropdownSelect = (id: string) => {
+  const handleDropdownSelect = (e: ChangeEvent<HTMLSelectElement>) => {
+    const id = e.target.value;
     const priceString = formattedPricesBySaleId[id];
-    const amount = parseFloat(priceString.split(' ')[0].replace(/[,]/g, ''));
+    const amount = parseFloat(priceString.split(' ')[0].replace(',', ''));
     setPurchasingError('');
     setIsBalanceInsufficient(false);
     setSaleId(id);
@@ -89,7 +81,7 @@ export const AssetFormBuy = ({
         isLoading={isLoadingPrices}
         name="Available Assets For Sale"
         value={saleId}
-        onChange={(e) => handleDropdownSelect(e.target.value)}>
+        onChange={handleDropdownSelect}>
         <option key="blank" value="" disabled>
           - - Select a serial number - -
         </option>

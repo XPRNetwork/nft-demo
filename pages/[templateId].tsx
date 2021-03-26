@@ -65,7 +65,7 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
   const [saleId, setSaleId] = useState('');
 
   const balanceAmount = parseFloat(
-    currentUserBalance.split(' ')[0].replace(/[,]/g, '')
+    currentUserBalance.split(' ')[0].replace(',', '')
   );
   const {
     lowestPrice,
@@ -108,6 +108,14 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
     setPurchasingError('');
     if (balanceAmount === 0) setIsBalanceInsufficient(true);
   }, [currentUser, currentUserBalance]);
+
+  useEffect(() => {
+    templateAssets.forEach((asset) => {
+      if (asset.salePrice === lowestPrice) {
+        setSaleId(asset.saleId);
+      }
+    });
+  }, [templateAssets, lowestPrice]);
 
   const buyAsset = async () => {
     if (!saleId) {
