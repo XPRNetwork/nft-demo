@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import {
@@ -24,6 +25,12 @@ const AssetFormTitle = ({
 }: Props): JSX.Element => {
   const router = useRouter();
   const isMyTemplate = router.pathname.includes('my-templates');
+  const redirectToAuthor = () => router.push(`/my-nfts/${collectionAuthor}`);
+
+  useEffect(() => {
+    router.prefetch(`/my-nfts/${collectionAuthor}`);
+  }, []);
+
   return (
     <>
       <CollectionIconContainer>
@@ -42,7 +49,10 @@ const AssetFormTitle = ({
         {isMyTemplate && <AssetFormSellPopupMenu />}
       </NameContainer>
       <General>
-        Created by <Author>{capitalize(collectionAuthor)}</Author>
+        Created by{' '}
+        <Author onClick={redirectToAuthor}>
+          {capitalize(collectionAuthor)}
+        </Author>
       </General>
     </>
   );
