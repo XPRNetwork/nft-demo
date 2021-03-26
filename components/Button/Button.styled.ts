@@ -1,16 +1,7 @@
 import styled from 'styled-components';
 
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 export interface ButtonProps {
-=======
-type ButtonProps = {
-  color: string;
-  hoverColor: string;
->>>>>>> Create sale creation and sale cancellation modals
-=======
-export interface ButtonProps {
->>>>>>> Update sale creation and cancellation modal buttons
   filled?: boolean;
   rounded?: boolean;
   fullWidth?: boolean;
