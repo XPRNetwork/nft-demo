@@ -156,7 +156,7 @@ export const getUserTemplateAssets = async (
     for (const asset of myAssetsAndSaleItems) {
       const { asset_id, salePrice, saleId } = asset;
       pricesByAssetIdRaw[asset_id] = {
-        rawPrice: salePrice.replace(',', ''),
+        rawPrice: salePrice.replace(/[,]/g, ''),
         saleId,
       };
     }
