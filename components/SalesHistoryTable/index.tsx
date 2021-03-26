@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import TableHeaderRow from '../TableHeaderRow';
 import TableHeaderCell from '../TableHeaderCell';
 import TableRow from '../TableRow';
@@ -12,13 +11,12 @@ import { StyledTable } from './SalesHistoryTable.styled';
 import { useWindowSize } from '../../hooks';
 import { getFromApi } from '../../utils/browser-fetch';
 import { useAuthContext } from '../Provider';
-import { getSalesHistoryForTemplate } from '../../services/sales';
+import { getSalesHistoryForAsset } from '../../services/sales';
 
 type Props = {
   tableData: Sale[];
-  id: string;
   error?: string;
-  serialFilter?: string;
+  assetId?: string;
 };
 
 type TableHeader = {
@@ -27,9 +25,8 @@ type TableHeader = {
 };
 
 type GetSalesOptions = {
-  id: string;
+  assetId: string;
   page?: number;
-  serialFilter?: string;
 };
 
 const salesHistoryTableHeaders = [
@@ -71,17 +68,12 @@ const getAvatars = async (
 };
 
 const getMySalesHistory = async ({
-  id,
+  assetId,
   page,
-  serialFilter,
 }: GetSalesOptions): Promise<Sale[]> => {
   try {
     const pageParam = page ? page : 1;
-    const result = await getSalesHistoryForTemplate(
-      id,
-      serialFilter,
-      pageParam
-    );
+    const result = await getSalesHistoryForAsset(assetId, pageParam);
 
     return result;
   } catch (e) {
@@ -91,12 +83,10 @@ const getMySalesHistory = async ({
 
 const SalesHistoryTable = ({
   tableData,
-  id,
   error,
-  serialFilter,
+  assetId,
 }: Props): JSX.Element => {
   const { currentUser } = useAuthContext();
-  const router = useRouter();
   const [avatars, setAvatars] = useState({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState<boolean>(true);
@@ -149,7 +139,7 @@ const SalesHistoryTable = ({
   const getTableContent = () => {
     return renderedData.map((sale) => {
       return (
-        <TableRow key={sale.assets[0].asset_id}>
+        <TableRow key={sale.sale_id}>
           {tableHeaders.map(({ id }) => {
             const content = getCellContent(sale, id, avatars);
             return <SalesHistoryTableCell key={id} id={id} content={content} />;
@@ -161,9 +151,8 @@ const SalesHistoryTable = ({
 
   const prefetchNextPage = async () => {
     const prefetchedResult = await getMySalesHistory({
-      id,
+      assetId,
       page: prefetchPageNumber,
-      serialFilter,
     });
     setPrefetchedData(prefetchedResult as Sale[]);
 

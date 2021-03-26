@@ -17,7 +17,7 @@ import {
   RawPrices,
   SaleIds,
 } from '../../services/assets';
-import { getSalesHistoryForTemplate, Sale } from '../../services/sales';
+import { getSalesHistoryForAsset, Sale } from '../../services/sales';
 import { DEFAULT_COLLECTION } from '../../utils/constants';
 
 const emptyTemplateDetails = {
@@ -52,7 +52,6 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
   const [assetId, setAssetId] = useState('');
-  const [serialNumber, setSerialNumber] = useState('');
 
   const isSelectedAssetBeingSold =
     rawPricesByAssetId[assetId] && rawPricesByAssetId[assetId].rawPrice;
@@ -102,16 +101,13 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
   useEffect(() => {
     try {
       (async () => {
-        const sales = await getSalesHistoryForTemplate(
-          templateId,
-          serialNumber
-        );
+        const sales = await getSalesHistoryForAsset(assetId);
         setSales(sales);
       })();
     } catch (e) {
       setError(e.message);
     }
-  }, [serialNumber]);
+  }, [assetId]);
 
   useEffect(() => {
     if (templateId) {
@@ -163,7 +159,7 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
         sales={sales}
         error={error}
         image={image}
-        serialFilter={serialNumber}>
+        assetId={assetId}>
         <AssetFormSell
           dropdownAssets={templateAssets}
           lowestPrice={lowestPrice}
@@ -173,7 +169,6 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
           isLoadingPrices={isLoadingPrices}
           handleButtonClick={handleButtonClick}
           setAssetId={setAssetId}
-          setSerialNumber={setSerialNumber}
         />
       </DetailsLayout>
     );

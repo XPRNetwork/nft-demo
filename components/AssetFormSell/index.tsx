@@ -17,7 +17,6 @@ type Props = {
   isLoadingPrices: boolean;
   handleButtonClick: () => void;
   setAssetId: Dispatch<SetStateAction<string>>;
-  setSerialNumber: Dispatch<SetStateAction<string>>;
 };
 
 export const AssetFormSell = ({
@@ -29,17 +28,14 @@ export const AssetFormSell = ({
   isLoadingPrices,
   handleButtonClick,
   setAssetId,
-  setSerialNumber,
 }: Props): JSX.Element => {
   useEffect(() => {
     handleDropdownSelect(dropdownAssets[0].asset_id);
   }, []);
 
   const handleDropdownSelect = (id: string) => {
+    console.log(id);
     setAssetId(id);
-    setSerialNumber(
-      dropdownAssets.filter((asset) => asset.asset_id === id)[0].template_mint
-    );
   };
 
   return (
