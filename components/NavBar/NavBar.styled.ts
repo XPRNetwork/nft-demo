@@ -227,7 +227,6 @@ export const DesktopNavLink = styled.a<NavLinkProps>`
   :hover,
   :focus-visible {
     color: #7578b5;
-    border-bottom: 2px solid #8a9ef5;
   }
 `;
 
