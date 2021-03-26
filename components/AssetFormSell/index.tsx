@@ -34,7 +34,6 @@ export const AssetFormSell = ({
   }, []);
 
   const handleDropdownSelect = (id: string) => {
-    console.log(id);
     setAssetId(id);
   };
 
