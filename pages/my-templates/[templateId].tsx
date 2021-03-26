@@ -14,8 +14,7 @@ import { getTemplateDetails, Template } from '../../services/templates';
 import {
   getUserTemplateAssets,
   Asset,
-  RawPrices,
-  SaleIds,
+  FullSaleDataByAssetId,
 } from '../../services/assets';
 import { getSalesHistoryForAsset, Sale } from '../../services/sales';
 import { DEFAULT_COLLECTION } from '../../utils/constants';
@@ -45,16 +44,18 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
   const { openModal, setModalProps } = useModalContext();
   const [sales, setSales] = useState<Sale[]>([]);
   const [templateAssets, setTemplateAssets] = useState<Asset[]>([]);
-  const [rawPricesByAssetId, setRawPricesByAssetId] = useState<RawPrices>({});
-  const [saleIdsByAssetId, setSaleIdsByAssetId] = useState<SaleIds>({});
+  const [
+    saleDataByAssetId,
+    setSaleDataByAssetId,
+  ] = useState<FullSaleDataByAssetId>({});
   const [template, setTemplate] = useState<Template>(emptyTemplateDetails);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
   const [currentAsset, setCurrentAsset] = useState<Partial<Asset>>({});
 
   const isSelectedAssetBeingSold =
-    rawPricesByAssetId[currentAsset.asset_id] &&
-    rawPricesByAssetId[currentAsset.asset_id].rawPrice;
+    saleDataByAssetId[currentAsset.asset_id] &&
+    saleDataByAssetId[currentAsset.asset_id].rawPrice;
   const {
     lowestPrice,
     max_supply,
@@ -71,25 +72,27 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
         DEFAULT_COLLECTION,
         templateId
       );
-      const { assets, rawPrices, saleIds } = await getUserTemplateAssets(
+
+      const { assets, saleData } = await getUserTemplateAssets(
         owner,
         templateId
       );
 
       const assetIds = assets
-        .filter(({ asset_id }) => !saleIds[asset_id])
+        .filter(({ asset_id }) => !saleData[asset_id])
         .map(({ asset_id }) => asset_id);
 
+      const saleIds = Object.values(saleData).map(({ saleId }) => saleId);
+
       setModalProps({
-        saleIds: Object.values(saleIds),
+        saleIds,
         assetIds,
         fetchPageData,
       });
 
-      setSaleIdsByAssetId(saleIds);
       setTemplateAssets(assets);
       setCurrentAsset(assets[0]);
-      setRawPricesByAssetId(rawPrices);
+      setSaleDataByAssetId(saleData);
       setIsLoading(false);
       setTemplate(templateDetails);
       setIsLoading(false);
@@ -126,7 +129,7 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
   const cancelSale = () => {
     openModal(MODAL_TYPES.CANCEL_SALE);
     setModalProps({
-      saleId: saleIdsByAssetId[currentAsset.asset_id],
+      saleId: saleDataByAssetId[currentAsset.asset_id].saleId,
       fetchPageData,
     });
   };
