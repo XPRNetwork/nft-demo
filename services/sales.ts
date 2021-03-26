@@ -63,7 +63,6 @@ export type SaleAssetRecord = {
 
 export const getSalesHistoryForTemplate = async (
   templateId: string,
-  filter?: string,
   page?: number
 ): Promise<Sale[]> => {
   try {
@@ -72,8 +71,6 @@ export const getSalesHistoryForTemplate = async (
       state: '3', // Valid sale, Sale was bought
       template_id: templateId,
       sort: 'updated',
-      min_template_mint: filter,
-      max_template_mint: filter,
       order: 'desc',
       page: pageParam,
       limit: 10,

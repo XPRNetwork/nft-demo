@@ -9,7 +9,7 @@ import { useAuthContext } from '../components/Provider';
 import { getTemplateDetails, Template } from '../services/templates';
 import {
   getAllTemplateSales,
-  getSalesHistoryForTemplate,
+  getSalesHistoryForAsset,
   Sale,
   SaleAsset,
 } from '../services/sales';
@@ -62,7 +62,8 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
   const [saleId, setSaleId] = useState('');
-  const [serialNumber, setSerialNumber] = useState('');
+  // const [serialNumber, setSerialNumber] = useState('');
+  const [assetId, setAssetId] = useState('');
 
   const balanceAmount = parseFloat(
     currentUserBalance.split(' ')[0].replace(/[,]/g, '')
@@ -105,16 +106,13 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
   useEffect(() => {
     try {
       (async () => {
-        const sales = await getSalesHistoryForTemplate(
-          templateId,
-          serialNumber
-        );
+        const sales = await getSalesHistoryForAsset(assetId);
         setSales(sales);
       })();
     } catch (e) {
       setError(e.message);
     }
-  }, [serialNumber]);
+  }, [assetId]);
 
   useEffect(() => {
     setPurchasingError('');
@@ -190,7 +188,7 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
         sales={sales}
         error={error}
         image={image}
-        serialFilter={serialNumber}>
+        assetId={assetId}>
         <AssetFormBuy
           dropdownAssets={templateAssets}
           lowestPrice={lowestPrice}
@@ -204,7 +202,7 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
           setPurchasingError={setPurchasingError}
           setIsBalanceInsufficient={setIsBalanceInsufficient}
           setSaleId={setSaleId}
-          setSerialNumber={setSerialNumber}
+          setAssetId={setAssetId}
         />
       </DetailsLayout>
     );
