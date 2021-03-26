@@ -39,7 +39,7 @@ export const getUserOffers = async (sender: string): Promise<Offer[]> => {
       };
       const queryParams = toQueryString(queryObject);
       const result = await getFromApi<Offer[]>(
-        `https://proton.api.atomicassets.io/atomicassets/v1/offers?${queryParams}`
+        `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicassets/v1/offers?${queryParams}`
       );
 
       if (!result.success) {

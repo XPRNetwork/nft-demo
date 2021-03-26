@@ -6,8 +6,10 @@ selling of `monsters` NFT.
 
 This is built off of atomicassets NFT framework.
 
-- [API Documentation for atomicassets](https://test.proton.api.atomicassets.io/atomicassets/docs/swagger/)
-- [API Documentation for atomicmarket](https://test.proton.api.atomicassets.io/atomicmarket/docs/swagger/)
+- [API Documentation for atomicassets (mainnet)](https://proton.api.atomicassets.io/atomicassets/docs/swagger/)
+- [API Documentation for atomicmarket (mainnet)](https://proton.api.atomicassets.io/atomicmarket/docs/swagger/)
+- [API Documentation for atomicassets (testnet)](https://test.proton.api.atomicassets.io/atomicassets/docs/swagger/)
+- [API Documentation for atomicmarket (testnet)](https://test.proton.api.atomicassets.io/atomicmarket/docs/swagger/)
 
 The demo uses FOOBAR as a currency to buy and sell the monster NFTs. To get some FOOBAR tokens, 
 use the [FOOBAR Faucet](https://foobar.protonchain.com).
@@ -42,16 +44,18 @@ Create a copy of `.env.template` and name it `.env.local`:
 
 For mainnet:
 ```
-NFT_ENDPOINT='https://proton.api.atomicassets.io'
 NEXT_PUBLIC_CHAIN_ID='384da888112027f0321850a169f737c33e53b388aad48b5adace4bab97f437e0'
 NEXT_PUBLIC_CHAIN_ENDPOINT='https://proton.greymass.com'
+NEXT_PUBLIC_BLOCK_EXPLORER='https://proton.bloks.io/block/'
+NEXT_PUBLIC_NFT_ENDPOINT='https://proton.api.atomicassets.io'
 ```
 
 For testnet:
 ```
-NFT_ENDPOINT='https://test.proton.api.atomicassets.io'
 NEXT_PUBLIC_CHAIN_ID='71ee83bcf52142d61019d95f9cc5427ba6a0d7ff8accd9e2088ae2abeaf3d3dd'
 NEXT_PUBLIC_CHAIN_ENDPOINT='https://testnet.protonchain.com'
+NEXT_PUBLIC_BLOCK_EXPLORER='https://proton-test.bloks.io/block/'
+NEXT_PUBLIC_NFT_ENDPOINT='https://test.proton.api.atomicassets.io'
 ```
 
 ## Marketplace
