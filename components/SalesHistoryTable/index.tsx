@@ -18,6 +18,7 @@ type Props = {
   tableData: Sale[];
   id: string;
   error?: string;
+  serialFilter?: string;
 };
 
 type TableHeader = {
@@ -28,6 +29,7 @@ type TableHeader = {
 type GetSalesOptions = {
   id: string;
   page?: number;
+  serialFilter?: string;
 };
 
 const salesHistoryTableHeaders = [
@@ -71,10 +73,15 @@ const getAvatars = async (
 const getMySalesHistory = async ({
   id,
   page,
+  serialFilter,
 }: GetSalesOptions): Promise<Sale[]> => {
   try {
     const pageParam = page ? page : 1;
-    const result = await getSalesHistoryForTemplate(id, null, pageParam);
+    const result = await getSalesHistoryForTemplate(
+      id,
+      serialFilter,
+      pageParam
+    );
 
     return result;
   } catch (e) {
@@ -82,7 +89,12 @@ const getMySalesHistory = async ({
   }
 };
 
-const SalesHistoryTable = ({ tableData, id, error }: Props): JSX.Element => {
+const SalesHistoryTable = ({
+  tableData,
+  id,
+  error,
+  serialFilter,
+}: Props): JSX.Element => {
   const { currentUser } = useAuthContext();
   const router = useRouter();
   const [avatars, setAvatars] = useState({});
@@ -134,9 +146,9 @@ const SalesHistoryTable = ({ tableData, id, error }: Props): JSX.Element => {
   }, [currentUser]);
 
   const getTableContent = () => {
-    return renderedData.map((sale) => {
+    return renderedData.map((sale, i) => {
       return (
-        <TableRow key={sale.sale_id}>
+        <TableRow key={i}>
           {tableHeaders.map(({ id }) => {
             const content = getCellContent(sale, id, avatars);
             return <SalesHistoryTableCell key={id} id={id} content={content} />;
@@ -150,6 +162,7 @@ const SalesHistoryTable = ({ tableData, id, error }: Props): JSX.Element => {
     const prefetchedResult = await getMySalesHistory({
       id,
       page: prefetchPageNumber,
+      serialFilter,
     });
     setPrefetchedData(prefetchedResult as Sale[]);
 

@@ -24,6 +24,7 @@ type Props = {
   collectionAuthor: string;
   sales: Sale[];
   error?: string;
+  serialFilter?: string;
 };
 
 const AssetImage = ({ image }: { image: string }): JSX.Element => (
@@ -47,6 +48,7 @@ const DetailsLayout = ({
   collectionAuthor,
   sales,
   error,
+  serialFilter,
 }: Props): JSX.Element => {
   const [salesTableActive, setSalesTableActive] = useState(true);
   return (
@@ -79,7 +81,12 @@ const DetailsLayout = ({
         </ArrowContainer>
       </ContentRow>
       <ToggleContainer active={salesTableActive}>
-        <SalesHistoryTable id={templateId} tableData={sales} error={error} />
+        <SalesHistoryTable
+          id={templateId}
+          tableData={sales}
+          error={error}
+          serialFilter={serialFilter}
+        />
       </ToggleContainer>
     </Container>
   );

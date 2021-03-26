@@ -162,7 +162,8 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
         collectionAuthor={author}
         sales={sales}
         error={error}
-        image={image}>
+        image={image}
+        serialFilter={serialNumber}>
         <AssetFormSell
           dropdownAssets={templateAssets}
           lowestPrice={lowestPrice}
