@@ -388,7 +388,7 @@ const formatTemplatesWithLowPriceAndAssetCount = ({
 
       const assetsForSale =
         parseInt(assetCountById[templateId]) -
-        parseInt(assetCountByIdWithHidden[templateId]);
+        parseInt(assetCountByIdWithHidden[templateId] || '0');
 
       template.assetsForSale = `${assetsForSale}`;
       template.lowestPrice = lowPriceById[templateId];
