@@ -82,26 +82,14 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
         .filter(({ asset_id }) => !saleIds[asset_id])
         .map(({ asset_id }) => asset_id);
 
-      const saleIdsToCancel = Object.keys(saleIds)
-        .filter(
-          (asset_id) => !rawPrices[asset_id].rawPrice.includes(TOKEN_SYMBOL)
-        )
-        .map((asset_id) => saleIds[asset_id]);
-
       setModalProps({
-        saleIds: saleIdsToCancel,
+        saleIds: Object.values(saleIds),
         assetIds,
         fetchPageData,
       });
 
-      const assetsOfSpecifiedToken = assets.filter(
-        ({ asset_id }) =>
-          rawPrices[asset_id].rawPrice &&
-          !rawPrices[asset_id].rawPrice.includes(TOKEN_SYMBOL)
-      );
-
       setSaleIdsByAssetId(saleIds);
-      setTemplateAssets(assetsOfSpecifiedToken);
+      setTemplateAssets(assets);
       setAssetId(assets[0].asset_id);
       setRawPricesByAssetId(rawPrices);
       setIsLoadingPrices(false);
