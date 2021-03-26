@@ -88,14 +88,10 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
   }, [chainAccount]);
 
   useEffect(() => {
-    if (currentUser) {
-      if (chainAccount !== currentUser.actor) {
-        setCurrentProfile(capitalize(chainAccount));
-      } else {
-        setCurrentProfile('');
-      }
-    } else if (chainAccount) {
+    if (!currentUser || chainAccount !== currentUser.actor) {
       setCurrentProfile(capitalize(chainAccount));
+    } else {
+      setCurrentProfile('');
     }
   }, [currentUser, chainAccount]);
 
