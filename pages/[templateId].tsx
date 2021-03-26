@@ -62,7 +62,6 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
   const [saleId, setSaleId] = useState('');
-  // const [serialNumber, setSerialNumber] = useState('');
   const [assetId, setAssetId] = useState('');
 
   const balanceAmount = parseFloat(
