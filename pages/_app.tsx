@@ -22,7 +22,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   const start = () => NProgress.start();
   const end = (url) => {
     NProgress.done();
-    if (gtag.isProduction) gtag.pageview(url);
+    gtag.pageview(url);
   };
 
   useEffect(() => {

@@ -23,8 +23,9 @@ export const Title = styled(General)`
   color: #0e103c;
 `;
 
-export const Author = styled(General).attrs({ as: 'span' })`
+export const Author = styled(General).attrs({ as: 'a' })`
   color: #8a9ef5;
+  cursor: pointer;
 `;
 
 export const CollectionIconContainer = styled.div`
