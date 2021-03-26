@@ -20,8 +20,9 @@ export const Content = styled.div`
   font-size: 12px;
   color: #7578b5;
   flex-direction: column;
-  max-width: 300px;
+  max-width: 350px;
   padding: 8px;
+  background-color: white;
   border: 1px solid #7578b5;
   border-radius: 4px;
   margin-top: 48px;
@@ -33,7 +34,7 @@ export const Content = styled.div`
     left: 50%;
     border: solid transparent;
     position: absolute;
-    top: -12%;
+    top: -14%;
     border-width: 5px;
     border-bottom-color: #7578b5;
   }
