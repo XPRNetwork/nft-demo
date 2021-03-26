@@ -59,6 +59,7 @@ jobs:
           --build-arg NEXT_PUBLIC_CHAIN_ENDPOINT="${{ secrets.NEXT_PUBLIC_CHAIN_ENDPOINT }}" \
           --build-arg NEXT_PUBLIC_BLOCK_EXPLORER="https://proton.bloks.io/block/" \
           --build-arg NEXT_PUBLIC_GA_TRACKING_ID="${{ secrets.NEXT_PUBLIC_GA_TRACKING_ID }}" \
+          --build-arg NEXT_PUBLIC_NFT_ENDPOINT="https://proton.api.atomicassets.io" \
           .
 
     # Push the Docker image to Google Container Registry

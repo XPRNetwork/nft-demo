@@ -7,6 +7,11 @@ type DropdownProps = {
   isOpen: boolean;
 };
 
+type GradientBackgroundProps = {
+  isOpen: boolean;
+  isTransparent?: boolean;
+};
+
 type DropdownLinkProps = {
   red?: boolean;
 };
@@ -50,7 +55,6 @@ export const UserMenuButton = styled.button`
 `;
 
 export const UserMenuText = styled.span`
-  font-family: GilroyMedium;
   color: #0e103c;
   font-size: 14px;
   margin: 8px 8px 8px 16px;
@@ -88,14 +92,14 @@ export const DropdownList = styled.section<DropdownProps>`
   border-radius: 8px;
   box-shadow: 0 12px 20px -4px rgba(0, 0, 0, 0.1), 0 0 8px 0 rgba(0, 0, 0, 0.08);
   min-width: 224px;
-  z-index: 1;
+  z-index: 2;
 
   ${breakpoint.tablet`
     display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
     flex-direction: column;
     position: absolute;
     right: 0;
-    z-index: 1;
+    z-index: 2;
     top: 65px;
     width: 100%;
 
@@ -112,9 +116,9 @@ export const DropdownList = styled.section<DropdownProps>`
   `}
 `;
 
-export const GradientBackground = styled.div<DropdownProps>`
+export const GradientBackground = styled.div<GradientBackgroundProps>`
   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
-  z-index: 0;
+  z-index: 1;
   width: 100%;
   height: 100%;
   position: fixed;
@@ -122,14 +126,18 @@ export const GradientBackground = styled.div<DropdownProps>`
   left: 0;
   cursor: pointer;
 
-  ${breakpoint.tablet`
-    background-image: linear-gradient(
-      rgba(14, 16, 60, 0.3),
-      rgba(14, 16, 60, 0.4),
-      rgba(14, 16, 60, 0.5),
-      rgba(14, 16, 60, 0.6),
-      rgba(14, 16, 60, 0.67)
-    );
+  ${({ isTransparent }) =>
+    !isTransparent &&
+    `
+    ${breakpoint.tablet`
+      background-image: linear-gradient(
+        rgba(14, 16, 60, 0.3),
+        rgba(14, 16, 60, 0.4),
+        rgba(14, 16, 60, 0.5),
+        rgba(14, 16, 60, 0.6),
+        rgba(14, 16, 60, 0.67)
+      );
+    `}
   `}
 `;
 
@@ -149,7 +157,6 @@ export const Name = styled.span`
 `;
 
 export const Subtitle = styled.span`
-  font-family: GilroyMedium;
   color: #7578b5;
   font-weight: 500;
   font-size: 14px;
@@ -174,7 +181,6 @@ export const Balance = styled(Name)`
 `;
 
 export const DropdownLink = styled.a<DropdownLinkProps>`
-  font-family: GilroyMedium;
   font-weight: 500;
   color: ${({ red }) => (red ? '#fb849a' : '#0e103c')};
   font-size: 16px;
@@ -209,14 +215,19 @@ export const DesktopOnlySection = styled.section`
 `;
 
 export const DesktopNavLink = styled.a<NavLinkProps>`
-  font-family: GilroyMedium;
-  color: ${({ isActive }) => (isActive ? '#0e103c' : '#7578b5')};
+  color: ${({ isActive }) => (isActive ? '#7578b5' : '#0e103c')};
   font-weight: ${({ isActive }) => (isActive ? 600 : 500)};
   border-bottom: 2px solid ${({ isActive }) => (isActive ? '#8a9ef5' : 'white')};
   cursor: pointer;
   margin-right: 40px;
   font-size: 16px;
-  padding: 20px 0;
+  padding: 21px 0;
+  transition: 0.2s;
+
+  :hover,
+  :focus-visible {
+    color: #7578b5;
+  }
 `;
 
 export const MobileIcon = styled.div`

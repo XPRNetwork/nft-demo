@@ -33,6 +33,7 @@ a {
 
 * {
   box-sizing: border-box;
+  font-family: 'GilroyMedium';
 }
 
 *:focus {

@@ -3,6 +3,7 @@ import { Collection } from './templates';
 import { getFromApi } from '../utils/browser-fetch';
 import { toQueryString, addPrecisionDecimal, asyncForEach } from '../utils';
 import { Template } from './templates';
+import { TOKEN_SYMBOL } from '../utils/constants';
 
 type Price = {
   token_contract: string;
@@ -14,6 +15,7 @@ type Price = {
 
 export type SaleAsset = {
   saleId: string;
+  assetId: string;
   templateMint: string;
   salePrice: string;
 };
@@ -66,7 +68,7 @@ type GetNumberOfListingsProps = {
  * Get the fulfilled sales for a specific templates (sales that were successful)
  * Mostly used in viewing sales history of a specific template
  * @param {string} templateId The template id of the history you want to look up
- * @param {number} page       The page to look up from atomicassets api if number of assets returned is greater than given limit (default 100)
+ * @param {number} page       The page to look up from atomicassets api if number of assets returned is greater than given limit (API defaults to a limit of 100)
  * @return {Sales[]}          Returns an array of Sales for that specific template id
  */
 
@@ -86,7 +88,7 @@ export const getSalesHistoryForTemplate = async (
     };
     const queryString = toQueryString(queryObject);
     const latestSalesRes = await getFromApi<Sale[]>(
-      `https://proton.api.atomicassets.io/atomicmarket/v1/sales?${queryString}`
+      `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicmarket/v1/sales?${queryString}`
     );
 
     if (!latestSalesRes.success) {
@@ -103,7 +105,7 @@ export const getSalesHistoryForTemplate = async (
  * Get the fulfilled sales for a specific asset (sales that were successful)
  * Mostly used in viewing sales history of a specific asset
  * @param {string} assetId The asset id of the history you want to look up
- * @param {number} page    The page to look up from atomicassets api if number of assets returned is greater than given limit (default 100)
+ * @param {number} page    The page to look up from atomicassets api if number of assets returned is greater than given limit (API defaults to a limit of 100)
  * @return {Sales[]}       Returns an array of Sales for that specific template id
  */
 
@@ -123,7 +125,7 @@ export const getSalesHistoryForAsset = async (
     };
     const queryString = toQueryString(queryObject);
     const latestSalesRes = await getFromApi<Sale[]>(
-      `https://proton.api.atomicassets.io/atomicmarket/v1/sales?${queryString}`
+      `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicmarket/v1/sales?${queryString}`
     );
 
     if (!latestSalesRes.success) {
@@ -157,7 +159,7 @@ export const getAssetSale = async (
     const queryString = toQueryString(queryObject);
 
     const result = await getFromApi<Sale[]>(
-      `https://proton.api.atomicassets.io/atomicmarket/v1/sales?${queryString}`
+      `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicmarket/v1/sales?${queryString}`
     );
 
     if (!result.success) {
@@ -178,7 +180,8 @@ export const getAssetSale = async (
  */
 
 export const getAllTemplateSales = async (
-  templateId: string
+  templateId: string,
+  owner?: string
 ): Promise<SaleAssetRecord> => {
   try {
     let sales = [];
@@ -192,10 +195,12 @@ export const getAllTemplateSales = async (
         order: 'asc',
         template_id: templateId,
         page,
+        owner: owner || '',
+        symbol: TOKEN_SYMBOL,
       };
       const queryParams = toQueryString(queryObject);
       const result = await getFromApi<SaleAsset[]>(
-        `https://proton.api.atomicassets.io/atomicmarket/v1/sales?${queryParams}`
+        `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicmarket/v1/sales?${queryParams}`
       );
 
       if (!result.success) {
@@ -235,10 +240,11 @@ export const getAllTemplateSales = async (
       pricesBySaleId[sale_id] = salePrice;
       pricesBySaleIdRaw[sale_id] = rawListingPrice;
 
-      const formattedAssets = assets.map(({ template_mint }) => ({
+      const formattedAssets = assets.map(({ template_mint, asset_id }) => ({
         saleId: sale_id,
         templateMint: template_mint,
         salePrice,
+        assetId: asset_id,
       }));
 
       saleAssets = saleAssets.concat(formattedAssets);
@@ -295,11 +301,12 @@ export const getLowestPriceAsset = async (
       order: 'asc',
       state: '1', // assets listed for sale
       limit: '1',
+      symbol: TOKEN_SYMBOL,
     };
     const queryString = toQueryString(queryObject);
 
     const saleRes = await getFromApi<Sale[]>(
-      `https://proton.api.atomicassets.io/atomicmarket/v1/sales?${queryString}`
+      `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicmarket/v1/sales?${queryString}`
     );
 
     if (!saleRes.success) {
@@ -347,7 +354,7 @@ export const getNumberOfListingsByTemplateId = async ({
         };
         const queryParams = toQueryString(queryObject);
         const result = await getFromApi<SaleAsset[]>(
-          `https://proton.api.atomicassets.io/atomicmarket/v1/sales?${queryParams}`
+          `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicmarket/v1/sales?${queryParams}`
         );
 
         if (!result.success) {
