@@ -1,3 +1,4 @@
+import { KeyboardEvent } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { Template } from '../../services/templates';
@@ -48,8 +49,16 @@ const Card = ({
     return <Price>{priceText}</Price>;
   };
 
+  const openDetailPage = () => router.push(redirectPath);
+
+  const handleEnterKey = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      openDetailPage();
+    }
+  };
+
   return (
-    <Container tabIndex={0} onClick={() => router.push(redirectPath)}>
+    <Container tabIndex={0} onClick={openDetailPage} onKeyDown={handleEnterKey}>
       <ImageContainer>
         <Image
           priority
