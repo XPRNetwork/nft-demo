@@ -47,7 +47,6 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
   const [templateAssets, setTemplateAssets] = useState<Asset[]>([]);
   const [rawPricesByAssetId, setRawPricesByAssetId] = useState<RawPrices>({});
   const [saleIdsByAssetId, setSaleIdsByAssetId] = useState<SaleIds>({});
-  const [isLoadingPrices, setIsLoadingPrices] = useState<boolean>(true);
   const [template, setTemplate] = useState<Template>(emptyTemplateDetails);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
@@ -65,7 +64,7 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
   const fetchPageData = async () => {
     try {
       const owner = currentUser ? currentUser.actor : '';
-      setIsLoadingPrices(true);
+      setIsLoading(true);
 
       const templateDetails = await getTemplateDetails(
         DEFAULT_COLLECTION,
@@ -91,7 +90,7 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
       setTemplateAssets(assets);
       setAssetId(assets[0].asset_id);
       setRawPricesByAssetId(rawPrices);
-      setIsLoadingPrices(false);
+      setIsLoading(false);
       setTemplate(templateDetails);
       setSales(sales);
       setIsLoading(false);
@@ -156,7 +155,6 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
           maxSupply={max_supply}
           buttonText={buttonText}
           assetId={assetId}
-          isLoadingPrices={isLoadingPrices}
           handleButtonClick={handleButtonClick}
           setAssetId={setAssetId}
         />
