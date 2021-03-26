@@ -215,13 +215,20 @@ export const DesktopOnlySection = styled.section`
 `;
 
 export const DesktopNavLink = styled.a<NavLinkProps>`
-  color: ${({ isActive }) => (isActive ? '#0e103c' : '#0e103c')};
+  color: ${({ isActive }) => (isActive ? '#7578b5' : '#0e103c')};
   font-weight: ${({ isActive }) => (isActive ? 600 : 500)};
   border-bottom: 2px solid ${({ isActive }) => (isActive ? '#8a9ef5' : 'white')};
   cursor: pointer;
   margin-right: 40px;
   font-size: 16px;
   padding: 21px 0;
+  transition: 0.2s;
+
+  :hover,
+  :focus-visible {
+    color: #7578b5;
+    border-bottom: 2px solid #8a9ef5;
+  }
 `;
 
 export const MobileIcon = styled.div`
