@@ -189,8 +189,7 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
         collectionAuthor={author}
         sales={sales}
         error={error}
-        image={image}
-        serialFilter={serialNumber}>
+        image={image}>
         <AssetFormBuy
           dropdownAssets={templateAssets}
           lowestPrice={lowestPrice}

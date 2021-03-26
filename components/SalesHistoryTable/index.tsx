@@ -18,7 +18,6 @@ type Props = {
   tableData: Sale[];
   id: string;
   error?: string;
-  serialFilter?: string;
 };
 
 type TableHeader = {
@@ -83,12 +82,7 @@ const getMySalesHistory = async ({
   }
 };
 
-const SalesHistoryTable = ({
-  tableData,
-  id,
-  error,
-  serialFilter,
-}: Props): JSX.Element => {
+const SalesHistoryTable = ({ tableData, id, error }: Props): JSX.Element => {
   const { currentUser } = useAuthContext();
   const router = useRouter();
   const [avatars, setAvatars] = useState({});
@@ -103,7 +97,7 @@ const SalesHistoryTable = ({
 
   useEffect(() => {
     setRenderedData(tableData);
-  }, [tableData, serialFilter]);
+  }, [tableData]);
 
   useEffect(() => {
     if (isMobile) {
@@ -170,11 +164,7 @@ const SalesHistoryTable = ({
 
   const showNextPage = async () => {
     const allFetchedData = renderedData.concat(prefetchedData);
-    setRenderedData(
-      allFetchedData.filter(
-        (row) => row.assets[0].template_mint === serialFilter
-      )
-    );
+    setRenderedData(allFetchedData);
     setIsLoadingNextPage(true);
     await prefetchNextPage();
   };
