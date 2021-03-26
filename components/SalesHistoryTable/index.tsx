@@ -127,8 +127,10 @@ const SalesHistoryTable = ({
           const res = await getAvatars(chainAccounts);
           setAvatars(res);
         }
-        router.prefetch('/');
-        await prefetchNextPage();
+        if (renderedData.length % 10 == 0) {
+          router.prefetch('/');
+          await prefetchNextPage();
+        }
       } catch (e) {
         setErrorMessage(e.message);
       }
