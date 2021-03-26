@@ -115,7 +115,7 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
         setSaleId(asset.saleId);
       }
     });
-  }, [templateAssets]);
+  }, [templateAssets, lowestPrice]);
 
   const buyAsset = async () => {
     if (!saleId) {
