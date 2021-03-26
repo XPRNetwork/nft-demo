@@ -1,8 +1,7 @@
 import { Asset } from './assets';
 import { Collection } from './templates';
 import { getFromApi } from '../utils/browser-fetch';
-import { toQueryString, addPrecisionDecimal, asyncForEach } from '../utils';
-import { Template } from './templates';
+import { toQueryString, addPrecisionDecimal } from '../utils';
 import { TOKEN_SYMBOL } from '../utils/constants';
 
 type Price = {
@@ -52,16 +51,6 @@ export type SaleAssetRecord = {
     [templateMint: string]: string;
   };
   assets: SaleAsset[];
-};
-
-export type NumberOfListingsByTemplateId = {
-  [templateId: string]: number;
-};
-
-type GetNumberOfListingsProps = {
-  templates?: Template[];
-  collection_name?: string;
-  template_Ids?: string[];
 };
 
 /**

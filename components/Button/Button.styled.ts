@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 
-
 export interface ButtonProps {
   filled?: boolean;
   rounded?: boolean;
