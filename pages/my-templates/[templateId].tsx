@@ -102,7 +102,6 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
   useEffect(() => {
     try {
       (async () => {
-        console.log(serialNumber);
         const sales = await getSalesHistoryForTemplate(
           templateId,
           serialNumber
@@ -163,8 +162,7 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
         collectionAuthor={author}
         sales={sales}
         error={error}
-        image={image}
-        serialFilter={serialNumber}>
+        image={image}>
         <AssetFormSell
           dropdownAssets={templateAssets}
           lowestPrice={lowestPrice}
