@@ -15,4 +15,8 @@ export const StyledTableHeaderCell = styled.th`
   ${breakpoint.mobile`
     padding: 9px 10px;
   `}
+
+  :first-of-type {
+    width: 64px;
+  }
 `;

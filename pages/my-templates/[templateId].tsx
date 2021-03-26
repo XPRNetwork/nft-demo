@@ -17,7 +17,7 @@ import {
   RawPrices,
   SaleIds,
 } from '../../services/assets';
-import { getSalesHistoryForTemplate, Sale } from '../../services/sales';
+import { getSalesHistoryForAsset, Sale } from '../../services/sales';
 import { DEFAULT_COLLECTION } from '../../utils/constants';
 
 const emptyTemplateDetails = {
@@ -70,7 +70,6 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
         DEFAULT_COLLECTION,
         templateId
       );
-      const sales = await getSalesHistoryForTemplate(templateId);
       const { assets, rawPrices, saleIds } = await getUserTemplateAssets(
         owner,
         templateId
@@ -92,12 +91,22 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
       setRawPricesByAssetId(rawPrices);
       setIsLoading(false);
       setTemplate(templateDetails);
-      setSales(sales);
       setIsLoading(false);
     } catch (e) {
       setError(e.message);
     }
   };
+
+  useEffect(() => {
+    try {
+      (async () => {
+        const sales = await getSalesHistoryForAsset(assetId);
+        setSales(sales);
+      })();
+    } catch (e) {
+      setError(e.message);
+    }
+  }, [assetId]);
 
   useEffect(() => {
     if (templateId) {
@@ -148,7 +157,8 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
         collectionAuthor={author}
         sales={sales}
         error={error}
-        image={image}>
+        image={image}
+        assetId={assetId}>
         <AssetFormSell
           dropdownAssets={templateAssets}
           lowestPrice={lowestPrice}

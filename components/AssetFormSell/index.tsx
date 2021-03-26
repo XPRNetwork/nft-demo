@@ -1,4 +1,4 @@
-import { ChangeEvent, Dispatch, SetStateAction } from 'react';
+import { useEffect, Dispatch, SetStateAction } from 'react';
 import Button from '../Button';
 import {
   DropdownMenu,
@@ -27,8 +27,12 @@ export const AssetFormSell = ({
   handleButtonClick,
   setAssetId,
 }: Props): JSX.Element => {
-  const handleDropdownSelect = (e: ChangeEvent<HTMLSelectElement>) => {
-    setAssetId(e.target.value);
+  useEffect(() => {
+    handleDropdownSelect(dropdownAssets[0].asset_id);
+  }, []);
+
+  const handleDropdownSelect = (id: string) => {
+    setAssetId(id);
   };
 
   return (
@@ -45,7 +49,7 @@ export const AssetFormSell = ({
       <DropdownMenu
         name="Available Assets For Sale"
         value={assetId}
-        onChange={handleDropdownSelect}>
+        onChange={(e) => handleDropdownSelect(e.target.value)}>
         <option key="blank" value="" disabled>
           - - Select a serial number - -
         </option>

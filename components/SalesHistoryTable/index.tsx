@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import TableHeaderRow from '../TableHeaderRow';
 import TableHeaderCell from '../TableHeaderCell';
 import TableRow from '../TableRow';
@@ -12,12 +11,12 @@ import { StyledTable } from './SalesHistoryTable.styled';
 import { useWindowSize } from '../../hooks';
 import { getFromApi } from '../../utils/browser-fetch';
 import { useAuthContext } from '../Provider';
-import { getSalesHistoryForTemplate } from '../../services/sales';
+import { getSalesHistoryForAsset } from '../../services/sales';
 
 type Props = {
   tableData: Sale[];
-  id: string;
   error?: string;
+  assetId?: string;
 };
 
 type TableHeader = {
@@ -26,7 +25,7 @@ type TableHeader = {
 };
 
 type GetSalesOptions = {
-  id: string;
+  assetId: string;
   page?: number;
 };
 
@@ -69,12 +68,12 @@ const getAvatars = async (
 };
 
 const getMySalesHistory = async ({
-  id,
+  assetId,
   page,
 }: GetSalesOptions): Promise<Sale[]> => {
   try {
     const pageParam = page ? page : 1;
-    const result = await getSalesHistoryForTemplate(id, pageParam);
+    const result = await getSalesHistoryForAsset(assetId, pageParam);
 
     return result;
   } catch (e) {
@@ -82,18 +81,25 @@ const getMySalesHistory = async ({
   }
 };
 
-const SalesHistoryTable = ({ tableData, id, error }: Props): JSX.Element => {
+const SalesHistoryTable = ({
+  tableData,
+  error,
+  assetId,
+}: Props): JSX.Element => {
   const { currentUser } = useAuthContext();
-  const router = useRouter();
   const [avatars, setAvatars] = useState({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState<boolean>(true);
-  const [renderedData, setRenderedData] = useState<Sale[]>(tableData);
+  const [renderedData, setRenderedData] = useState<Sale[]>([]);
   const [prefetchedData, setPrefetchedData] = useState<Sale[]>([]);
   const [prefetchPageNumber, setPrefetchPageNumber] = useState<number>(2);
   const [errorMessage, setErrorMessage] = useState<string>(error);
   const [tableHeaders, setTableHeaders] = useState<TableHeader[]>([]);
   const { isMobile } = useWindowSize();
+
+  useEffect(() => {
+    setRenderedData(tableData);
+  }, [tableData]);
 
   useEffect(() => {
     if (isMobile) {
@@ -111,8 +117,9 @@ const SalesHistoryTable = ({ tableData, id, error }: Props): JSX.Element => {
           const res = await getAvatars(chainAccounts);
           setAvatars(res);
         }
-        router.prefetch('/');
-        await prefetchNextPage();
+        if (renderedData.length % 10 == 0) {
+          await prefetchNextPage();
+        }
       } catch (e) {
         setErrorMessage(e.message);
       }
@@ -144,7 +151,7 @@ const SalesHistoryTable = ({ tableData, id, error }: Props): JSX.Element => {
 
   const prefetchNextPage = async () => {
     const prefetchedResult = await getMySalesHistory({
-      id,
+      assetId,
       page: prefetchPageNumber,
     });
     setPrefetchedData(prefetchedResult as Sale[]);
