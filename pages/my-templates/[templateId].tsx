@@ -18,7 +18,7 @@ import {
   SaleIds,
 } from '../../services/assets';
 import { getSalesHistoryForTemplate, Sale } from '../../services/sales';
-import { DEFAULT_COLLECTION } from '../../utils/constants';
+import { DEFAULT_COLLECTION, TOKEN_SYMBOL } from '../../utils/constants';
 
 const emptyTemplateDetails = {
   lowestPrice: '',
@@ -77,17 +77,31 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
         owner,
         templateId
       );
+
       const assetIds = assets
         .filter(({ asset_id }) => !saleIds[asset_id])
         .map(({ asset_id }) => asset_id);
 
+      const saleIdsToCancel = Object.keys(saleIds)
+        .filter(
+          (asset_id) => !rawPrices[asset_id].rawPrice.includes(TOKEN_SYMBOL)
+        )
+        .map((asset_id) => saleIds[asset_id]);
+
       setModalProps({
-        saleIds: Object.values(saleIds),
+        saleIds: saleIdsToCancel,
         assetIds,
         fetchPageData,
       });
+
+      const assetsOfSpecifiedToken = assets.filter(
+        ({ asset_id }) =>
+          rawPrices[asset_id].rawPrice &&
+          !rawPrices[asset_id].rawPrice.includes(TOKEN_SYMBOL)
+      );
+
       setSaleIdsByAssetId(saleIds);
-      setTemplateAssets(assets);
+      setTemplateAssets(assetsOfSpecifiedToken);
       setAssetId(assets[0].asset_id);
       setRawPricesByAssetId(rawPrices);
       setIsLoadingPrices(false);

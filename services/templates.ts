@@ -96,7 +96,7 @@ export const getTemplateDetails = async (
 ): Promise<Template> => {
   try {
     const templateResponse = await getFromApi<Template>(
-      `https://proton.api.atomicassets.io/atomicassets/v1/templates/${collectionName}/${templateId}`
+      `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicassets/v1/templates/${collectionName}/${templateId}`
     );
 
     if (!templateResponse.success) {
@@ -134,7 +134,7 @@ export const getTemplatesByCollection = async ({
 
     const templatesQueryParams = toQueryString(templatesQueryObject);
     const templatesResult = await getFromApi<Template[]>(
-      `https://proton.api.atomicassets.io/atomicassets/v1/templates?${templatesQueryParams}`
+      `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicassets/v1/templates?${templatesQueryParams}`
     );
 
     if (!templatesResult.success) {
@@ -218,7 +218,7 @@ export const getLowestPricesForAllCollectionTemplates = async ({
   type: string;
 }): Promise<{ [id: string]: string }> => {
   const statsResults = await getFromApi<{ templates: number }>(
-    `https://proton.api.atomicassets.io/atomicassets/v1/collections/${type}/stats`
+    `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicassets/v1/collections/${type}/stats`
   );
 
   if (!statsResults.success) {
@@ -241,7 +241,7 @@ export const getLowestPricesForAllCollectionTemplates = async ({
 
   const salesQueryParams = toQueryString(salesQueryObject);
   const salesResult = await getFromApi<Sale[]>(
-    `https://proton.api.atomicassets.io/atomicmarket/v1/sales/templates?${salesQueryParams}`
+    `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicmarket/v1/sales/templates?${salesQueryParams}`
   );
 
   if (!salesResult.success) {
@@ -309,7 +309,7 @@ export const getTemplatesWithUserAssetCount = async (
 ): Promise<Template[]> => {
   try {
     const accountResponse = await getFromApi<Account>(
-      `https://proton.api.atomicassets.io/atomicassets/v1/accounts/${owner}`
+      `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicassets/v1/accounts/${owner}`
     );
 
     if (!accountResponse.success) {
@@ -317,7 +317,7 @@ export const getTemplatesWithUserAssetCount = async (
     }
 
     const accountResponseWithHidden = await getFromApi<Account>(
-      `https://proton.api.atomicassets.io/atomicassets/v1/accounts/${owner}?hide_offers=true`
+      `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicassets/v1/accounts/${owner}?hide_offers=true`
     );
 
     if (!accountResponseWithHidden.success) {
@@ -416,7 +416,7 @@ export const getTemplatesFromTemplateIds = async (
 
     const templatesQueryParams = toQueryString(templatesQueryObject);
     const templatesResponse = await getFromApi<Template[]>(
-      `https://proton.api.atomicassets.io/atomicassets/v1/templates?${templatesQueryParams}`
+      `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicassets/v1/templates?${templatesQueryParams}`
     );
 
     if (!templatesResponse.success) {

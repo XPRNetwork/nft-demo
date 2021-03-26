@@ -58,7 +58,7 @@ type UserTemplateAssetDetails = {
  * Mostly used in viewing all your owned assets and see which one is listed for sale at a glance.
  * @param owner       The account name of the owner of the assets to look up
  * @param templateId  The ID of the template of a group of assets
- * @returns {Asset[]}
+ * @returns {Asset[]} Returns array of Assets owned by the user of a specified template
  */
 
 const getAllUserAssetsByTemplate = async (
@@ -80,7 +80,7 @@ const getAllUserAssetsByTemplate = async (
       };
       const queryString = toQueryString(queryObject);
       const result = await getFromApi<Asset[]>(
-        `https://proton.api.atomicassets.io/atomicassets/v1/assets?${queryString}`
+        `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicassets/v1/assets?${queryString}`
       );
 
       if (!result.success) {
@@ -175,7 +175,7 @@ export const getUserTemplateAssets = async (
  * Gets a list of all user owned assets and checks whether there are open offers.
  * Mostly used in viewing all your owned assets and see which one is listed for sale at a glance.
  * @param owner         The account name of the owner of the assets to look up
- * @param page          The page to look up from atomicassets api if number of assets returned is greater than given limit (default 100)
+ * @param page          The page to look up from atomicassets api if number of assets returned is greater than given limit (API defaults to a limit of 100)
  * @returns {Asset[]}   Returns array of Assets with additional 'isForSale' and 'salePrice' flags
  */
 
@@ -194,7 +194,7 @@ export const getUserAssets = async (
     };
     const queryString = toQueryString(queryObject);
     const userAssetsRes = await getFromApi<Asset[]>(
-      `https://proton.api.atomicassets.io/atomicassets/v1/assets?${queryString}`
+      `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicassets/v1/assets?${queryString}`
     );
 
     if (!userAssetsRes.success) {
@@ -279,7 +279,7 @@ const findMySaleItems = async (
 
 export const getAssetDetails = async (assetId: string): Promise<Asset> => {
   const currentAssetResponse = await getFromApi<Asset>(
-    `https://proton.api.atomicassets.io/atomicassets/v1/assets/${assetId}`
+    `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicassets/v1/assets/${assetId}`
   );
 
   if (!currentAssetResponse.success) {
