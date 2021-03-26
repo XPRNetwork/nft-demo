@@ -49,7 +49,6 @@ export const UserMenuButton = styled.button`
   align-items: center;
   cursor: pointer;
   border: 1px solid #dde4ee;
-  outline: none;
   background: none;
   padding: 0;
 `;

@@ -11,7 +11,6 @@ export const Button = styled.button<ButtonProps>`
   margin: 24px 0 12px;
   border-radius: 4px;
   border: 1px solid #e8ecfd;
-  outline: none;
   transition: 0.2s;
   width: 100%;
   transform: rotate(-180deg);

@@ -1,8 +1,7 @@
 import { Asset } from './assets';
 import { Collection } from './templates';
 import { getFromApi } from '../utils/browser-fetch';
-import { toQueryString, addPrecisionDecimal, asyncForEach } from '../utils';
-import { Template } from './templates';
+import { toQueryString, addPrecisionDecimal } from '../utils';
 import { TOKEN_SYMBOL } from '../utils/constants';
 
 type Price = {
@@ -52,16 +51,6 @@ export type SaleAssetRecord = {
     [templateMint: string]: string;
   };
   assets: SaleAsset[];
-};
-
-export type NumberOfListingsByTemplateId = {
-  [templateId: string]: number;
-};
-
-type GetNumberOfListingsProps = {
-  templates?: Template[];
-  collection_name?: string;
-  template_Ids?: string[];
 };
 
 /**
@@ -184,6 +173,7 @@ export const getAllTemplateSales = async (
   owner?: string
 ): Promise<SaleAssetRecord> => {
   try {
+    const limit = 100;
     let sales = [];
     let hasResults = true;
     let page = 1;
@@ -197,6 +187,7 @@ export const getAllTemplateSales = async (
         page,
         owner: owner || '',
         symbol: TOKEN_SYMBOL,
+        limit,
       };
       const queryParams = toQueryString(queryObject);
       const result = await getFromApi<SaleAsset[]>(
@@ -207,7 +198,7 @@ export const getAllTemplateSales = async (
         throw new Error((result.message as unknown) as string);
       }
 
-      if (result.data.length === 0) {
+      if (result.data.length < limit) {
         hasResults = false;
       }
 
@@ -260,35 +251,6 @@ export const getAllTemplateSales = async (
   }
 };
 
-export const getHighestPriceAsset = async (
-  collection: string,
-  templateId: string
-): Promise<Sale[]> => {
-  try {
-    const queryObject = {
-      collection_name: collection,
-      template_id: templateId,
-      sort: 'price',
-      order: 'desc',
-      state: '1', // assets listed for sale
-      limit: '1',
-    };
-    const queryString = toQueryString(queryObject);
-
-    const saleRes = await getFromApi<Sale[]>(
-      `https://proton.api.atomicassets.io/atomicmarket/v1/sales?${queryString}`
-    );
-
-    if (!saleRes.success) {
-      throw new Error((saleRes.message as unknown) as string);
-    }
-
-    return saleRes.data;
-  } catch (e) {
-    throw new Error(e);
-  }
-};
-
 export const getLowestPriceAsset = async (
   collection: string,
   templateId: string
@@ -314,64 +276,6 @@ export const getLowestPriceAsset = async (
     }
 
     return saleRes.data;
-  } catch (e) {
-    throw new Error(e);
-  }
-};
-
-/**
- * Function to return number of listings currently on sale for given set of templates
- * Requires either a list of templates of type Template or an array of template Ids with corresponding collection name
- * @param templates
- * @param collection_name
- * @param template_Ids
- * @return {NumberOfListingsByTemplateId}
- */
-
-export const getNumberOfListingsByTemplateId = async ({
-  templates,
-  collection_name,
-  template_Ids,
-}: GetNumberOfListingsProps): Promise<NumberOfListingsByTemplateId> => {
-  try {
-    const collection =
-      collection_name || templates[0].collection.collection_name;
-    const templateIds =
-      template_Ids || templates.map(({ template_id }) => template_id);
-    const numberOfListingsByTemplateId = {};
-
-    await asyncForEach(templateIds, async (templateId: string) => {
-      let sales = [];
-      let hasResults = true;
-      let page = 1;
-
-      while (hasResults) {
-        const queryObject = {
-          state: '1', // assets listed for sale
-          collection_name: collection,
-          template_id: templateId,
-          page,
-        };
-        const queryParams = toQueryString(queryObject);
-        const result = await getFromApi<SaleAsset[]>(
-          `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicmarket/v1/sales?${queryParams}`
-        );
-
-        if (!result.success) {
-          throw new Error((result.message as unknown) as string);
-        }
-
-        if (result.data.length === 0) {
-          hasResults = false;
-        }
-
-        sales = sales.concat(result.data);
-        page += 1;
-      }
-      numberOfListingsByTemplateId[templateId] = sales.length;
-    });
-
-    return numberOfListingsByTemplateId;
   } catch (e) {
     throw new Error(e);
   }

@@ -1,6 +1,6 @@
 import { getFromApi } from '../utils/browser-fetch';
-import { Sale, getLowestPriceAsset, getHighestPriceAsset } from './sales';
-import { asyncForEach, addPrecisionDecimal, toQueryString } from '../utils/';
+import { Sale, getLowestPriceAsset } from './sales';
+import { addPrecisionDecimal, toQueryString } from '../utils/';
 import { TOKEN_SYMBOL, DEFAULT_COLLECTION } from '../utils/constants';
 
 export type SchemaFormat = {
@@ -48,7 +48,6 @@ export interface Template {
   created_at_block?: string;
   issued_supply?: string;
   lowestPrice?: string;
-  highestPrice?: string;
   totalAssets?: string;
   assetsForSale?: string;
 }
@@ -103,11 +102,23 @@ export const getTemplateDetails = async (
       throw new Error((templateResponse.message as unknown) as string);
     }
 
-    const templateWithLowestHighestPrice = await parseTemplatesForHighLowPrice([
-      templateResponse.data,
-    ]);
+    const saleForTemplateAsc = await getLowestPriceAsset(
+      collectionName,
+      templateId
+    );
+    const lowestPriceSale = saleForTemplateAsc[0];
+    const lowestPrice =
+      lowestPriceSale && lowestPriceSale.listing_price
+        ? `${addPrecisionDecimal(
+            lowestPriceSale.listing_price,
+            lowestPriceSale.price.token_precision
+          )} ${lowestPriceSale.listing_symbol}`
+        : '';
 
-    return templateWithLowestHighestPrice[0];
+    return {
+      ...templateResponse.data,
+      lowestPrice,
+    };
   } catch (e) {
     throw new Error(e);
   }
@@ -149,60 +160,6 @@ export const getTemplatesByCollection = async ({
   } catch (e) {
     throw new Error(e);
   }
-};
-
-/**
- * Gets the highest and lowest price of any assets for sale in a list of templates
- * Mostly used to display the highest and lowest price of any of the templates with assets for sale in the collection
- * @param  {Template[]} allTemplates   An array of templates you want to look up the highest/lowest price for
- * @return {Template[]}                Returns array of templates with an additional two flags: 'highestPrice' and 'lowestPrice'
- */
-
-const parseTemplatesForHighLowPrice = async (
-  allTemplates: Template[]
-): Promise<Template[]> => {
-  const templateIdsByPrice = {};
-
-  await asyncForEach(allTemplates, async (template: Template) => {
-    const saleForTemplateAsc = await getLowestPriceAsset(
-      template.collection.collection_name,
-      template.template_id
-    );
-    const saleForTemplateDesc = await getHighestPriceAsset(
-      template.collection.collection_name,
-      template.template_id
-    );
-
-    const highestPriceSale = saleForTemplateDesc[0];
-    const lowestPriceSale = saleForTemplateAsc[0];
-    templateIdsByPrice[template.template_id] = {
-      highestPrice: highestPriceSale
-        ? `${addPrecisionDecimal(
-            highestPriceSale.listing_price,
-            highestPriceSale.price.token_precision
-          )} ${highestPriceSale.listing_symbol}`
-        : '',
-      lowestPrice: lowestPriceSale
-        ? `${addPrecisionDecimal(
-            lowestPriceSale.listing_price,
-            lowestPriceSale.price.token_precision
-          )} ${lowestPriceSale.listing_symbol}`
-        : '',
-    };
-  });
-
-  const allTemplateResultsWithLowestPrice = allTemplates.map((template) => {
-    const { lowestPrice, highestPrice } = templateIdsByPrice[
-      template.template_id
-    ];
-    return {
-      ...template,
-      lowestPrice,
-      highestPrice,
-    };
-  });
-
-  return allTemplateResultsWithLowestPrice;
 };
 
 /**

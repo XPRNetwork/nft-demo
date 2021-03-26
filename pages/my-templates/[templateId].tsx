@@ -22,7 +22,6 @@ import { DEFAULT_COLLECTION } from '../../utils/constants';
 
 const emptyTemplateDetails = {
   lowestPrice: '',
-  highestPrice: '',
   max_supply: '',
   collection: {
     author: '',
