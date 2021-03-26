@@ -14,7 +14,6 @@ type Props = {
   maxSupply: string;
   buttonText: string;
   assetId: string;
-  isLoadingPrices: boolean;
   handleButtonClick: () => void;
   setAssetId: Dispatch<SetStateAction<string>>;
 };
@@ -25,7 +24,6 @@ export const AssetFormSell = ({
   maxSupply,
   buttonText,
   assetId,
-  isLoadingPrices,
   handleButtonClick,
   setAssetId,
 }: Props): JSX.Element => {
@@ -45,7 +43,6 @@ export const AssetFormSell = ({
       </Row>
       <General>Serial number</General>
       <DropdownMenu
-        isLoading={isLoadingPrices}
         name="Available Assets For Sale"
         value={assetId}
         onChange={handleDropdownSelect}>

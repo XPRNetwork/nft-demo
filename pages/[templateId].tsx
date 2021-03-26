@@ -57,7 +57,6 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
   const [isBalanceInsufficient, setIsBalanceInsufficient] = useState<boolean>(
     false
   );
-  const [isLoadingPrices, setIsLoadingPrices] = useState<boolean>(true);
   const [template, setTemplate] = useState<Template>(emptyTemplateDetails);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
@@ -77,7 +76,7 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
     if (templateId) {
       try {
         (async () => {
-          setIsLoadingPrices(true);
+          setIsLoading(true);
           const templateDetails = await getTemplateDetails(
             DEFAULT_COLLECTION,
             templateId
@@ -92,7 +91,7 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
           setTemplateAssets(assets);
           setFormattedPricesBySaleId(formattedPrices);
           setRawPricesBySaleId(rawPrices);
-          setIsLoadingPrices(false);
+          setIsLoading(false);
           setTemplate(templateDetails);
           setSales(sales);
           setIsLoading(false);
@@ -184,7 +183,6 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
           buttonText={buttonText}
           saleId={saleId}
           purchasingError={purchasingError}
-          isLoadingPrices={isLoadingPrices}
           formattedPricesBySaleId={formattedPricesBySaleId}
           handleButtonClick={handleButtonClick}
           setPurchasingError={setPurchasingError}

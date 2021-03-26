@@ -17,7 +17,6 @@ type Props = {
   buttonText: string;
   saleId: string;
   purchasingError: string;
-  isLoadingPrices: boolean;
   formattedPricesBySaleId: {
     [templateMint: string]: string;
   };
@@ -34,7 +33,6 @@ export const AssetFormBuy = ({
   buttonText,
   saleId,
   purchasingError,
-  isLoadingPrices,
   formattedPricesBySaleId,
   handleButtonClick,
   setPurchasingError,
@@ -86,7 +84,6 @@ export const AssetFormBuy = ({
       </Row>
       <General>Serial number</General>
       <DropdownMenu
-        isLoading={isLoadingPrices}
         name="Available Assets For Sale"
         value={saleId}
         onChange={(e) => handleDropdownSelect(e.target.value)}>
