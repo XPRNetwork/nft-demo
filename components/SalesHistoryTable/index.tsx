@@ -11,12 +11,12 @@ import { StyledTable } from './SalesHistoryTable.styled';
 import { useWindowSize } from '../../hooks';
 import { getFromApi } from '../../utils/browser-fetch';
 import { useAuthContext } from '../Provider';
-import { getSalesHistoryForAsset } from '../../services/sales';
+import { getSalesHistoryForAsset, SaleAsset } from '../../services/sales';
 
 type Props = {
   tableData: Sale[];
   error?: string;
-  assetId?: string;
+  asset?: SaleAsset;
 };
 
 type TableHeader = {
@@ -84,7 +84,7 @@ const getMySalesHistory = async ({
 const SalesHistoryTable = ({
   tableData,
   error,
-  assetId,
+  asset,
 }: Props): JSX.Element => {
   const { currentUser } = useAuthContext();
   const [avatars, setAvatars] = useState({});
@@ -151,7 +151,7 @@ const SalesHistoryTable = ({
 
   const prefetchNextPage = async () => {
     const prefetchedResult = await getMySalesHistory({
-      assetId,
+      assetId: asset.assetId,
       page: prefetchPageNumber,
     });
     setPrefetchedData(prefetchedResult as Sale[]);
@@ -193,7 +193,7 @@ const SalesHistoryTable = ({
             }
             loading={isLoading}
             noData={!renderedData.length}
-            noDataMessage={'No Recent Sales'}
+            noDataMessage={`No Recent Sales for Serial #${asset.templateMint}`}
             columns={tableHeaders.length}>
             {getTableContent()}
           </TableContentWrapper>

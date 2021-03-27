@@ -61,7 +61,7 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
   const [saleId, setSaleId] = useState('');
-  const [assetId, setAssetId] = useState('');
+  const [currentAsset, setCurrentAsset] = useState<SaleAsset>({});
 
   const balanceAmount = parseFloat(
     currentUserBalance.split(' ')[0].replace(/[,]/g, '')
@@ -104,13 +104,13 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
   useEffect(() => {
     try {
       (async () => {
-        const sales = await getSalesHistoryForAsset(assetId);
+        const sales = await getSalesHistoryForAsset(currentAsset.assetId);
         setSales(sales);
       })();
     } catch (e) {
       setError(e.message);
     }
-  }, [assetId]);
+  }, [currentAsset]);
 
   useEffect(() => {
     setPurchasingError('');
@@ -186,7 +186,7 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
         sales={sales}
         error={error}
         image={image}
-        assetId={assetId}>
+        currentAsset={currentAsset}>
         <AssetFormBuy
           dropdownAssets={templateAssets}
           lowestPrice={lowestPrice}
@@ -199,7 +199,7 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
           setPurchasingError={setPurchasingError}
           setIsBalanceInsufficient={setIsBalanceInsufficient}
           setSaleId={setSaleId}
-          setAssetId={setAssetId}
+          setCurrentAsset={setCurrentAsset}
         />
       </DetailsLayout>
     );

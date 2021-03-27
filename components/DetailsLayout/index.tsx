@@ -13,7 +13,7 @@ import {
 } from './DetailsLayout.styled';
 import SalesHistoryTable from '../SalesHistoryTable';
 import AssetFormTitle from '../AssetFormTitle';
-import { Sale } from '../../services/sales';
+import { Sale, SaleAsset } from '../../services/sales';
 
 type Props = {
   children: ReactNode;
@@ -24,7 +24,7 @@ type Props = {
   collectionAuthor: string;
   sales: Sale[];
   error?: string;
-  assetId?: string;
+  currentAsset?: SaleAsset;
 };
 
 const AssetImage = ({ image }: { image: string }): JSX.Element => (
@@ -42,13 +42,12 @@ const AssetImage = ({ image }: { image: string }): JSX.Element => (
 const DetailsLayout = ({
   children,
   image,
-  templateId,
   templateName,
   collectionName,
   collectionAuthor,
   sales,
   error,
-  assetId,
+  currentAsset,
 }: Props): JSX.Element => {
   const [salesTableActive, setSalesTableActive] = useState(true);
   return (
@@ -81,7 +80,11 @@ const DetailsLayout = ({
         </ArrowContainer>
       </ContentRow>
       <ToggleContainer active={salesTableActive}>
-        <SalesHistoryTable tableData={sales} error={error} assetId={assetId} />
+        <SalesHistoryTable
+          tableData={sales}
+          error={error}
+          asset={currentAsset}
+        />
       </ToggleContainer>
     </Container>
   );
