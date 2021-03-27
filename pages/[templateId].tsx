@@ -61,7 +61,7 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
   const [saleId, setSaleId] = useState('');
-  const [currentAsset, setCurrentAsset] = useState<SaleAsset>({});
+  const [currentAsset, setCurrentAsset] = useState<Partial<SaleAsset>>({});
 
   const balanceAmount = parseFloat(
     currentUserBalance.split(' ')[0].replace(/[,]/g, '')

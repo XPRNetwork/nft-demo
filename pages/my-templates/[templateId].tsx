@@ -50,10 +50,11 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
   const [template, setTemplate] = useState<Template>(emptyTemplateDetails);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
-  const [assetId, setAssetId] = useState('');
+  const [currentAsset, setCurrentAsset] = useState<Partial<Asset>>({});
 
   const isSelectedAssetBeingSold =
-    rawPricesByAssetId[assetId] && rawPricesByAssetId[assetId].rawPrice;
+    rawPricesByAssetId[currentAsset.asset_id] &&
+    rawPricesByAssetId[currentAsset.asset_id].rawPrice;
   const {
     lowestPrice,
     max_supply,
@@ -87,7 +88,7 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
 
       setSaleIdsByAssetId(saleIds);
       setTemplateAssets(assets);
-      setAssetId(assets[0].asset_id);
+      setCurrentAsset(assets[0]);
       setRawPricesByAssetId(rawPrices);
       setIsLoading(false);
       setTemplate(templateDetails);
@@ -100,13 +101,13 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
   useEffect(() => {
     try {
       (async () => {
-        const sales = await getSalesHistoryForAsset(assetId);
+        const sales = await getSalesHistoryForAsset(currentAsset.asset_id);
         setSales(sales);
       })();
     } catch (e) {
       setError(e.message);
     }
-  }, [assetId]);
+  }, [currentAsset]);
 
   useEffect(() => {
     if (templateId) {
@@ -117,7 +118,7 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
   const createSale = () => {
     openModal(MODAL_TYPES.CREATE_SALE);
     setModalProps({
-      assetId,
+      assetId: currentAsset.asset_id,
       fetchPageData,
     });
   };
@@ -125,7 +126,7 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
   const cancelSale = () => {
     openModal(MODAL_TYPES.CANCEL_SALE);
     setModalProps({
-      saleId: saleIdsByAssetId[assetId],
+      saleId: saleIdsByAssetId[currentAsset.asset_id],
       fetchPageData,
     });
   };
@@ -158,15 +159,15 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
         sales={sales}
         error={error}
         image={image}
-        assetId={assetId}>
+        currentAsset={currentAsset}>
         <AssetFormSell
           dropdownAssets={templateAssets}
           lowestPrice={lowestPrice}
           maxSupply={max_supply}
           buttonText={buttonText}
-          assetId={assetId}
+          assetId={currentAsset.asset_id}
           handleButtonClick={handleButtonClick}
-          setAssetId={setAssetId}
+          setCurrentAsset={setCurrentAsset}
         />
       </DetailsLayout>
     );

@@ -5,18 +5,18 @@ import TableRow from '../TableRow';
 import TableContentWrapper from '../TableContentWraper';
 import SalesHistoryTableCell from '../SalesHistoryTableCell';
 import PaginationButton from '../../components/PaginationButton';
-import { Sale } from '../../services/sales';
 import { addPrecisionDecimal, parseTimestamp } from '../../utils';
 import { StyledTable } from './SalesHistoryTable.styled';
 import { useWindowSize } from '../../hooks';
 import { getFromApi } from '../../utils/browser-fetch';
 import { useAuthContext } from '../Provider';
-import { getSalesHistoryForAsset, SaleAsset } from '../../services/sales';
+import { getSalesHistoryForAsset, SaleAsset, Sale } from '../../services/sales';
+import { Asset } from '../../services/assets';
 
 type Props = {
   tableData: Sale[];
   error?: string;
-  asset?: SaleAsset;
+  asset?: Partial<SaleAsset> & Partial<Asset>;
 };
 
 type TableHeader = {
@@ -81,11 +81,7 @@ const getMySalesHistory = async ({
   }
 };
 
-const SalesHistoryTable = ({
-  tableData,
-  error,
-  asset,
-}: Props): JSX.Element => {
+const SalesHistoryTable = ({ tableData, error, asset }: Props): JSX.Element => {
   const { currentUser } = useAuthContext();
   const [avatars, setAvatars] = useState({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -151,9 +147,10 @@ const SalesHistoryTable = ({
 
   const prefetchNextPage = async () => {
     const prefetchedResult = await getMySalesHistory({
-      assetId: asset.assetId,
+      assetId: asset.assetId || asset.asset_id,
       page: prefetchPageNumber,
     });
+
     setPrefetchedData(prefetchedResult as Sale[]);
 
     if (!prefetchedResult.length) {
@@ -193,7 +190,9 @@ const SalesHistoryTable = ({
             }
             loading={isLoading}
             noData={!renderedData.length}
-            noDataMessage={`No Recent Sales for Serial #${asset.templateMint}`}
+            noDataMessage={`No Recent Sales for Serial #${
+              asset.templateMint || asset.template_mint
+            }`}
             columns={tableHeaders.length}>
             {getTableContent()}
           </TableContentWrapper>

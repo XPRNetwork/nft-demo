@@ -15,7 +15,7 @@ type Props = {
   buttonText: string;
   assetId: string;
   handleButtonClick: () => void;
-  setAssetId: Dispatch<SetStateAction<string>>;
+  setCurrentAsset: Dispatch<SetStateAction<Asset>>;
 };
 
 export const AssetFormSell = ({
@@ -25,14 +25,18 @@ export const AssetFormSell = ({
   buttonText,
   assetId,
   handleButtonClick,
-  setAssetId,
+  setCurrentAsset,
 }: Props): JSX.Element => {
   useEffect(() => {
     handleDropdownSelect(dropdownAssets[0].asset_id);
   }, []);
 
   const handleDropdownSelect = (id: string) => {
-    setAssetId(id);
+    const dropdownAsset = dropdownAssets.find((asset) => {
+      return asset.asset_id === id;
+    });
+    console.log('handledropdown: ', dropdownAsset);
+    setCurrentAsset(dropdownAsset);
   };
 
   return (
