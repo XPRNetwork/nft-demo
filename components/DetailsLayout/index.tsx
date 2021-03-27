@@ -14,6 +14,7 @@ import {
 import SalesHistoryTable from '../SalesHistoryTable';
 import AssetFormTitle from '../AssetFormTitle';
 import { Sale, SaleAsset } from '../../services/sales';
+import { Asset } from '../../services/assets';
 
 type Props = {
   children: ReactNode;
@@ -24,7 +25,7 @@ type Props = {
   collectionAuthor: string;
   sales: Sale[];
   error?: string;
-  currentAsset?: SaleAsset;
+  currentAsset?: Partial<SaleAsset> & Partial<Asset>;
 };
 
 const AssetImage = ({ image }: { image: string }): JSX.Element => (
