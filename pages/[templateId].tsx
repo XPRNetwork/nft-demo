@@ -62,6 +62,7 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
   const [error, setError] = useState<string>('');
   const [saleId, setSaleId] = useState('');
   const [currentAsset, setCurrentAsset] = useState<SaleAsset>({});
+  const [asssetMint, setAssetMint] = useState<string>('');
 
   const balanceAmount = parseFloat(
     currentUserBalance.split(' ')[0].replace(/[,]/g, '')
@@ -200,6 +201,7 @@ const MarketplaceTemplateDetail = (): JSX.Element => {
           setIsBalanceInsufficient={setIsBalanceInsufficient}
           setSaleId={setSaleId}
           setCurrentAsset={setCurrentAsset}
+          setAssetMint={setAssetMint}
         />
       </DetailsLayout>
     );

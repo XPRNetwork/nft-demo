@@ -50,7 +50,8 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
   const [template, setTemplate] = useState<Template>(emptyTemplateDetails);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
-  const [assetId, setAssetId] = useState('');
+  const [assetId, setAssetId] = useState<string>('');
+  const [assetMint, setAssetMint] = useState<string>('');
 
   const isSelectedAssetBeingSold =
     rawPricesByAssetId[assetId] && rawPricesByAssetId[assetId].rawPrice;
@@ -167,6 +168,7 @@ const MyNFTsTemplateDetail = (): JSX.Element => {
           assetId={assetId}
           handleButtonClick={handleButtonClick}
           setAssetId={setAssetId}
+          setAssetMint={setAssetMint}
         />
       </DetailsLayout>
     );
