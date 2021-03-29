@@ -27,7 +27,7 @@ const AssetFormSellPopupMenu = (): JSX.Element => {
 
   const popupMenuItems = [
     {
-      type: 'Sell',
+      isHidden: assetIds.length === 0,
       name: 'Mark all for sale',
       onClick: () => {
         setIsOpen(false);
@@ -35,7 +35,7 @@ const AssetFormSellPopupMenu = (): JSX.Element => {
       },
     },
     {
-      type: 'Cancel',
+      isHidden: saleIds.length === 0,
       name: 'Cancel all sales',
       onClick: () => {
         setIsOpen(false);
@@ -50,11 +50,8 @@ const AssetFormSellPopupMenu = (): JSX.Element => {
         <Ellipsis />
       </PopupMenuButton>
       <Menu isOpen={isOpen}>
-        {popupMenuItems.map(({ type, name, onClick }) => {
-          if (
-            (type === 'Sell' && assetIds.length !== 0) ||
-            (type === 'Cancel' && saleIds.length !== 0)
-          ) {
+        {popupMenuItems.map(({ isHidden, name, onClick }) => {
+          if (!isHidden) {
             return (
               <MenuItem key={name} tabIndex={0} onClick={onClick}>
                 {name}
