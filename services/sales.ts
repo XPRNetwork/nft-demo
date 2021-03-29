@@ -2,7 +2,7 @@ import { Asset } from './assets';
 import { Collection } from './templates';
 import { getFromApi } from '../utils/browser-fetch';
 import { toQueryString, addPrecisionDecimal } from '../utils';
-import { TOKEN_SYMBOL } from '../utils/constants';
+import { TOKEN_SYMBOL, PAGINATION_LIMIT } from '../utils/constants';
 
 type Price = {
   token_contract: string;
@@ -73,7 +73,7 @@ export const getSalesHistoryForTemplate = async (
       sort: 'updated',
       order: 'desc',
       page: pageParam,
-      limit: 10,
+      limit: PAGINATION_LIMIT,
     };
     const queryString = toQueryString(queryObject);
     const latestSalesRes = await getFromApi<Sale[]>(
@@ -110,7 +110,7 @@ export const getSalesHistoryForAsset = async (
       sort: 'updated',
       order: 'desc',
       page: pageParam,
-      limit: 10,
+      limit: PAGINATION_LIMIT,
     };
     const queryString = toQueryString(queryObject);
     const latestSalesRes = await getFromApi<Sale[]>(
