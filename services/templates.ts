@@ -1,7 +1,11 @@
 import { getFromApi } from '../utils/browser-fetch';
 import { Sale, getLowestPriceAsset } from './sales';
 import { addPrecisionDecimal, toQueryString } from '../utils/';
-import { TOKEN_SYMBOL, DEFAULT_COLLECTION } from '../utils/constants';
+import {
+  TOKEN_SYMBOL,
+  DEFAULT_COLLECTION,
+  PAGINATION_LIMIT,
+} from '../utils/constants';
 
 export type SchemaFormat = {
   name: string;
@@ -140,7 +144,7 @@ export const getTemplatesByCollection = async ({
     const templatesQueryObject = {
       collection_name: type,
       page: page || 1,
-      limit: 10,
+      limit: PAGINATION_LIMIT,
     };
 
     const templatesQueryParams = toQueryString(templatesQueryObject);

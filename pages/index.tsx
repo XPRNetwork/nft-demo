@@ -13,7 +13,7 @@ import {
   formatTemplatesWithPriceData,
   getLowestPricesForAllCollectionTemplates,
 } from '../services/templates';
-import { DEFAULT_COLLECTION } from '../utils/constants';
+import { DEFAULT_COLLECTION, PAGINATION_LIMIT } from '../utils/constants';
 
 const MarketPlace = (): JSX.Element => {
   const router = useRouter();
@@ -114,7 +114,7 @@ const MarketPlace = (): JSX.Element => {
         <Grid isLoading={isLoading} items={renderedTemplates} />
         <PaginationButton
           onClick={showNextPage}
-          isHidden={isLoading}
+          isHidden={renderedTemplates.length < PAGINATION_LIMIT}
           isLoading={isLoadingNextPage}
           disabled={prefetchPageNumber === -1}
         />
