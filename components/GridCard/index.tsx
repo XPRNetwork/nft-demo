@@ -66,7 +66,7 @@ const Card = ({
           width={213}
           height={220}
           alt={text}
-          src={`https://ipfs.io/ipfs/${image}`}
+          src={`https://cloudflare-ipfs.com/ipfs/${image}`}
         />
         {isUsersTemplates ? (
           <Tag>

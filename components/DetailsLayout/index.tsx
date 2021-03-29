@@ -35,7 +35,7 @@ const AssetImage = ({ image }: { image: string }): JSX.Element => (
       layout="responsive"
       width={456}
       height={470}
-      src={`https://ipfs.io/ipfs/${image}`}
+      src={`https://cloudflare-ipfs.com/ipfs/${image}`}
     />
   </ImageContainer>
 );
