@@ -25,9 +25,6 @@ const AssetFormSellPopupMenu = (): JSX.Element => {
   useScrollLock(isOpen);
   useEscapeKeyClose(closePopupMenu);
 
-  console.log(saleIds); //for sale
-  console.log(assetIds); //not for sale
-
   const popupMenuItems = [
     {
       type: 'Sell',
