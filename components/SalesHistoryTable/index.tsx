@@ -12,6 +12,7 @@ import { getFromApi } from '../../utils/browser-fetch';
 import { useAuthContext } from '../Provider';
 import { getSalesHistoryForAsset, SaleAsset, Sale } from '../../services/sales';
 import { Asset } from '../../services/assets';
+import { PAGINATION_LIMIT } from '../../utils/constants';
 
 type Props = {
   tableData: Sale[];
@@ -113,7 +114,7 @@ const SalesHistoryTable = ({ tableData, error, asset }: Props): JSX.Element => {
           const res = await getAvatars(chainAccounts);
           setAvatars(res);
         }
-        if (renderedData.length % 10 == 0) {
+        if (renderedData.length % PAGINATION_LIMIT == 0) {
           await prefetchNextPage();
         }
       } catch (e) {
@@ -165,6 +166,7 @@ const SalesHistoryTable = ({ tableData, error, asset }: Props): JSX.Element => {
   const showNextPage = async () => {
     const allFetchedData = renderedData.concat(prefetchedData);
     setRenderedData(allFetchedData);
+    setIsLoading(true);
     setIsLoadingNextPage(true);
     await prefetchNextPage();
   };
@@ -200,6 +202,7 @@ const SalesHistoryTable = ({ tableData, error, asset }: Props): JSX.Element => {
       </StyledTable>
       <PaginationButton
         onClick={showNextPage}
+        isHidden={renderedData.length < PAGINATION_LIMIT}
         isLoading={isLoadingNextPage}
         disabled={prefetchPageNumber === -1}
       />

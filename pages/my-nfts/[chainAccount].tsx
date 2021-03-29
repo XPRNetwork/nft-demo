@@ -10,8 +10,9 @@ import { Template } from '../../services/templates';
 import { Title } from '../../styles/Title.styled';
 import LoadingPage from '../../components/LoadingPage';
 import { capitalize } from '../../utils';
+import { PAGINATION_LIMIT } from '../../utils/constants';
 
-type Props = {
+type RouterQuery = {
   chainAccount: string;
 };
 
@@ -36,8 +37,9 @@ const getMyTemplates = async ({
   }
 };
 
-const Collection = ({ chainAccount }: Props): JSX.Element => {
+const Collection = (): JSX.Element => {
   const router = useRouter();
+  const { chainAccount } = router.query as RouterQuery;
   const { currentUser } = useAuthContext();
   const [renderedTemplates, setRenderedTemplates] = useState<Template[]>([]);
   const [prefetchedTemplates, setPrefetchedTemplates] = useState<Template[]>(
@@ -127,6 +129,7 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
         />
         <PaginationButton
           onClick={showNextPage}
+          isHidden={renderedTemplates.length < PAGINATION_LIMIT}
           isLoading={isLoadingNextPage}
           disabled={prefetchPageNumber === -1}
         />
@@ -142,22 +145,6 @@ const Collection = ({ chainAccount }: Props): JSX.Element => {
       </PageLayout>
     </>
   );
-};
-
-type GetServerSidePropsArgs = {
-  params: {
-    chainAccount: string;
-  };
-};
-
-export const getServerSideProps = async ({
-  params: { chainAccount },
-}: GetServerSidePropsArgs): Promise<{ props: Props }> => {
-  return {
-    props: {
-      chainAccount,
-    },
-  };
 };
 
 export default Collection;
