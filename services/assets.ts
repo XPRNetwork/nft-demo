@@ -1,5 +1,4 @@
 import { Collection, Schema, Template } from './templates';
-import { Offer } from './offers';
 import { getAssetSale, getAllTemplateSales } from './sales';
 import { addPrecisionDecimal, toQueryString } from '../utils';
 import { getFromApi } from '../utils/browser-fetch';
@@ -43,14 +42,28 @@ export type RawPrices = {
   };
 };
 
-export type SaleIds = {
-  [assetId: string]: string;
+interface SaleData {
+  saleId: string;
+  templateMint: string;
+  salePrice: string;
+  assetId: string;
+}
+
+interface FullSaleData extends SaleData {
+  rawPrice: string;
+}
+
+type SaleDataByAssetId = {
+  [assetId: string]: SaleData;
+};
+
+export type FullSaleDataByAssetId = {
+  [assetId: string]: FullSaleData;
 };
 
 type UserTemplateAssetDetails = {
   assets: Asset[];
-  rawPrices: RawPrices;
-  saleIds: SaleIds;
+  saleData: FullSaleDataByAssetId;
 };
 
 /**
@@ -106,21 +119,21 @@ const getAllUserAssetsByTemplate = async (
 /**
  * Gets an index of sale IDs organized by asset ID.
  * Mostly used in viewing all your owned assets and see which one is listed for sale at a glance.
- * @param owner       The account name of the owner of the assets to look up
- * @param templateId  The ID of the template of a group of assets
- * @returns {SaleIds} Returns object of sale IDs organized by asset ID
+ * @param owner                 The account name of the owner of the assets to look up
+ * @param templateId            The ID of the template of a group of assets
+ * @returns {SaleDataByAssetId} Returns object of sale asset data organized by asset ID
  */
 
-const getSaleIdsByAsset = async (
+const getSaleDataByAssetId = async (
   owner: string,
   templateId: string
-): Promise<SaleIds> => {
+): Promise<SaleDataByAssetId> => {
   const { assets } = await getAllTemplateSales(templateId, owner);
-  const saleIdsByAssetId = {};
+  const sales = {};
   for (const asset of assets) {
-    saleIdsByAssetId[asset.assetId] = asset.saleId;
+    sales[asset.assetId] = asset;
   }
-  return saleIdsByAssetId;
+  return sales;
 };
 
 /**
@@ -142,133 +155,33 @@ export const getUserTemplateAssets = async (
     if (!userOffers || !userOffers.length) {
       return {
         assets,
-        rawPrices: {},
-        saleIds: {},
+        saleData: {},
       };
     }
 
-    const saleIdsByAssetId = await getSaleIdsByAsset(owner, templateId);
-    const myAssetsAndSaleItems = await findMySaleItems(
-      assets,
-      userOffers,
-      owner
-    );
+    const saleData = await getSaleDataByAssetId(owner, templateId);
 
-    const pricesByAssetIdRaw = {};
-    for (const asset of myAssetsAndSaleItems) {
-      const { asset_id, salePrice, saleId } = asset;
-      pricesByAssetIdRaw[asset_id] = {
+    const saleDataWithRawPrice = {};
+    for (const assetId in saleData) {
+      const { salePrice } = saleData[assetId];
+      saleDataWithRawPrice[assetId] = {
         rawPrice: salePrice.replace(/[,]/g, ''),
-        saleId,
+        ...saleData[assetId],
       };
     }
+
+    const assetsWithSaleData = assets.map((asset) => ({
+      ...asset,
+      ...saleDataWithRawPrice[asset.asset_id],
+    }));
 
     return {
-      assets: myAssetsAndSaleItems,
-      rawPrices: pricesByAssetIdRaw,
-      saleIds: saleIdsByAssetId,
+      assets: assetsWithSaleData,
+      saleData: saleDataWithRawPrice,
     };
   } catch (e) {
     throw new Error(e);
   }
-};
-
-/**
- * Gets a list of all user owned assets and checks whether there are open offers.
- * Mostly used in viewing all your owned assets and see which one is listed for sale at a glance.
- * @param owner         The account name of the owner of the assets to look up
- * @param page          The page to look up from atomicassets api if number of assets returned is greater than given limit (API defaults to a limit of 100)
- * @returns {Asset[]}   Returns array of Assets with additional 'isForSale' and 'salePrice' flags
- */
-
-export const getUserAssets = async (
-  owner: string,
-  page?: number
-): Promise<Asset[]> => {
-  try {
-    const pageParam = page ? page : 1;
-    const queryObject = {
-      owner: owner,
-      page: pageParam,
-      limit: 10,
-      order: 'desc',
-      sort: 'transferred',
-    };
-    const queryString = toQueryString(queryObject);
-    const userAssetsRes = await getFromApi<Asset[]>(
-      `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicassets/v1/assets?${queryString}`
-    );
-
-    if (!userAssetsRes.success) {
-      throw new Error((userAssetsRes.message as unknown) as string);
-    }
-
-    const userOffers = await getUserOffers(owner);
-
-    if (!userOffers || !userOffers.length) {
-      return userAssetsRes.data;
-    }
-
-    const myAssetsAndSaleItems = await findMySaleItems(
-      userAssetsRes.data,
-      userOffers,
-      owner
-    );
-
-    return myAssetsAndSaleItems;
-  } catch (e) {
-    throw new Error(e);
-  }
-};
-
-/**
- * A utility function that loops through a list (array) of open offers and owned assets and
- * to cross references with the sales API to determine which assets are for sale.
- * Mostly used in viewing all your owned assets and see which one is listed for sale at a glance.
- * @param  {Asset[]} allAssets    An array of assets
- * @param  {Offer[]} allMyOffers  An array of all offers for the above assets
- * @param  {string}  owner        The owner of the assets you're trying to look up the sales for
- * @return {Asset[]}              Returns array of Assets with additional 'isForSale' and 'salePrice' flags
- */
-
-const findMySaleItems = async (
-  allAssets: Asset[],
-  allMyOffers: Offer[],
-  owner: string
-): Promise<Asset[]> => {
-  const assetIdsWithOffers = {};
-  allMyOffers.forEach((offer) => {
-    offer.sender_assets.forEach((asset) => {
-      assetIdsWithOffers[asset.asset_id] = true;
-    });
-  });
-  return Promise.all(
-    allAssets.map(async (asset) => {
-      let isForSale = false;
-      let salePrice = '';
-      if (assetIdsWithOffers[asset.asset_id]) {
-        isForSale = true;
-        const saleForThisAsset = await getAssetSale(asset.asset_id, owner);
-        // needs further testing to make sure only one sale item comes up in the API call
-        if (saleForThisAsset.length && saleForThisAsset.length > 0) {
-          const {
-            listing_price,
-            listing_symbol,
-            price: { token_precision },
-          } = saleForThisAsset[0];
-          salePrice = `${addPrecisionDecimal(
-            listing_price,
-            token_precision
-          )} ${listing_symbol}`;
-        }
-      }
-      return {
-        ...asset,
-        isForSale,
-        salePrice,
-      };
-    })
-  );
 };
 
 /**
