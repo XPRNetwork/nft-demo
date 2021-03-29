@@ -9,7 +9,6 @@ import { getTemplatesWithUserAssetCount } from '../../services/templates';
 import { Template } from '../../services/templates';
 import { Title } from '../../styles/Title.styled';
 import LoadingPage from '../../components/LoadingPage';
-import Banner from '../../components/Banner';
 import { capitalize } from '../../utils';
 
 type Props = {
