@@ -35,7 +35,6 @@ export const AssetFormSell = ({
     const dropdownAsset = dropdownAssets.find((asset) => {
       return asset.asset_id === id;
     });
-    console.log('handledropdown: ', dropdownAsset);
     setCurrentAsset(dropdownAsset);
   };
 
