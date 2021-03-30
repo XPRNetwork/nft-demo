@@ -17,7 +17,6 @@ ENV NEXT_PUBLIC_GA_TRACKING_ID=$NEXT_PUBLIC_GA_TRACKING_ID
 ENV NEXT_PUBLIC_NFT_ENDPOINT=$NEXT_PUBLIC_NFT_ENDPOINT
 
 COPY package*.json /usr/src/app/
-RUN rm package-lock.json
 RUN yarn install
 
 COPY . /usr/src/app
