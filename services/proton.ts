@@ -1,6 +1,7 @@
 import { ConnectWallet } from '@proton/web-sdk';
 import { LinkSession, Link } from '@proton/link';
 import logoUrl from '../public/logo.svg';
+import { TOKEN_CONTRACT } from '../utils/constants';
 
 export interface User {
   actor: string;
@@ -471,7 +472,7 @@ class ProtonSDK {
   }: PurchaseSaleOptions): Promise<SaleResponse> => {
     const actions = [
       {
-        account: 'xtokens',
+        account: TOKEN_CONTRACT,
         name: 'transfer',
         authorization: [
           {
