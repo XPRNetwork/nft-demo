@@ -472,7 +472,7 @@ class ProtonSDK {
   }: PurchaseSaleOptions): Promise<SaleResponse> => {
     const actions = [
       {
-        account: 'xtokens',
+        account: TOKEN_CONTRACT,
         name: 'transfer',
         authorization: [
           {
