@@ -27,7 +27,7 @@ const AssetFormSellPopupMenu = (): JSX.Element => {
 
   const popupMenuItems = [
     {
-      isHidden: assetIds.length === 0,
+      isHidden: !assetIds || assetIds.length === 0,
       name: 'Mark all for sale',
       onClick: () => {
         setIsOpen(false);
@@ -35,7 +35,7 @@ const AssetFormSellPopupMenu = (): JSX.Element => {
       },
     },
     {
-      isHidden: saleIds.length === 0,
+      isHidden: !saleIds || saleIds.length === 0,
       name: 'Cancel all sales',
       onClick: () => {
         setIsOpen(false);
