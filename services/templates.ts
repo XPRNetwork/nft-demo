@@ -270,7 +270,7 @@ export const getTemplatesWithUserAssetCount = async (
 ): Promise<Template[]> => {
   try {
     const accountResponse = await getFromApi<Account>(
-      `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicassets/v1/accounts/${owner}`
+      `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicassets/v1/accounts/${owner}?collection_whitelist=${DEFAULT_COLLECTION}`
     );
 
     if (!accountResponse.success) {
@@ -278,7 +278,7 @@ export const getTemplatesWithUserAssetCount = async (
     }
 
     const accountResponseWithHidden = await getFromApi<Account>(
-      `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicassets/v1/accounts/${owner}?hide_offers=true`
+      `${process.env.NEXT_PUBLIC_NFT_ENDPOINT}/atomicassets/v1/accounts/${owner}?hide_offers=true&collection_whitelist=${DEFAULT_COLLECTION}`
     );
 
     if (!accountResponseWithHidden.success) {
