@@ -21,7 +21,14 @@ use the [FOOBAR Faucet](https://foobar.protonchain.com).
 Run a docker container:
 
 ```
-docker build nft-demo .
+docker build \
+          --tag nft-demo \
+          --build-arg NEXT_PUBLIC_CHAIN_ID="384da888112027f0321850a169f737c33e53b388aad48b5adace4bab97f437e0" \
+          --build-arg NEXT_PUBLIC_CHAIN_ENDPOINT="https://proton.greymass.com" \
+          --build-arg NEXT_PUBLIC_BLOCK_EXPLORER="https://proton.bloks.io/block/" \
+          --build-arg NEXT_PUBLIC_GA_TRACKING_ID="YOUR_TRACKING_ID_HERE" \
+          --build-arg NEXT_PUBLIC_NFT_ENDPOINT="https://proton.api.atomicassets.io" \
+          .
 
 docker images
 
