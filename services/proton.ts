@@ -104,7 +104,16 @@ class ProtonSDK {
         throw new Error('An error has occurred while logging in');
       }
       const { auth, accountData } = this.session;
-      const { avatar, isLightKYCVerified, name } = accountData[0];
+      const profile = accountData
+        ? accountData[0]
+        : {
+            name: '',
+            acc: auth.actor,
+            avatar: '',
+            isLightKYCVerified: false,
+          };
+
+      const { avatar, isLightKYCVerified, name } = profile;
       const chainAccountAvatar = avatar
         ? `data:image/jpeg;base64,${avatar}`
         : '/default-avatar.png';
@@ -139,7 +148,16 @@ class ProtonSDK {
       }
 
       const { auth, accountData } = this.session;
-      const { avatar, isLightKYCVerified, name } = accountData[0];
+      const profile = accountData
+        ? accountData[0]
+        : {
+            name: '',
+            acc: auth.actor,
+            avatar: '',
+            isLightKYCVerified: false,
+          };
+
+      const { avatar, isLightKYCVerified, name } = profile;
       const chainAccountAvatar = avatar
         ? `data:image/jpeg;base64,${avatar}`
         : '/default-avatar.png';
