@@ -109,6 +109,10 @@ const handler = async (
     case 'PATCH':
       break;
     default:
+      res.status(200).send({
+        success: true,
+        message: 'Hello!',
+      });
       break;
   }
 };
