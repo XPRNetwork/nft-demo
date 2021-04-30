@@ -61,6 +61,8 @@ jobs:
           --build-arg NEXT_PUBLIC_GA_TRACKING_ID="${{ secrets.NEXT_PUBLIC_GA_TRACKING_ID }}" \
           --build-arg NEXT_PUBLIC_NFT_ENDPOINT="https://proton.api.atomicassets.io" \
           --build-arg XAUTH_PROTON_MARKET="${{ secrets.XAUTH_PROTON_MARKET }}" \
+          --build-arg PINATA_API_KEY="${{ secrets.PINATA_API_KEY }}" \
+          --build-arg PINATA_SECRET="${{ secrets.PINATA_SECRET }}" \
           .
 
     # Push the Docker image to Google Container Registry
