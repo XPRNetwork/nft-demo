@@ -1,13 +1,14 @@
 import { NextApiResponse, NextApiRequest } from 'next';
 import Cors from 'cors';
 import multer from 'multer';
-import FormData from 'form-data';
-import fetch from 'node-fetch';
+// import FormData from 'form-data';
+// import fetch from 'node-fetch';
 
 const LG_FILE_SIZE_UPLOAD_LIMIT = 30 * 1000000; // 30 MB
 
 const cors = Cors({
   methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Authorization'],
 });
 
 function initMiddleware(middleware) {
@@ -69,38 +70,38 @@ const handler = async (
   switch (method) {
     case 'POST': {
       try {
-        await multerAny(req, res);
-        if (!req.files?.length || req.files.length > 1) {
-          res.status(400).send({
-            success: false,
-            message: 'File not found, please try again.',
-          });
-          return;
-        }
-        const blob: FileBuffer = req.files[0];
+        // await multerAny(req, res);
+        // if (!req.files?.length || req.files.length > 1) {
+        //   res.status(400).send({
+        //     success: false,
+        //     message: 'File not found, please try again.',
+        //   });
+        //   return;
+        // }
+        // const blob: FileBuffer = req.files[0];
 
-        const formData = new FormData();
-        formData.append('file', blob.buffer, blob.originalname);
+        // const formData = new FormData();
+        // formData.append('file', blob.buffer, blob.originalname);
 
-        const headers = {
-          pinata_api_key: process.env.PINATA_API_KEY,
-          pinata_secret_api_key: process.env.PINATA_SECRET,
-          ...formData.getHeaders(),
-        };
+        // const headers = {
+        //   pinata_api_key: process.env.PINATA_API_KEY,
+        //   pinata_secret_api_key: process.env.PINATA_SECRET,
+        //   ...formData.getHeaders(),
+        // };
 
-        const resultRaw = await fetch(
-          'https://api.pinata.cloud/pinning/pinFileToIPFS',
-          {
-            method: 'POST',
-            body: formData,
-            headers,
-          }
-        );
+        // const resultRaw = await fetch(
+        //   'https://api.pinata.cloud/pinning/pinFileToIPFS',
+        //   {
+        //     method: 'POST',
+        //     body: formData,
+        //     headers,
+        //   }
+        // );
 
-        const result = await resultRaw.json();
+        // const result = await resultRaw.json();
 
-        if (result.error) throw new Error(result.error.message);
-        res.status(200).send({ success: true, message: result });
+        // if (result.error) throw new Error(result.error.message);
+        res.status(200).send({ success: true, message: 'hey!' });
       } catch (e) {
         res.status(500).send({
           success: false,
