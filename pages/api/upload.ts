@@ -33,7 +33,10 @@ type FileBuffer = File & {
 
 const allowCors = fn => async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Origin',
+    'https://deploy-preview-28--dev-protonmarket-com.netlify.app/'
+  );
   res.setHeader(
     'Access-Control-Allow-Methods',
     'GET,OPTIONS,PATCH,DELETE,POST,PUT'
