@@ -1,9 +1,14 @@
 import { NextApiResponse, NextApiRequest } from 'next';
+import Cors from 'cors'
 import multer from 'multer';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
 
 const LG_FILE_SIZE_UPLOAD_LIMIT = 30 * 1000000; // 30 MB
+
+const cors = Cors({
+  methods: ['GET', 'POST', 'OPTIONS'],
+});
 
 function initMiddleware(middleware) {
   return (req: NextApiRequest, res: NextApiResponse) =>
@@ -15,6 +20,18 @@ function initMiddleware(middleware) {
         return resolve(result);
       });
     });
+}
+
+function runMiddleware(req, res, fn) {
+  return new Promise((resolve, reject) => {
+    fn(req, res, (result) => {
+      if (result instanceof Error) {
+        return reject(result);
+      }
+
+      return resolve(result);
+    });
+  });
 }
 
 const upload = multer({
@@ -31,31 +48,12 @@ type FileBuffer = File & {
   originalname?: string;
 };
 
-const allowCors = fn => async (req, res) => {
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader(
-    'Access-Control-Allow-Origin',
-    'https://deploy-preview-28--dev-protonmarket-com.netlify.app/'
-  );
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'GET,OPTIONS,PATCH,DELETE,POST,PUT'
-  );
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'Authorization, X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-  );
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-  return await fn(req, res);
-};
-
 const handler = async (
   req: NextApiRequestWithFormData,
   res: NextApiResponse
 ): Promise<void> => {
+  await runMiddleware(req, res, cors);
+
   const isUnauthorized =
     req.headers['Authorization'] !== `Basic ${process.env.XAUTH_PROTON_MARKET}`;
 
@@ -124,7 +122,7 @@ const handler = async (
   }
 };
 
-export default allowCors(handler);
+export default handler;
 
 export const config = {
   api: {
