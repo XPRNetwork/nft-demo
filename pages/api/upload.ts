@@ -54,16 +54,16 @@ const handler = async (
 ): Promise<void> => {
   await runMiddleware(req, res, cors);
 
-  const isUnauthorized =
-    req.headers['Authorization'] !== `Basic ${process.env.XAUTH_PROTON_MARKET}`;
+  // const isUnauthorized =
+  //   req.headers['Authorization'] !== `Basic ${process.env.XAUTH_PROTON_MARKET}`;
 
-  if (isUnauthorized) {
-    res.status(401).send({
-      success: false,
-      message: 'Unauthorized',
-    });
-    return;
-  }
+  // if (isUnauthorized) {
+  //   res.status(401).send({
+  //     success: false,
+  //     message: 'Unauthorized',
+  //   });
+  //   return;
+  // }
 
   const { method } = req;
   switch (method) {
