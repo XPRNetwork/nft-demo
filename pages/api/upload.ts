@@ -1,5 +1,5 @@
 import { NextApiResponse, NextApiRequest } from 'next';
-import Cors from 'cors'
+import Cors from 'cors';
 import multer from 'multer';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
