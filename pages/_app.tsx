@@ -18,13 +18,14 @@ NProgress.configure({
   showSpinner: false,
 });
 
-function MyApp({ Component, pageProps }: AppProps): JSX.Element {
+function MyApp({ Component, pageProps }) {
   const start = () => NProgress.start();
   const end = (url) => {
     NProgress.done();
     gtag.pageview(url);
   };
 
+  /*
   useEffect(() => {
     if (process.env.NODE_ENV !== 'production') {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -32,6 +33,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
       axe(React, ReactDOM, 1000);
     }
   }, []);
+  */
 
   useEffect(() => {
     Router.events.on('routeChangeStart', start);
